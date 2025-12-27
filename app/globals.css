@@ -184,14 +184,19 @@ a { text-decoration: none; color: inherit; }
   /* border-radius: 50%; */
   /* background: #fff; */
   /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); */
-  
+
+  /* ★変更：ここがポイントです */
+  /* filterプロパティでドロップシャドウを指定します */
+  /* drop-shadow(X方向のズレ Y方向のズレ ぼかし具合 色) */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+
   margin-bottom: 8px; /* テキストとの間隔を少し調整 */
   transition: filter 0.3s ease; /* ホバー効果を影から明るさに変更 */
 }
 /* ★変更：ホバー時に影ではなく、少し明るくするエフェクトに */
 .category-card:hover .category-thumb {
   /* box-shadow: 0 15px 30px rgba(0,0,0,0.2); */
-  filter: brightness(1.1);
+  filter: brightness(1.1) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
 }
 .category-name {
   font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333; transition: color 0.3s;
