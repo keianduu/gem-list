@@ -110,38 +110,37 @@ export default function Home() {
         </div>
 
         <div className="hero-bottom-categories">
-          {loopCategories.length > 0 && (
-            // ★ここからSwiperに変更
+          {/* データがある場合：Swiperを表示（既存のコード） */}
+          {loopCategories.length > 0 ? (
             <Swiper
+              /* ...既存の設定そのまま... */
               modules={[Autoplay, FreeMode]}
-              spaceBetween={40}      // PCでのアイコン間隔
-              slidesPerView="auto"   // コンテンツの幅に合わせて表示
-              loop={true}            // 無限ループ
-              speed={6000}           // 流れる速度（数値が大きいほどゆっくり）
+              spaceBetween={40}
+              slidesPerView="auto"
+              loop={true}
+              speed={6000}
               autoplay={{
-                delay: 0,            // 停止時間なし（流れ続ける）
-                disableOnInteraction: false, // 触っても自動再生を止めない
-                pauseOnMouseEnter: true      // マウスホバーで一時停止
+                delay: 0,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true
               }}
-              freeMode={true}        // フリック（慣性スクロール）を有効にする
-              allowTouchMove={true}  // タッチ操作許可
+              freeMode={true}
+              allowTouchMove={true}
               breakpoints={{
-                // スマホ(768px以下)の設定上書き
-                320: {
-                  spaceBetween: 12,  // スマホでの間隔（狭く）
-                  speed: 5000,       // スマホは少し速くてもOK
-                },
-                768: {
-                  spaceBetween: 40,
-                }
+                320: { spaceBetween: 12, speed: 5000 },
+                768: { spaceBetween: 40 }
               }}
-              className="category-swiper"
+              className="category-swiper fade-in"
             >
               {loopCategories.map((cat, index) => (
-                // ★SwiperSlideで囲む（width: auto が重要）
                 <SwiperSlide key={index} style={{ width: 'auto' }}>
                   <div className="category-card">
-                    <img src={cat.image?.url} alt={cat.name} className="category-thumb" />
+                    {/* ★軽量化した画像タグを使用 */}
+                    <img 
+                      src={`${cat.image?.url}?w=140&q=75&fm=webp`} 
+                      alt={cat.name} 
+                      className="category-thumb" 
+                    />
                     <span className="category-name">{cat.name}</span>
                     {cat.nameJa && (
                       <span style={{ 
@@ -157,6 +156,16 @@ export default function Home() {
                 </SwiperSlide>
               ))}
             </Swiper>
+          ) : (
+            /* ★データがない場合：スケルトンを表示（ここを追加！） */
+            <div className="skeleton-container fade-in">
+              {[...Array(7)].map((_, i) => (
+                <div key={i} className="skeleton-item">
+                  <div className="skeleton-circle"></div>
+                  <div className="skeleton-text"></div>
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </section>
