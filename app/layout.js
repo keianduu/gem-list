@@ -1,32 +1,43 @@
+/* app/layout.js */
 import "./globals.css";
-import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
+// Noto Serif JP を Noto Sans JP に変更します
+import { Cormorant_Garamond, Noto_Sans_JP } from "next/font/google";
 
-// 英語フォントの設定
+// 英語フォント（数字やアクセントに使用）
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-en",
-  weight: ["400", "600"],
+  weight: ["600", "700"], // 太めを追加
   display: "swap",
 });
 
-// 日本語フォントの設定
-const noto = Noto_Serif_JP({
+// 日本語フォント（ゴシック体に変更）
+const notoSans = Noto_Sans_JP({
   preload: false,
   variable: "--font-jp",
-  weight: ["300", "400", "500"],
+  weight: ["400", "500", "700"], // 太めを追加
   display: "swap",
 });
 
 export const metadata = {
-  title: "GemList - Discover Timeless Beauty",
-  description: "歴史に磨かれた一石との出会い。洗練された宝石の世界へ。",
+  title: "IKEA-like & Pinterest-like Prototype",
+  description: "ECサイトプロトタイプ",
 };
 
 export default function RootLayout({ children }) {
   return (
-    // ↓ ここに suppressHydrationWarning を追加しました
-    <html lang="ja" className={`${cormorant.variable} ${noto.variable}`} suppressHydrationWarning>
-      <body>{children}</body>
+    <html lang="ja" className={`${cormorant.variable} ${notoSans.variable}`} suppressHydrationWarning>
+      {/* 背景のオーブをbodyの外（または一番上）に配置して固定表示させます */}
+      <body>
+        <div className="fixed-bg">
+           <div className="orb orb-1"></div>
+           <div className="orb orb-2"></div>
+           <div className="orb orb-3"></div>
+           <div className="orb orb-4"></div>
+           <div className="orb orb-5"></div>
+        </div>
+        {children}
+      </body>
     </html>
   );
 }
