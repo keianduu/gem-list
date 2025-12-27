@@ -168,16 +168,36 @@ a { text-decoration: none; color: inherit; }
   display: inline-flex; flex-direction: column; align-items: center;
   width: 100px; cursor: pointer; background: transparent;
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* ★追加：テキストの改行と配置設定 */
+  white-space: normal; /* テキストの自動改行を許可 */
+  text-align: center;  /* 中央揃え */
+  vertical-align: top; /* 上揃え */
 }
 .category-card:hover { transform: translateY(-7px) scale(1.02); }
 .category-thumb {
-  width: 70px; height: 70px; object-fit: cover; border-radius: 50%;
-  margin-bottom: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  background: #fff; transition: box-shadow 0.3s ease;
+  width: 70px; height: 70px; /* 画像の表示エリアサイズ */
+  
+  /* ★変更：画像をトリミングせず全体を表示 */
+  object-fit: contain; 
+  
+  /* ★削除：丸い背景と影をなくす */
+  /* border-radius: 50%; */
+  /* background: #fff; */
+  /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); */
+  
+  margin-bottom: 8px; /* テキストとの間隔を少し調整 */
+  transition: filter 0.3s ease; /* ホバー効果を影から明るさに変更 */
 }
-.category-card:hover .category-thumb { box-shadow: 0 15px 30px rgba(0,0,0,0.2); }
+/* ★変更：ホバー時に影ではなく、少し明るくするエフェクトに */
+.category-card:hover .category-thumb {
+  /* box-shadow: 0 15px 30px rgba(0,0,0,0.2); */
+  filter: brightness(1.1);
+}
 .category-name {
   font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333; transition: color 0.3s;
+  /* ★追加：長い英単語などの改行設定と行間 */
+  word-break: break-word; 
+  line-height: 1.2;
 }
 .category-card:hover .category-name { color: var(--accent-blue); }
 
@@ -258,9 +278,13 @@ a { text-decoration: none; color: inherit; }
 
   /* Categories: 密度を高める */
   .marquee-content { gap: 20px; }
-  .category-card { width: 80px; }
-  .category-thumb { width: 60px; height: 60px; }
-
+  .category-card {
+    width: 70px; /* ★スマホでのカード幅。狭いので改行されやすくなります */
+  }
+  .category-thumb {
+    width: 60px; height: 60px;
+    object-fit: contain; /* スマホも同様に全体表示 */
+  }
   /* Main Container: 左右の余白を狭く(8px) */
   .main-container { padding: 0 8px; }
 
@@ -276,5 +300,22 @@ a { text-decoration: none; color: inherit; }
   }
   .my-masonry-grid_column > div {
     margin-bottom: 16px; /* カード下の隙間も少し詰める */
+  }
+}
+/* app/globals.css の一番下に追加 */
+
+/* --- Swiper Custom Styles --- */
+/* これを入れることで、autoplay: delay: 0 の時の動きが「等速直線運動」になり、スムーズに流れます */
+.category-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+/* スマホ等で左右に見切れるのを防ぐためのパディング調整 */
+.category-swiper {
+  padding: 0 20px; /* 左右に少し余白を持たせて、端のカードが見えやすくする */
+}
+@media (max-width: 768px) {
+  .category-swiper {
+    padding: 0 10px;
   }
 }
