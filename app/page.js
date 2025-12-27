@@ -3,6 +3,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
+import Masonry from 'react-masonry-css';
 
 // カテゴリーデータ
 const categories = [
@@ -79,6 +80,12 @@ export default function Home() {
     element.dataset.rafId = String(requestAnimationFrame(step));
   };
 
+  const breakpointColumnsObj = {
+    default: 4,  // PCなど基本は4列
+    1024: 3,     // 1024px以下は3列
+    768: 2       // 768px以下（スマホ）は2列
+  };
+
   return (
     <>
       <header className={`site-header ${isScrolled ? "scrolled" : "transparent"}`}>
@@ -152,9 +159,15 @@ export default function Home() {
       </section>
 
       <main className="main-container">
-        <div className="pinterest-grid">
+        {/* ★変更：div を Masonry コンポーネントに置き換え */}
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
           {items.map((item) => (
             <div key={item.id} className="pin-card">
+              {/* ...（カードの中身はそのまま変更なし）... */}
               <div className="pin-image-wrapper">
                 <img src={item.image} alt={item.name} className="pin-image" />
                 {item.type === 'product' ? (
@@ -176,7 +189,7 @@ export default function Home() {
               </div>
             </div>
           ))}
-        </div>
+        </Masonry>
       </main>
 
       <footer className="gem-footer">
