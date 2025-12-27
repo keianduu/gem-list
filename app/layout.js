@@ -1,33 +1,32 @@
 /* app/layout.js */
 import "./globals.css";
-// Noto Serif JP を Noto Sans JP に変更します
-import { Cormorant_Garamond, Noto_Sans_JP } from "next/font/google";
+// Noto_Sans_JP を Noto_Serif_JP に変更
+import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
 
-// 英語フォント（数字やアクセントに使用）
+// 英語フォント（変更なし）
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-en",
-  weight: ["600", "700"], // 太めを追加
+  weight: ["300", "400", "600", "700"],
   display: "swap",
 });
 
-// 日本語フォント（ゴシック体に変更）
-const notoSans = Noto_Sans_JP({
-  preload: false,
+// 日本語フォント（明朝体に変更）
+const notoSerif = Noto_Serif_JP({
+  weight: ["300", "400", "500", "600"], // 細字(300)もあるとエレガントです
   variable: "--font-jp",
-  weight: ["400", "500", "700"], // 太めを追加
+  preload: false,
   display: "swap",
 });
 
 export const metadata = {
-  title: "IKEA-like & Pinterest-like Prototype",
-  description: "ECサイトプロトタイプ",
+  title: "GemList",
+  description: "洗練された宝石の世界へ",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ja" className={`${cormorant.variable} ${notoSans.variable}`} suppressHydrationWarning>
-      {/* 背景のオーブをbodyの外（または一番上）に配置して固定表示させます */}
+    <html lang="ja" className={`${cormorant.variable} ${notoSerif.variable}`} suppressHydrationWarning>
       <body>
         <div className="fixed-bg">
            <div className="orb orb-1"></div>

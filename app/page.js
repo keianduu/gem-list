@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // カテゴリーデータ
 const categories = [
@@ -18,7 +18,6 @@ const categories = [
   { name: "Tourmaline", image: "https://images.unsplash.com/photo-1596906260846-9761e3895e6d?w=200&q=80" },
 ];
 
-// 商品・記事データ
 const items = [
   { id: 1, type: "product", name: "北欧風ダイニングチェア オーク材", price: "¥12,990", image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=600&q=80" },
   { id: 2, type: "article", name: "【特集】初めてのダイヤモンド選び。4Cとは？", desc: "輝きを決めるカット、カラー、クラリティ、カラットの基礎知識。", image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" },
@@ -33,6 +32,7 @@ const items = [
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
+  const marqueeRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -42,44 +42,81 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // ★修正版：時間を指定してゆっくり速度を変える関数
+  const smoothSpeed = (target) => {
+    const element = marqueeRef.current;
+    if (!element) return;
+
+    // スクロールアニメーションを取得
+    const animations = element.getAnimations();
+    const scrollAnim = animations.find(a => a.animationName === 'scrollLeft') || animations[0];
+    if (!scrollAnim) return;
+
+    // 現在の速度と開始時間を記録
+    const startRate = scrollAnim.playbackRate;
+    const startTime = performance.now();
+    const duration = 1000; // ★ここを1000ms（1秒）に設定
+
+    // 前のループがあればキャンセル
+    if (element.dataset.rafId) cancelAnimationFrame(Number(element.dataset.rafId));
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      let progress = elapsed / duration;
+      if (progress > 1) progress = 1;
+
+      // 線形補間（現在の値から目標値へ、時間の経過とともに近づける）
+      scrollAnim.playbackRate = startRate + (target - startRate) * progress;
+
+      if (progress < 1) {
+        element.dataset.rafId = String(requestAnimationFrame(step));
+      } else {
+        // 完了したら目標値に固定
+        scrollAnim.playbackRate = target;
+      }
+    };
+
+    element.dataset.rafId = String(requestAnimationFrame(step));
+  };
+
   return (
     <>
-      {/* --- Header (Left Aligned Logo) --- */}
       <header className={`site-header ${isScrolled ? "scrolled" : "transparent"}`}>
-        {/* 左側グループ：ハンバーガー + ロゴ */}
+        {/* 左側：ロゴのみにする */}
         <div className="header-left">
-          <div className="menu-btn">
-            <svg className="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </div>
-          <Link href="/" className="header-logo">GemList</Link>
+          <Link href="/" className="header-logo-container">
+            <span className="logo-main">Jewelism</span>
+            <span className="logo-sub">MARKET</span>
+          </Link>
         </div>
 
-        {/* 右側グループ：アイコン類 */}
+        {/* 右側：アイコン群（検索・お気に入り・メニュー） */}
         <div className="header-icons">
+          {/* 検索アイコン（既存） */}
           <div className="icon-btn">
              <svg className="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
              </svg>
           </div>
+          
+          {/* お気に入りアイコン（既存） */}
           <div className="icon-btn">
              <svg className="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
              </svg>
           </div>
-          <div className="icon-btn">
-             <svg className="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-             </svg>
-             <span className="cart-badge">2</span>
+
+          {/* ★変更：カートを削除し、ここにハンバーガーメニューを移動 */}
+          {/* デザイン統一のため icon-btn クラスを使用 */}
+          <div className="icon-btn menu-toggle">
+            <svg className="icon-svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
           </div>
         </div>
       </header>
 
-      {/* --- Hero Area (Full Screen 100vh) --- */}
       <section className="hero-area">
-        {/* 中央のコンテンツ */}
         <div className="hero-center-content">
           <h1 className="hero-title">Discover the Unseen <br /> Brilliance</h1>
           <p className="hero-subtitle">歴史に磨かれた一石との出会い。洗練された宝石の世界へ。</p>
@@ -89,18 +126,22 @@ export default function Home() {
               <svg className="hero-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              {/* プレースホルダー変更 */}
               <input type="text" className="hero-search-input" placeholder="宝石名、色などで検索..." />
             </div>
           </div>
         </div>
 
-        {/* ボトムのカテゴリ (画面内最下部に配置) */}
         <div className="hero-bottom-categories">
           <div className="marquee-container">
-            <div className="marquee-content">
+            <div className="marquee-content" ref={marqueeRef}>
               {[...categories, ...categories].map((cat, index) => (
-                <div key={index} className="category-card">
+                <div 
+                  key={index} 
+                  className="category-card"
+                  // ★マウスが乗ったら速度0へ、離れたら速度1へ（1秒かけて）
+                  onMouseEnter={() => smoothSpeed(0)} 
+                  onMouseLeave={() => smoothSpeed(1)}
+                >
                   <img src={cat.image} alt={cat.name} className="category-thumb" />
                   <span className="category-name">{cat.name}</span>
                 </div>
@@ -110,7 +151,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* --- Main Grid --- */}
       <main className="main-container">
         <div className="pinterest-grid">
           {items.map((item) => (
@@ -139,16 +179,18 @@ export default function Home() {
         </div>
       </main>
 
-      {/* --- Footer --- */}
       <footer className="gem-footer">
-        <div className="footer-logo">GemList</div>
+        <Link href="/" className="footer-logo-container">
+          <span className="logo-main">Jewelism</span>
+          <span className="logo-sub">MARKET</span>
+        </Link>
         <div className="footer-links">
           <Link href="#">ブランドについて</Link>
           <Link href="#">お問い合わせ</Link>
           <Link href="#">プライバシーポリシー</Link>
           <Link href="#">特定商取引法に基づく表記</Link>
         </div>
-        <p className="copyright">&copy; 2025 GemList. All Rights Reserved.</p>
+        <p className="copyright">&copy; 2025 Jewelism Market. All Rights Reserved.</p>
       </footer>
     </>
   );

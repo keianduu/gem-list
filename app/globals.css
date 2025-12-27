@@ -61,11 +61,7 @@ a { text-decoration: none; color: inherit; }
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
-/* ロゴとメニューを左寄せにするグループ */
-.header-left {
-  display: flex; align-items: center; gap: 20px;
-}
-
+.header-left { display: flex; align-items: center; gap: 20px; }
 .menu-btn { cursor: pointer; display: flex; align-items: center; }
 .header-logo {
   font-family: var(--font-en); font-weight: 700; font-size: 1.8rem;
@@ -86,78 +82,204 @@ a { text-decoration: none; color: inherit; }
   display: flex; align-items: center; justify-content: center;
 }
 
-/* --- Hero Area (100vh Layout) --- */
+/* --- Hero Area --- */
 .hero-area {
-  height: 100vh; /* 画面いっぱいの高さ */
+  height: 100vh;
   width: 100%;
   display: flex;
-  flex-direction: column; /* 縦並びにする */
-  padding-top: var(--header-height); /* ヘッダー被り防止 */
-}
-
-/* 中央のコンテンツ（タイトル・検索） */
-.hero-center-content {
-  flex-grow: 1; /* 余ったスペースを全部使う＝中央に来る */
-  display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  padding: 0 20px;
+  padding-top: var(--header-height);
 }
 
-.hero-title {
-  font-family: var(--font-en); font-size: 4rem; font-weight: 400;
-  margin: 0 0 20px; line-height: 1.1; color: #1A1A1A;
+.hero-center-content {
+  flex-grow: 1;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  text-align: center; padding: 0 20px;
 }
+
+/* --- 高級感のあるタイトル装飾（全体グラデーション） --- */
+.hero-title {
+  font-family: var(--font-en);
+  font-size: 4rem;
+  font-weight: 400;
+  margin: 0 0 20px;
+  line-height: 1.1;
+  color: #1A1A1A; /* バックアップ色 */
+
+  /* ★全体に掛かるグラデーション（ブロンズゴールド） */
+  /* 左から：濃い黒→渋い金→明るい金→渋い金→濃い黒 */
+  background-image: linear-gradient(
+    135deg,
+    #1a1a1a 0%,    /* 左上：黒 */
+    #47371b 25%,   /* ブロンズ */
+    #8c6a30 75%,   /* ブロンズ */
+    #1a1a1a 100%   /* 右下：黒 */
+  );
+
+  /* 背景のサイズを少し広げて、馴染ませる */
+  background-size: 120% auto;
+  background-position: center center;
+  
+  /* 文字で切り抜く */
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* 文字全体がゆっくり呼吸するように明るくなるアニメーション */
+  animation: text-breathing 5s ease-in-out infinite;
+}
+
+/* ゆっくり明るさが変化するアニメーション */
+@keyframes text-breathing {
+  0%, 100% {
+    filter: brightness(1);     /* 通常 */
+    background-size: 120% auto; /* 変化なし */
+  }
+  50% {
+    filter: brightness(1.5);   /* 少し明るく輝く */
+    background-size: 150% auto; /* 光沢が少し動くように見える */
+  }
+}
+
+/* スマホ対応 */
+@media (max-width: 768px) {
+  .hero-area { height: 50vh; }
+  .hero-title { font-size: 2.5rem; }
+}
+
+
 .hero-subtitle {
   font-size: 1rem; letter-spacing: 0.2em; opacity: 0.8; margin-bottom: 40px;
 }
 
-/* 検索バー */
-.hero-search-wrapper { width: 100%; max-width: 600px; }
-.hero-search-container {
-  display: flex; align-items: center;
-  background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 50px;
-  padding: 15px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  transition: box-shadow 0.3s;
-}
-.hero-search-container:focus-within {
-  box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: var(--accent-blue);
-}
-.hero-search-input {
-  border: none; background: transparent; outline: none;
-  flex-grow: 1; font-size: 1.1rem; padding-left: 15px; color: #333;
-}
-.hero-search-icon { color: #888; width: 20px; height: 20px; }
-
-/* カテゴリセクション（ボトム固定） */
-.hero-bottom-categories {
-  flex-shrink: 0; /* 縮まないようにする */
-  padding-bottom: 40px; /* 下の余白 */
+/* --- 検索バー（洗練された半透明カプセルスタイル） --- */
+.hero-search-wrapper {
   width: 100%;
+  max-width: 500px;
+  margin-top: 30px; /* 少し余白を増やす */
+}
+
+.hero-search-container {
+  display: flex;
+  align-items: center;
+  
+  /* ★ここがポイント：半透明の白背景とすりガラス効果 */
+  background: rgba(255, 255, 255, 0.6); /* 透明度60%の白 */
+  backdrop-filter: blur(10px); /* 背景をぼかす（すりガラス） */
+  -webkit-backdrop-filter: blur(10px); /* Safari用 */
+  
+  border-radius: 50px; /* カプセル型の角丸 */
+  
+  /* 薄い境界線をつけて輪郭をはっきりさせる */
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  
+  padding: 8px 15px;
+  
+  /* 柔らかく浮かび上がるような影 */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  
+  transition: all 0.3s ease;
+}
+
+/* 入力中に少し強調する（白さを増して影を濃く） */
+.hero-search-container:focus-within {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.hero-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex-grow: 1;
+  font-size: 1rem;
+  padding-left: 10px;
+  color: #333;
+  font-family: var(--font-jp);
+  font-weight: 300;
+}
+
+.hero-search-input::placeholder {
+  color: #888;
+  font-family: var(--font-jp);
+}
+
+.hero-search-icon {
+  color: #666;
+  width: 20px;
+  height: 20px;
+  opacity: 0.8;
+}
+
+/* --- カテゴリセクション（調整版） --- */
+.hero-bottom-categories {
+  flex-shrink: 0;
+  width: 100%;
+  /* コンテナ自体の余白は少し減らす（中身で確保するため） */
+  padding-bottom: 20px; 
 }
 
 .marquee-container {
   width: 100%; overflow: hidden; white-space: nowrap; position: relative;
-  mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+  /* 左右のフェードを少し強めに */
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  
+  /* ★重要：上下に見切れないための余白を確保 */
+  /* padding-top をカードの浮き上がり量以上に設定します */
+  padding-top: 40px; 
+  padding-bottom: 20px;
+  /* ネガティブマージンでレイアウト崩れを防ぐ（必要なら調整） */
+  margin-top: -20px;
 }
-.marquee-content { display: inline-flex; gap: 30px; animation: scrollLeft 45s linear infinite; padding: 0 20px; }
+
+.marquee-content {
+  display: inline-flex;
+  gap: 40px; /* カード間の隙間も少し広げてゆったりさせる */
+  
+  /* ★スピード調整：80s にしてゆっくり優雅に */
+  animation: scrollLeft 80s linear infinite; 
+  
+  /* アニメーション要素自体のパディングは削除（コンテナで制御） */
+  padding: 0 20px; 
+}
+
+
 @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
 .category-card {
   display: inline-flex; flex-direction: column; align-items: center;
-  width: 100px; cursor: pointer; background: transparent; transition: transform 0.2s;
+  width: 100px; cursor: pointer; background: transparent; 
+  
+  /* ★イージング調整：少しバネのような「ふわっ」とした動きにする */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.category-card:hover { transform: translateY(-5px); }
+
+.category-card:hover {
+  /* 移動量を約50%に抑え、拡大率も少しだけ控えめ(1.05→1.02)にしてバランスを取りました */
+  transform: translateY(-7px) scale(1.02); 
+}
+
 .category-thumb {
   width: 70px; height: 70px; object-fit: cover; border-radius: 50%;
-  margin-bottom: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 12px; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
   background: #fff;
+  transition: box-shadow 0.3s ease;
 }
+
+/* ホバー時に影を濃くして浮遊感を出す */
+.category-card:hover .category-thumb {
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
 .category-name {
   font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333;
+  transition: color 0.3s;
+}
+.category-card:hover .category-name {
+  color: var(--accent-blue);
 }
 
 /* --- Pinterest Grid --- */
@@ -207,3 +329,73 @@ a { text-decoration: none; color: inherit; }
 .footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 50px; flex-wrap: wrap; }
 .footer-links a { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
 .footer-links a:hover { color: #fff; }
+
+/* =========================================
+   新しいロゴスタイル (Jewelism Market)
+========================================= */
+
+/* =========================================
+   新しいロゴスタイル (Jewelism Market) - 修正版
+========================================= */
+
+/* --- ヘッダー用ロゴ --- */
+.header-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  text-decoration: none;
+  color: #1a1a1a;
+  transition: opacity 0.3s;
+  /* 左側の余計な隙間（メニューがあった名残）を埋めるため、左寄せにするか確認 */
+  /* 必要なら margin-left: 0; などを追加 */
+}
+.header-logo-container:hover { opacity: 0.8; }
+
+/* メイン部分 (Jewelism) - サイズアップ */
+.logo-main {
+  font-family: var(--font-en);
+  font-size: 2.0rem; /* 1.6rem -> 2.0rem に拡大 */
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* サブ部分 (MARKET) - サイズアップ */
+.logo-sub {
+  font-family: var(--font-en);
+  font-size: 0.75rem; /* 0.65rem -> 0.75rem に拡大 */
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+
+/* --- フッター用ロゴ（少し大きくする） --- */
+/* ※古い .footer-logo のスタイルは削除してください */
+
+.footer-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+  text-decoration: none;
+  color: #a38045; /* ヘッダーと同じゴールド */
+  margin-bottom: 40px; /* 下のリンクとの余白 */
+}
+
+/* フッターではサイズを大きく */
+.footer-logo-container .logo-main {
+  font-size: 2.4rem;
+}
+.footer-logo-container .logo-sub {
+  font-size: 0.9rem;
+  letter-spacing: 0.4em;
+  margin-top: 5px;
+}
+
+/* --- スマホ調整 --- */
+@media (max-width: 768px) {
+  .logo-main { font-size: 1.4rem; }
+  .logo-sub { font-size: 0.6rem; }
+}
