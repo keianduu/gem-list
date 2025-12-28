@@ -209,15 +209,34 @@ a { text-decoration: none; color: inherit; }
 /* --- Main Layout & Masonry Grid --- */
 .main-container { max-width: 1400px; margin: 60px auto 0; padding: 0 24px; }
 
-/* react-masonry-css Custom Styles */
+/* app/globals.css */
+
+/* Masonryコンテナ全体の設定 */
 .my-masonry-grid {
   display: flex;
-  margin-left: -16px; /* 列間の隙間調整 (PC: 16px) */
+  margin-left: auto;   /* ★左の余白を自動調整 */
+  margin-right: auto;  /* ★右の余白を自動調整 */
   width: auto;
+  max-width: 1200px;   /* サイトの最大幅に合わせて調整してください */
+  justify-content: center; /* ★中身を中央に寄せる（重要） */
 }
+
+/* 各カラムの設定 */
 .my-masonry-grid_column {
-  padding-left: 16px; /* 列間の隙間 (PC: 16px) */
+  padding-left: 20px;  /* カラム間の溝（gutter） */
   background-clip: padding-box;
+  
+  /* ★カードが少ない時にカラム自体が広がりすぎないようにする */
+  max-width: 300px;    /* 1つのカードの理想的な最大幅 */
+  min-width: 250px;    /* モバイル等の最小幅 */
+}
+
+/* 商品一覧を囲むセクションも中央寄せを保証 */
+.category-items-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 20px;
 }
 .my-masonry-grid_column > div {
   margin-bottom: 24px; /* カード下の隙間 (PC) */
@@ -435,4 +454,259 @@ a { text-decoration: none; color: inherit; }
 .fade-in {
   /* 0.8秒かけて、ふわっと表示 */
   animation: fadeInUp 0.8s ease-out forwards;
+}
+
+
+/* --- Category Page Styles --- */
+.category-main {
+  padding-top: var(--header-height);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-bottom: 80px;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  padding: 20px 24px;
+  font-size: 0.85rem;
+  color: #888;
+  font-family: var(--font-en);
+}
+.breadcrumb-inner {
+  display: flex; align-items: center; gap: 8px;
+}
+.breadcrumb a:hover { color: var(--accent-blue); text-decoration: underline; }
+.separator { font-size: 0.7rem; color: #ccc; }
+.current { color: #333; font-weight: 500; }
+
+/* Category Header */
+.category-header {
+  text-align: center;
+  padding: 40px 20px 60px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.category-header-icon-wrapper {
+  width: 100px; height: 100px;
+  margin: 0 auto 20px;
+}
+.category-header-img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+}
+
+.category-title-en {
+  font-family: var(--font-en);
+  font-size: 3rem;
+  font-weight: 400;
+  margin: 0 0 5px;
+  color: #111;
+  background-image: linear-gradient(135deg, #1a1a1a 0%, #47371b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.category-title-ja {
+  font-size: 0.9rem;
+  color: #888;
+  letter-spacing: 0.1em;
+  margin: 0 0 24px;
+}
+.category-desc {
+  font-size: 0.95rem;
+  line-height: 1.8;      /* 行間を広げて読みやすく */
+  color: #555;
+  text-align: left;      /* ★左寄せに強制 */
+  text-align-last: left; /* ★最後の行も左寄せ */
+  margin: 0 auto;
+  max-width: 700px;      /* ★一行が長すぎないよう幅を絞る */
+}
+
+/* Items Container */
+.category-items-container {
+  padding: 0 24px;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 768px) {
+  .category-title-en { font-size: 2rem; }
+  .category-desc { text-align: left; text-align-last: left; }
+  .breadcrumb { padding: 16px; }
+  .category-items-container { padding: 0 8px; }
+}
+
+/* app/globals.css */
+.category-desc p {
+  margin-bottom: 1.5em; /* 段落の間に余白を作る */
+}
+.category-desc p:last-child {
+  margin-bottom: 0;
+}
+
+/* --- Gem Infographic Section --- */
+.gem-infographic-section {
+  max-width: 1000px;
+  margin: 100px auto;
+  padding: 60px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4));
+  backdrop-filter: blur(20px);
+  border-radius: 40px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+}
+
+.infographic-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.concept-label {
+  font-family: var(--font-en);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  color: #a3937d;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.infographic-title {
+  font-family: var(--font-en);
+  font-size: 2.2rem;
+  font-weight: 300;
+  color: #222;
+}
+
+.infographic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.info-glass-card {
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 30px;
+  border-radius: 24px;
+  transition: transform 0.3s ease;
+}
+
+.info-glass-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.info-glass-card.full-width {
+  grid-column: span 2;
+}
+
+.info-icon {
+  width: 32px;
+  height: 32px;
+  color: #a3937d;
+  margin-bottom: 20px;
+}
+
+.info-label {
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.info-content p {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.6;
+}
+
+.info-4c-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+}
+
+.c-item {
+  text-align: center;
+  border-left: 1px solid #eee;
+}
+.c-item:first-child { border: none; }
+
+.c-item span {
+  display: block;
+  font-family: var(--font-en);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.c-item small {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.infographic-footer {
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  padding-top: 30px;
+}
+
+.raw-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+.keyword-tags span {
+  font-size: 0.8rem;
+  color: #a3937d;
+  margin-left: 15px;
+}
+
+@media (max-width: 768px) {
+  .infographic-grid { grid-template-columns: 1fr; }
+  .info-glass-card.full-width { grid-column: span 1; }
+  .info-4c-container { grid-template-columns: repeat(2, 1fr); }
+  .gem-infographic-section { padding: 30px 20px; }
+}
+
+/* app/globals.css */
+
+.location-flags-container {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 10px 0;
+}
+
+.flag-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 80px;
+}
+
+.flag-icon {
+  font-size: 2rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+}
+
+.flag-name {
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #8c7e6a;
+}
+
+/* スマホ対応 */
+@media (max-width: 768px) {
+  .location-flags-container {
+    gap: 15px;
+  }
+  .flag-icon {
+    font-size: 1.5rem;
+  }
 }

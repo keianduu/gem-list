@@ -134,25 +134,32 @@ export default function Home() {
             >
               {loopCategories.map((cat, index) => (
                 <SwiperSlide key={index} style={{ width: 'auto' }}>
-                  <div className="category-card">
-                    {/* ★軽量化した画像タグを使用 */}
-                    <img 
-                      src={`${cat.image?.url}?w=140&q=75&fm=webp`} 
-                      alt={cat.name} 
-                      className="category-thumb" 
-                    />
-                    <span className="category-name">{cat.name}</span>
-                    {cat.nameJa && (
-                      <span style={{ 
-                        fontSize: '0.65rem', color: '#888', marginTop: '2px', 
-                        fontFamily: 'var(--font-jp)', whiteSpace: 'normal', 
-                        wordBreak: 'break-word', lineHeight: '1.2', 
-                        display: 'block', width: '100%' 
-                      }}>
-                        {cat.nameJa}
-                      </span>
-                    )}
-                  </div>
+                <Link href={`/category/${cat.slug}`} className="category-card">
+                      <img 
+                        src={`${cat.image?.url}?w=140&q=75&fm=webp`} 
+                        alt={cat.name} 
+                        className="category-thumb" 
+                      />
+                      {/* ★修正ポイント2: メイン表示を cat.name (英語) に */}
+                      <span className="category-name">{cat.name}</span>
+                      
+                      {/* ★修正ポイント3: サブ表示を cat.yomigana に変更 */}
+                      {cat.yomigana && (
+                        <span style={{ 
+                          fontSize: '0.65rem', 
+                          color: '#888', 
+                          marginTop: '2px', 
+                          fontFamily: 'var(--font-jp)',
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-word',
+                          lineHeight: '1.2',
+                          display: 'block',
+                          width: '100%'
+                        }}>
+                          {cat.yomigana}
+                        </span>
+                      )}
+                </Link>
                 </SwiperSlide>
               ))}
             </Swiper>
