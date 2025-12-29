@@ -1,5 +1,6 @@
 /* app/category/[slug]/page.js */
 import Link from "next/link";
+import Image from "next/image"; // ★Imageコンポーネント
 import { client } from "@/libs/microcms";
 import { items } from "@/libs/data"; 
 import MasonryGrid from "@/components/MasonryGrid";
@@ -19,13 +20,16 @@ export default async function CategoryPage({ params }) {
   const data = await client.get({
     endpoint: "jewelry-categories",
     queries: { 
-      filters: `slug[equals]${urlSlug}` 
+      filters: `slug[equals]${urlSlug}`,
+      // 開発中のためキャッシュしない設定
+      customRequestInit: {
+        cache: "no-store", 
+      },
     },
   });
 
   const category = data.contents[0];
 
-  // カテゴリが見つからない場合の処理
   if (!category) {
     return (
       <div style={{padding: "100px 20px", textAlign:"center", minHeight: "60vh"}}>
@@ -38,38 +42,37 @@ export default async function CategoryPage({ params }) {
     );
   }
 
-  // 3. ローカルの商品データからフィルタリング
   const categoryItems = items.filter(item => item.category === category.name);
 
-  // ▼▼▼ 追加：表示確認用のダミーデータ ▼▼▼
+  // ダミーデータ
   const dummyColorVariations = [
     {
       id: 1,
       name: "Color less",
       nameJa: "カラーレス",
       description: "無色透明",
-      image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=200&q=80&fm=webp" // ダミー: 白い宝石
+      image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0"
     },
     {
       id: 2,
       name: "Pink",
       nameJa: "ピンク",
       description: "天然は希少",
-      image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65?w=200&q=80&fm=webp" // ダミー: ピンクの宝石
+      image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65"
     },
     {
       id: 3,
       name: "Blue",
       nameJa: "ブルー",
       description: "現在主流。色の濃さでスカイ、スイス、ロンドンと呼び分けられる",
-      image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e?w=200&q=80&fm=webp" // ダミー: 青い宝石
+      image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e"
     },
     {
       id: 4,
       name: "Sherry",
       nameJa: "シェリー（インペリアル）",
       description: "最高級とされる、赤みがかった黄金色",
-      image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75?w=200&q=80&fm=webp" // ダミー: 黄/オレンジの宝石
+      image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75"
     }
   ];
 
@@ -85,7 +88,6 @@ export default async function CategoryPage({ params }) {
       </header>
 
       <main className="category-main">
-        {/* パンくず */}
         <nav className="breadcrumb">
           <div className="breadcrumb-inner">
             <Link href="/">Home</Link>
@@ -94,13 +96,21 @@ export default async function CategoryPage({ params }) {
           </div>
         </nav>
 
-        {/* カテゴリ詳細ヘッダー */}
         <section className="category-header">
-          <div className="category-header-icon-wrapper">
+          {/* ▼▼▼ Image化: ヘッダーアイコン ▼▼▼ */}
+          <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
              {category.image && (
-               <img src={`${category.image.url}?w=160&q=80&fm=webp`} alt={category.name} className="category-header-img" />
+               <Image 
+                 src={category.image.url} 
+                 alt={category.name} 
+                 fill
+                 sizes="100px"
+                 style={{ objectFit: 'contain' }}
+                 className="category-header-img"
+               />
              )}
           </div>
+          
           <h1 className="category-title-en">{category.name}</h1>
           <p className="category-title-ja">{category.yomigana}</p>
           
@@ -112,8 +122,6 @@ export default async function CategoryPage({ params }) {
           )}
         </section>
 
-
-        {/* インフォグラフィックセクション */ }
         <section className="gem-infographic-section">
           <div className="infographic-header">
             <span className="concept-label">Encyclopedia</span>
@@ -122,8 +130,7 @@ export default async function CategoryPage({ params }) {
 
           <div className="infographic-grid">
 
-            {/* --- MINING LOCATION カード (50%幅に変更) --- */}
-            {/* full-width クラスを削除しました */}
+            {/* --- MAJOR MINING LOCATIONS --- */}
             <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -155,7 +162,7 @@ export default async function CategoryPage({ params }) {
               </div>
             </div>
 
-            {/* --- ROUGH STONE カード (右隣に配置) --- */}
+            {/* --- ROUGH STONE --- */}
             <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -168,13 +175,20 @@ export default async function CategoryPage({ params }) {
 
               {category.roughStones ? (
                 <div className="info-content-row">
+                  {/* ▼▼▼ Image化: 原石画像 ▼▼▼ */}
                   {category.roughStones.image && (
-                    <img
-                      src={`${category.roughStones.image.url}?w=150&h=150&q=80&fm=webp`}
-                      alt={category.roughStones.name}
-                      className="info-thumb"
-                    />
+                    <div className="info-thumb-wrapper" style={{ position: 'relative', width: '150px', height: '150px', flexShrink: 0 }}>
+                      <Image
+                        src={category.roughStones.image.url}
+                        alt={category.roughStones.name}
+                        fill
+                        sizes="150px"
+                        style={{ objectFit: 'cover', borderRadius: '12px' }}
+                        className="info-thumb"
+                      />
+                    </div>
                   )}
+                  
                   <div className="info-text-col">
                     <span className="info-main-name">{category.roughStones.name}</span>
                     <span className="info-sub-name">{category.roughStones.yomigana}</span>
@@ -192,8 +206,7 @@ export default async function CategoryPage({ params }) {
               )}
             </div>
 
-            {/* --- ACCESSORY カード (100%幅・3列表示) --- */}
-            {/* full-width を追加し、中身を3列レイアウトに変更 */}
+            {/* --- ACCESSORY --- */}
             <div className="info-glass-card full-width">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -206,16 +219,21 @@ export default async function CategoryPage({ params }) {
                 <h3 className="info-label">ACCESSORY</h3>
               </div>
 
-              {/* 3列レイアウトのコンテナ */}
               <div className="accessory-grid">
                 
                 {/* Item 1 */}
                 <div className="accessory-item">
-                  <img 
-                    src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&h=100&q=80" 
-                    alt="Ring" 
-                    className="acc-thumb" 
-                  />
+                  {/* ▼▼▼ Image化 ▼▼▼ */}
+                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
+                    <Image 
+                      src="https://images.unsplash.com/photo-1605100804763-247f67b3557e" 
+                      alt="Ring" 
+                      fill
+                      sizes="50px"
+                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      className="acc-thumb" 
+                    />
+                  </div>
                   <div className="acc-text">
                     <h4>RING</h4>
                     <p>劈開性があるため、ぶつけないよう注意が必要。</p>
@@ -224,11 +242,16 @@ export default async function CategoryPage({ params }) {
 
                 {/* Item 2 */}
                 <div className="accessory-item">
-                  <img 
-                    src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=100&h=100&q=80" 
-                    alt="Earring" 
-                    className="acc-thumb" 
-                  />
+                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
+                    <Image 
+                      src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908" 
+                      alt="Earring" 
+                      fill
+                      sizes="50px"
+                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      className="acc-thumb" 
+                    />
+                  </div>
                   <div className="acc-text">
                     <h4>Earing</h4>
                     <p>顔色を明るく健康的に見せる効果が高い。</p>
@@ -237,11 +260,16 @@ export default async function CategoryPage({ params }) {
 
                 {/* Item 3 */}
                 <div className="accessory-item">
-                  <img 
-                    src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&h=100&q=80" 
-                    alt="Ring" 
-                    className="acc-thumb" 
-                  />
+                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
+                    <Image 
+                      src="https://images.unsplash.com/photo-1605100804763-247f67b3557e" 
+                      alt="Ring" 
+                      fill
+                      sizes="50px"
+                      style={{ objectFit: 'cover', borderRadius: '50%' }}
+                      className="acc-thumb" 
+                    />
+                  </div>
                   <div className="acc-text">
                     <h4>RING</h4>
                     <p>劈開性があるため、ぶつけないよう注意が必要。</p>
@@ -253,16 +281,21 @@ export default async function CategoryPage({ params }) {
 
           </div>
 
+          {/* Color Variation */}
           <div className="color-variation-block">
             <h3 className="color-section-title">{category.name} Color Variation</h3>
             
             <div className="color-grid">
               {dummyColorVariations.map((color) => (
                 <div key={color.id} className="color-card">
-                  <div className="color-img-wrapper">
-                    <img 
+                  {/* ▼▼▼ Image化: カラーバリエーション ▼▼▼ */}
+                  <div className="color-img-wrapper" style={{ position: 'relative', height: '60px', width: '100%' }}>
+                    <Image 
                       src={color.image} 
                       alt={color.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 25vw"
+                      style={{ objectFit: 'contain' }}
                       className="color-img"
                     />
                   </div>
@@ -275,7 +308,7 @@ export default async function CategoryPage({ params }) {
               ))}
             </div>
           </div>
-          
+
           <div className="infographic-footer">
             <div className="keyword-tags left-align">
               <span>#4月</span>
@@ -285,7 +318,6 @@ export default async function CategoryPage({ params }) {
           </div>
         </section>
 
-        {/* 商品一覧 (Pinterest形式) */}
         <section className="category-items-container">
            {categoryItems.length > 0 ? (
              <MasonryGrid items={categoryItems} />

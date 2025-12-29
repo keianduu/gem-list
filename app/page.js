@@ -2,20 +2,20 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react"; // useRefは不要になるので削除でOK
+import Image from "next/image"; // ★Imageコンポーネント
+import { useState, useEffect } from "react";
 import Masonry from 'react-masonry-css';
 import { client } from "@/libs/microcms";
 
-// ★追加：Swiper関連のインポート
+// Swiper関連
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, FreeMode } from 'swiper/modules';
 
-// ★追加：Swiperのスタイルシート
+// Swiperスタイル
 import 'swiper/css';
 import 'swiper/css/free-mode';
 
 const items = [
-  // ... (ここは変更なし。そのまま残してください) ...
   { id: 1, type: "product", name: "北欧風ダイニングチェア オーク材", price: "¥12,990", image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=600&q=80" },
   { id: 2, type: "article", name: "【特集】初めてのダイヤモンド選び。4Cとは？", desc: "輝きを決めるカット、カラー、クラリティ、カラットの基礎知識。", image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" },
   { id: 3, type: "product", name: "リネン100% デュベカバー ダブル グレー", price: "¥8,900", image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=600&q=80" },
@@ -30,7 +30,6 @@ const items = [
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [categories, setCategories] = useState([]);
-  // const marqueeRef = useRef(null); // ←これは削除してOK
 
   const breakpointColumnsObj = { default: 4, 1024: 3, 768: 2 };
 
@@ -45,10 +44,9 @@ export default function Home() {
       try {
         const data = await client.get({ 
           endpoint: "jewelry-categories",
-          // ★ここを追加：フィルタリング設定
           queries: {
-            filters: 'isVisible[equals]true', // isVisible が true のものだけ取得
-            limit: 100, // (念のため) 件数制限を少し増やしておく
+            filters: 'isVisible[equals]true',
+            limit: 100,
           }
         });
         setCategories(data.contents);
@@ -59,10 +57,6 @@ export default function Home() {
     fetchCategories();
   }, []);
 
-  // ★ smoothSpeed 関数も削除してOKです（Swiperが自動でやってくれます）
-
-  // ループが途切れないように、データが少ない場合は3回繰り返して配列を作る
-  // (Swiperのloopモードを安定させるため)
   const loopCategories = categories.length > 0 
     ? [...categories, ...categories, ...categories, ...categories] 
     : [];
@@ -110,10 +104,8 @@ export default function Home() {
         </div>
 
         <div className="hero-bottom-categories">
-          {/* データがある場合：Swiperを表示（既存のコード） */}
           {loopCategories.length > 0 ? (
             <Swiper
-              /* ...既存の設定そのまま... */
               modules={[Autoplay, FreeMode]}
               spaceBetween={40}
               slidesPerView="auto"
@@ -122,7 +114,7 @@ export default function Home() {
               autoplay={{
                 delay: 0,
                 disableOnInteraction: false,
-                pauseOnMouseEnter: true
+                pauseOnMouseEnter: false // ★変更：マウスオーバーで停止しない設定
               }}
               freeMode={true}
               allowTouchMove={true}
@@ -135,15 +127,19 @@ export default function Home() {
               {loopCategories.map((cat, index) => (
                 <SwiperSlide key={index} style={{ width: 'auto' }}>
                 <Link href={`/category/${cat.slug}`} className="category-card">
-                      <img 
-                        src={`${cat.image?.url}?w=140&q=75&fm=webp`} 
-                        alt={cat.name} 
-                        className="category-thumb" 
-                      />
-                      {/* ★修正ポイント2: メイン表示を cat.name (英語) に */}
+                      {/* ▼▼▼ Image化: 高解像度対応のため2倍サイズ指定 ▼▼▼ */}
+                      {cat.image?.url && (
+                        <Image 
+                          src={cat.image.url} 
+                          alt={cat.name}
+                          width={140}
+                          height={140}
+                          className="category-thumb" 
+                        />
+                      )}
+                      
                       <span className="category-name">{cat.name}</span>
                       
-                      {/* ★修正ポイント3: サブ表示を cat.yomigana に変更 */}
                       {cat.yomigana && (
                         <span style={{ 
                           fontSize: '0.65rem', 
@@ -164,7 +160,6 @@ export default function Home() {
               ))}
             </Swiper>
           ) : (
-            /* ★データがない場合：スケルトンを表示（ここを追加！） */
             <div className="skeleton-container fade-in">
               {[...Array(7)].map((_, i) => (
                 <div key={i} className="skeleton-item">
@@ -177,7 +172,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Main, Footerはそのまま */}
       <main className="main-container">
         <Masonry
           breakpointCols={breakpointColumnsObj}
@@ -187,7 +181,16 @@ export default function Home() {
           {items.map((item) => (
             <div key={item.id} className="pin-card">
               <div className="pin-image-wrapper">
-                <img src={item.image} alt={item.name} className="pin-image" />
+                {/* ▼▼▼ Image化: Masonry用のレスポンシブ設定 ▼▼▼ */}
+                <Image 
+                  src={item.image} 
+                  alt={item.name} 
+                  width={600} 
+                  height={400}
+                  className="pin-image"
+                  style={{ width: '100%', height: 'auto' }}
+                />
+                
                 {item.type === 'product' ? (
                    <span className="type-badge type-product">ITEM</span>
                 ) : (
