@@ -41,15 +41,6 @@ export default async function CategoryPage({ params }) {
   // 3. ローカルの商品データからフィルタリング
   const categoryItems = items.filter(item => item.category === category.name);
 
-  // ★地図用データ（経度, 緯度の順）
-  // 宝石の種類によって場所を変える場合は、本来はmicroCMSから取得するように拡張します
-  const gemLocations = [
-    { name: "Russia", coordinates: [105, 61] },
-    { name: "Botswana", coordinates: [24, -22] },
-    { name: "Canada", coordinates: [-106, 56] },
-    { name: "Australia", coordinates: [133, -25] },
-  ];
-
   return (
     <>
       <header className="site-header scrolled">
@@ -97,89 +88,102 @@ export default async function CategoryPage({ params }) {
           </div>
 
           <div className="infographic-grid">
-            {/* Mining Location カード */}
- 
-<div className="info-glass-card full-width">
-  <div className="info-icon">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" />
-      <circle cx="12" cy="10" r="3" />
-    </svg>
-  </div>
-  <h3 className="info-label">Mining Location</h3>
-  
-  <div className="location-flags-container">
-    {/* 国旗アイコン：画像を使わず、まずは絵文字や軽量なWebフォントでの対応がおすすめ */}
-    <div className="flag-item">
-      <span className="flag-icon">🇷🇺</span>
-      <span className="flag-name">Russia</span>
-    </div>
-    <div className="flag-item">
-      <span className="flag-icon">🇧🇼</span>
-      <span className="flag-name">Botswana</span>
-    </div>
-    <div className="flag-item">
-      <span className="flag-icon">🇨🇦</span>
-      <span className="flag-name">Canada</span>
-    </div>
-    <div className="flag-item">
-      <span className="flag-icon">🇦🇺</span>
-      <span className="flag-name">Australia</span>
-    </div>
-  </div>
-</div>
-
-            {/* Formation カード */}
-            <div className="info-glass-card">
-              <div className="info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <h3 className="info-label">Formation</h3>
-              <div className="info-content">
-                <p><strong>キンバーライト:</strong> 特殊な火山岩に含まれるマグマの結晶</p>
-              </div>
-            </div>
-
-            {/* Evaluation (4C) カード */}
+            
+            {/* --- Mining Location カード --- */}
             <div className="info-glass-card full-width">
-              <div className="info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 3l9 6-9 12-9-12 9-6z" />
-                </svg>
+              <div className="info-header-row">
+                <div className="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1118 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                </div>
+                <h3 className="info-label">Mining Location</h3>
               </div>
-              <h3 className="info-label">Evaluation (4C)</h3>
-              <div className="info-4c-container">
-                <div className="c-item"><span>Color</span><small>Dランク〜ファンシー</small></div>
-                <div className="c-item"><span>Clarity</span><small>透明度・内包物</small></div>
-                <div className="c-item"><span>Cut</span><small>輝きの生命線</small></div>
-                <div className="c-item"><span>Carat</span><small>重量と価値</small></div>
+              
+              <div className="location-flags-container">
+                <div className="flag-item">
+                  <span className="flag-icon">🇷🇺</span>
+                  <span className="flag-name">Russia</span>
+                </div>
+                <div className="flag-item">
+                  <span className="flag-icon">🇧🇼</span>
+                  <span className="flag-name">Botswana</span>
+                </div>
+                <div className="flag-item">
+                  <span className="flag-icon">🇨🇦</span>
+                  <span className="flag-name">Canada</span>
+                </div>
+                <div className="flag-item">
+                  <span className="flag-icon">🇦🇺</span>
+                  <span className="flag-name">Australia</span>
+                </div>
               </div>
             </div>
 
-            {/* Styling カード */}
+            {/* --- ROUGH STONE カード --- */}
             <div className="info-glass-card">
-              <div className="info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
-                </svg>
+              <div className="info-header-row">
+                <div className="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+                <h3 className="info-label">ROUGH STONE</h3>
               </div>
-              <h3 className="info-label">Styling</h3>
-              <div className="info-content">
-                <p>Ring / Pierce / Necklace</p>
+              
+              <div className="info-content-row">
+                <img 
+                  src="https://images.unsplash.com/photo-1612841793160-c3d32573215e?w=150&q=80" 
+                  alt="Rough Stone" 
+                  className="info-thumb"
+                />
+                <div className="info-text-col">
+                  <span className="info-main-name">Kimberlite</span>
+                  <span className="info-sub-name">キンバーライト</span>
+                  <p className="info-desc-text">
+                    地球深部からマグマと共に噴出した、ダイヤモンドを含む特殊な火山岩。
+                  </p>
+                </div>
               </div>
             </div>
+
+            {/* --- STYLING カード --- */}
+            <div className="info-glass-card">
+              <div className="info-header-row">
+                <div className="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                     <circle cx="12" cy="12" r="7" />
+                     <path d="M12 5V3m0 18v-2m9-7h-2M5 12H3" strokeLinecap="round" />
+                     <path d="M12 5l2-2m-2 2l-2-2" />
+                  </svg>
+                </div>
+                <h3 className="info-label">STYLING</h3>
+              </div>
+
+              <div className="info-content-row">
+                <img 
+                  src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=150&q=80" 
+                  alt="Styling Ring" 
+                  className="info-thumb"
+                />
+                <div className="info-text-col">
+                  <span className="info-main-name" style={{ marginBottom: '8px' }}>RING</span>
+                  <p className="info-desc-text">
+                    モース硬度10という極めて高い耐久性を持つため、日常的に身につけるリングに最適です。
+                  </p>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div className="infographic-footer">
-            <div className="raw-stone">
-              <span className="raw-label">Rough Stone</span>
-              <p>キンバレーライト / ランプロアイト</p>
-            </div>
-            <div className="keyword-tags">
-              <span>#4月</span><span>#4C</span><span>#アーガイル鉱山</span>
+            {/* タグ (左寄せクラスを適用) */}
+            <div className="keyword-tags left-align">
+              <span>#4月</span>
+              <span>#4C</span>
+              <span>#アーガイル鉱山</span>
             </div>
           </div>
         </section>

@@ -546,7 +546,7 @@ a { text-decoration: none; color: inherit; }
 /* --- Gem Infographic Section --- */
 .gem-infographic-section {
   max-width: 1000px;
-  margin: 100px auto;
+  margin: 64px auto;
   padding: 60px;
   background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4));
   backdrop-filter: blur(20px);
@@ -709,4 +709,101 @@ a { text-decoration: none; color: inherit; }
   .flag-icon {
     font-size: 1.5rem;
   }
+}
+
+/* ...既存のコードの続き... */
+
+/* =========================================
+   Infographic Custom Layout (New)
+   インフォグラフィックセクションの追加スタイル
+========================================= */
+
+/* --- Header: Icon + Title Row --- */
+.info-header-row {
+  display: flex;
+  align-items: center; /* 垂直方向の中央揃え */
+  gap: 12px;           /* アイコンとタイトルの間隔 */
+  margin-bottom: 20px;
+}
+
+/* アイコン設定 */
+.info-header-row .info-icon {
+  margin-bottom: 0;    /* 既存の下余白を打ち消し */
+  display: flex;       /* SVGを中央に配置 */
+  align-items: center;
+  justify-content: center;
+  height: 32px;        /* 高さ固定 */
+  width: 32px;         /* 幅固定 */
+}
+
+/* SVGがアイコン枠からはみ出ないようにする */
+.info-header-row .info-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* タイトル設定 */
+.info-header-row .info-label {
+  margin: 0;           /* ★重要: h3のデフォルト余白(上下)を全て削除 */
+  line-height: 1;      /* ★重要: 行間を詰めて垂直中央を合わせやすくする */
+  padding-top: 2px;    /* 視覚的な微調整（フォントによって少し下がるのを補正） */
+}
+
+/* --- Content: Image + Text Row --- */
+.info-content-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  text-align: left;
+}
+
+.info-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 12px;
+  flex-shrink: 0;
+  background-color: #f0f0f0;
+}
+
+.info-text-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* テキスト全体も垂直中央に */
+}
+
+.info-main-name {
+  font-family: var(--font-en);
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.2;
+  display: block;
+}
+
+.info-sub-name {
+  display: block;
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 8px;
+  margin-top: 2px;
+}
+
+.info-desc-text {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* --- Footer: Tags Alignment --- */
+.keyword-tags.left-align {
+  margin-left: 0;
+}
+.keyword-tags.left-align span {
+  margin-left: 15px;
+}
+.keyword-tags.left-align span:first-child {
+  margin-left: 0;
 }
