@@ -77,6 +77,37 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 | :--- | :--- | :--- | :--- |
 | `roughStones` | 関連する原石 | 複数コンテンツ参照 | 参照先API: `rough-stones` |
 
+## 画像処理・最適化 (Image Optimization)
+
+本プロジェクトでは、パフォーマンス向上（LCP短縮）と転送量削減のため、原則として Next.js 標準の `<Image />` コンポーネントを使用します。
+
+### `next/image` の採用理由
+通常の `<img>` タグではなく `<Image />` を使用することで、以下の最適化が自動的に適用されます。
+
+1.  **自動リサイズ & 圧縮**: アクセスするデバイス（スマホ/PC）に合わせて、最適なサイズ・WebP形式等の画像をサーバーサイドで生成・配信します。
+2.  **遅延読み込み (Lazy Load)**: 画面に入っていない画像は読み込まず、初期表示速度を向上させます。
+3.  **レイアウトシフトの防止**: 画像読み込み時のガタつき（CLS）を防ぎます。
+
+### 外部画像の許可設定 (`next.config.mjs`)
+microCMSやUnsplashなどの外部ドメインの画像を最適化対象とするため、以下の設定を行っています。
+
+```javascript
+// next.config.mjs
+const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.microcms-assets.io', // microCMS画像用
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com', // ダミー画像用
+      },
+    ],
+  },
+};
+
 ## Reference
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
