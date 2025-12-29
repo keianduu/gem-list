@@ -54,6 +54,29 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 
 ```
 
+## microCMS データ設計 (Schema)
+
+本プロジェクトでは、宝石データと原石データを分離し、リレーション機能を用いて管理しています。
+
+### 1. ラフストーンAPI (`rough-stones`)
+原石（Rough Stone）の詳細情報を管理するマスターデータです。
+
+| フィールドID | 表示名 | 種類 | 必須 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| `name` | 原石名 (英語) | テキスト | 〇 | 例: Kimberlite |
+| `nameJa` | 原石名 (日本語) | テキスト | - | 例: 金雲母カンラン岩 |
+| `yomigana` | 読み (yomigana) | テキスト | - | 例: キンバーライト |
+| `subtitle` | サブタイトル | テキスト | - | カード表示用の短い説明 |
+| `description` | 説明文 | テキストエリア | - | 詳細な解説文 |
+| `image` | 原石画像 | 画像 | 〇 | 推奨サイズ: 600px~800px (正方形) |
+
+### 2. 宝石カテゴリAPI (`jewelry-categories`) への追加設定
+メインの宝石データから原石データを参照可能にしています。
+
+| フィールドID | 表示名 | 種類 | 連携設定 |
+| :--- | :--- | :--- | :--- |
+| `roughStones` | 関連する原石 | 複数コンテンツ参照 | 参照先API: `rough-stones` |
+
 ## Reference
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).

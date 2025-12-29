@@ -123,30 +123,47 @@ export default async function CategoryPage({ params }) {
 
             {/* --- ROUGH STONE カード --- */}
             <div className="info-glass-card">
-              <div className="info-header-row">
-                <div className="info-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
-                </div>
-                <h3 className="info-label">ROUGH STONE</h3>
+            {/* ヘッダー部分: アイコンとタイトル */}
+            <div className="info-header-row">
+              <div className="info-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
               </div>
-              
-              <div className="info-content-row">
-                <img 
-                  src="https://images.unsplash.com/photo-1612841793160-c3d32573215e?w=150&q=80" 
-                  alt="Rough Stone" 
-                  className="info-thumb"
-                />
-                <div className="info-text-col">
-                  <span className="info-main-name">Kimberlite</span>
-                  <span className="info-sub-name">キンバーライト</span>
-                  <p className="info-desc-text">
-                    地球深部からマグマと共に噴出した、ダイヤモンドを含む特殊な火山岩。
-                  </p>
-                </div>
-              </div>
+              <h3 className="info-label">ROUGH STONE</h3>
             </div>
+
+            {/* データ表示部分 */}
+            {category.roughStones ? (
+                <div className="info-content-row">
+                  {/* 画像 */}
+                  {category.roughStones.image && (
+                    <img
+                      src={`${category.roughStones.image.url}?w=150&h=150&q=80&fm=webp`}
+                      alt={category.roughStones.name}
+                      className="info-thumb"
+                    />
+                  )}
+                  
+                  {/* テキスト情報 */}
+                  <div className="info-text-col">
+                    <span className="info-main-name">{category.roughStones.name}</span>
+                    <span className="info-sub-name">{category.roughStones.yomigana}</span>
+                    
+                    {category.roughStones.subtitle && (
+                      <p className="info-desc-text">
+                        {category.roughStones.subtitle}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // データがない場合
+                <div className="info-content">
+                  <p style={{color: '#999', fontSize: '0.9rem'}}>No rough stone info.</p>
+                </div>
+              )}
+          </div>
 
             {/* --- STYLING カード --- */}
             <div className="info-glass-card">
