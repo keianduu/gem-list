@@ -503,6 +503,7 @@ a { text-decoration: none; color: inherit; }
   margin: 0 0 5px;
   color: #111;
   background-image: linear-gradient(135deg, #1a1a1a 0%, #47371b 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -583,12 +584,18 @@ a { text-decoration: none; color: inherit; }
   gap: 20px;
 }
 
+/* 1. カード自体の設定を変更 (CSSの下の方にある info-glass-card を探して修正) */
 .info-glass-card {
   background: rgba(255, 255, 255, 0.4);
   border: 1px solid rgba(255, 255, 255, 0.5);
   padding: 30px;
   border-radius: 24px;
   transition: transform 0.3s ease;
+  
+  /* ▼▼▼ 追加: 中身を縦方向に並べて制御できるようにする ▼▼▼ */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* グリッド内で高さを最大まで広げる */
 }
 
 .info-glass-card:hover {
@@ -671,45 +678,57 @@ a { text-decoration: none; color: inherit; }
 
 /* app/globals.css */
 
+/* ... (前略) ... */
+
+/* --- Mining Location Flags --- */
 .location-flags-container {
   display: flex;
-  gap: 30px;
-  justify-content: center;
-  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: space-evenly;
+  flex-wrap: nowrap;
   padding: 10px 0;
+  width: 100%;
+  
+  /* ▼▼▼ 追加: 余白を埋めて、中身を垂直中央にする ▼▼▼ */
+  flex: 1;             /* 上下の余白を自動で埋める */
+  align-items: center; /* 垂直方向の中央揃え */
 }
 
 .flag-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  min-width: 80px;
+  gap: 8px;
+  min-width: 0;            /* ★変更: コンテンツ幅以下の縮小を許可 */
+  flex: 1;                 /* 均等な幅を確保 */
 }
 
 .flag-icon {
-  font-size: 2rem;
+  font-size: 1.8rem;       /* ★微調整: 少しだけ小さくしてバランス調整 */
   line-height: 1;
   filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
 }
 
 .flag-name {
   font-family: var(--font-en);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
+  font-size: 0.65rem;      /* ★微調整: フォントサイズを少し下げてはみ出し防止 */
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   color: #8c7e6a;
+  white-space: nowrap;     /* テキストの折り返しを禁止 */
 }
 
-/* スマホ対応 */
+/* スマホ対応（既存のメディアクエリ内も確認してください） */
 @media (max-width: 768px) {
   .location-flags-container {
-    gap: 15px;
+    gap: 12px; /* スマホ時は少し広げてもOK */
   }
   .flag-icon {
     font-size: 1.5rem;
   }
 }
+
+/* ... (後略) ... */
 
 /* ...既存のコードの続き... */
 
@@ -805,4 +824,167 @@ a { text-decoration: none; color: inherit; }
 }
 .keyword-tags.left-align span:first-child {
   margin-left: 0;
+}
+
+/* app/globals.css の一番下に追加 */
+
+/* --- Accessory Section Design --- */
+
+.accessory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3列均等割り */
+  gap: 24px;
+  margin-top: 10px;
+}
+
+.accessory-item {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.acc-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%; /* 丸く切り抜き */
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.acc-text {
+  flex: 1;
+}
+
+.acc-text h4 {
+  font-family: var(--font-en);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0 0 6px 0;
+  line-height: 1.1;
+}
+
+.acc-text p {
+  font-family: var(--font-jp);
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0;
+  font-weight: 300;
+  /* 長体などの微調整があればここに */
+}
+
+/* モバイル対応：縦積み */
+@media (max-width: 900px) {
+  .accessory-grid {
+    grid-template-columns: 1fr; /* 1列に変更 */
+    gap: 32px;
+  }
+}
+
+/* app/globals.css の末尾 */
+
+/* --- Color Variation (Inside Infographic) --- */
+
+.color-variation-block {
+  margin-top: 60px;    /* 上のカードとの間隔 */
+  margin-bottom: 20px; /* 下のタグとの間隔 */
+  width: 100%;
+}
+
+.color-section-title {
+  font-family: var(--font-en);
+  font-size: 2.0rem;   /* 少しサイズを調整 */
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #222;
+}
+
+/* グリッド設定 (4列) */
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; /* 狭いスペースに合わせて少し詰める */
+}
+
+/* カードスタイル */
+.color-card {
+  background: rgba(255, 255, 255, 0.7); /* 半透明の白にして背景に馴染ませる */
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+  padding: 20px 16px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: transform 0.3s ease, background 0.3s;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.color-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.9); /* ホバー時は白くはっきりさせる */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* 画像エリア */
+.color-img-wrapper {
+  height: 60px; /* スペースに合わせて少しコンパクトに */
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.color-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+
+/* テキスト */
+.color-name-en {
+  font-family: var(--font-en);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #111;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+}
+
+.color-name-ja {
+  font-family: var(--font-jp);
+  font-size: 0.75rem;
+  color: #555;
+  margin: 0 0 12px 0;
+  font-weight: 400;
+}
+
+.color-desc {
+  font-family: var(--font-jp);
+  font-size: 0.7rem;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* レスポンシブ */
+@media (max-width: 900px) {
+  .color-grid {
+    grid-template-columns: repeat(2, 1fr); /* タブレット以下は2列 */
+  }
+}
+@media (max-width: 600px) {
+  .color-grid {
+    grid-template-columns: 1fr; /* スマホは1列 */
+  }
+  .color-section-title {
+    font-size: 1.6rem;
+  }
 }

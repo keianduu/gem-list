@@ -41,6 +41,38 @@ export default async function CategoryPage({ params }) {
   // 3. ローカルの商品データからフィルタリング
   const categoryItems = items.filter(item => item.category === category.name);
 
+  // ▼▼▼ 追加：表示確認用のダミーデータ ▼▼▼
+  const dummyColorVariations = [
+    {
+      id: 1,
+      name: "Color less",
+      nameJa: "カラーレス",
+      description: "無色透明",
+      image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=200&q=80&fm=webp" // ダミー: 白い宝石
+    },
+    {
+      id: 2,
+      name: "Pink",
+      nameJa: "ピンク",
+      description: "天然は希少",
+      image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65?w=200&q=80&fm=webp" // ダミー: ピンクの宝石
+    },
+    {
+      id: 3,
+      name: "Blue",
+      nameJa: "ブルー",
+      description: "現在主流。色の濃さでスカイ、スイス、ロンドンと呼び分けられる",
+      image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e?w=200&q=80&fm=webp" // ダミー: 青い宝石
+    },
+    {
+      id: 4,
+      name: "Sherry",
+      nameJa: "シェリー（インペリアル）",
+      description: "最高級とされる、赤みがかった黄金色",
+      image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75?w=200&q=80&fm=webp" // ダミー: 黄/オレンジの宝石
+    }
+  ];
+
   return (
     <>
       <header className="site-header scrolled">
@@ -80,7 +112,8 @@ export default async function CategoryPage({ params }) {
           )}
         </section>
 
-        {/* インフォグラフィックセクション */}
+
+        {/* インフォグラフィックセクション */ }
         <section className="gem-infographic-section">
           <div className="infographic-header">
             <span className="concept-label">Encyclopedia</span>
@@ -88,9 +121,10 @@ export default async function CategoryPage({ params }) {
           </div>
 
           <div className="infographic-grid">
-            
-            {/* --- Mining Location カード --- */}
-            <div className="info-glass-card full-width">
+
+            {/* --- MINING LOCATION カード (50%幅に変更) --- */}
+            {/* full-width クラスを削除しました */}
+            <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -98,9 +132,9 @@ export default async function CategoryPage({ params }) {
                     <circle cx="12" cy="10" r="3" />
                   </svg>
                 </div>
-                <h3 className="info-label">Mining Location</h3>
+                <h3 className="info-label">MAJOR MINING LOCATIONS</h3>
               </div>
-              
+
               <div className="location-flags-container">
                 <div className="flag-item">
                   <span className="flag-icon">🇷🇺</span>
@@ -121,22 +155,19 @@ export default async function CategoryPage({ params }) {
               </div>
             </div>
 
-            {/* --- ROUGH STONE カード --- */}
+            {/* --- ROUGH STONE カード (右隣に配置) --- */}
             <div className="info-glass-card">
-            {/* ヘッダー部分: アイコンとタイトル */}
-            <div className="info-header-row">
-              <div className="info-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
+              <div className="info-header-row">
+                <div className="info-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                  </svg>
+                </div>
+                <h3 className="info-label">ROUGH STONE</h3>
               </div>
-              <h3 className="info-label">ROUGH STONE</h3>
-            </div>
 
-            {/* データ表示部分 */}
-            {category.roughStones ? (
+              {category.roughStones ? (
                 <div className="info-content-row">
-                  {/* 画像 */}
                   {category.roughStones.image && (
                     <img
                       src={`${category.roughStones.image.url}?w=150&h=150&q=80&fm=webp`}
@@ -144,12 +175,9 @@ export default async function CategoryPage({ params }) {
                       className="info-thumb"
                     />
                   )}
-                  
-                  {/* テキスト情報 */}
                   <div className="info-text-col">
                     <span className="info-main-name">{category.roughStones.name}</span>
                     <span className="info-sub-name">{category.roughStones.yomigana}</span>
-                    
                     {category.roughStones.subtitle && (
                       <p className="info-desc-text">
                         {category.roughStones.subtitle}
@@ -158,45 +186,97 @@ export default async function CategoryPage({ params }) {
                   </div>
                 </div>
               ) : (
-                // データがない場合
                 <div className="info-content">
-                  <p style={{color: '#999', fontSize: '0.9rem'}}>No rough stone info.</p>
+                  <p style={{ color: '#999', fontSize: '0.9rem' }}>No rough stone info.</p>
                 </div>
               )}
-          </div>
+            </div>
 
-            {/* --- STYLING カード --- */}
-            <div className="info-glass-card">
+            {/* --- ACCESSORY カード (100%幅・3列表示) --- */}
+            {/* full-width を追加し、中身を3列レイアウトに変更 */}
+            <div className="info-glass-card full-width">
               <div className="info-header-row">
                 <div className="info-icon">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                     <circle cx="12" cy="12" r="7" />
-                     <path d="M12 5V3m0 18v-2m9-7h-2M5 12H3" strokeLinecap="round" />
-                     <path d="M12 5l2-2m-2 2l-2-2" />
+                    <circle cx="12" cy="12" r="7" />
+                    <path d="M12 5V3m0 18v-2m9-7h-2M5 12H3" strokeLinecap="round" />
+                    <path d="M12 5l2-2m-2 2l-2-2" />
                   </svg>
                 </div>
-                <h3 className="info-label">STYLING</h3>
+                <h3 className="info-label">ACCESSORY</h3>
               </div>
 
-              <div className="info-content-row">
-                <img 
-                  src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=150&q=80" 
-                  alt="Styling Ring" 
-                  className="info-thumb"
-                />
-                <div className="info-text-col">
-                  <span className="info-main-name" style={{ marginBottom: '8px' }}>RING</span>
-                  <p className="info-desc-text">
-                    モース硬度10という極めて高い耐久性を持つため、日常的に身につけるリングに最適です。
-                  </p>
+              {/* 3列レイアウトのコンテナ */}
+              <div className="accessory-grid">
+                
+                {/* Item 1 */}
+                <div className="accessory-item">
+                  <img 
+                    src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&h=100&q=80" 
+                    alt="Ring" 
+                    className="acc-thumb" 
+                  />
+                  <div className="acc-text">
+                    <h4>RING</h4>
+                    <p>劈開性があるため、ぶつけないよう注意が必要。</p>
+                  </div>
                 </div>
+
+                {/* Item 2 */}
+                <div className="accessory-item">
+                  <img 
+                    src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=100&h=100&q=80" 
+                    alt="Earring" 
+                    className="acc-thumb" 
+                  />
+                  <div className="acc-text">
+                    <h4>Earing</h4>
+                    <p>顔色を明るく健康的に見せる効果が高い。</p>
+                  </div>
+                </div>
+
+                {/* Item 3 */}
+                <div className="accessory-item">
+                  <img 
+                    src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=100&h=100&q=80" 
+                    alt="Ring" 
+                    className="acc-thumb" 
+                  />
+                  <div className="acc-text">
+                    <h4>RING</h4>
+                    <p>劈開性があるため、ぶつけないよう注意が必要。</p>
+                  </div>
+                </div>
+
               </div>
             </div>
 
           </div>
 
+          <div className="color-variation-block">
+            <h3 className="color-section-title">{category.name} Color Variation</h3>
+            
+            <div className="color-grid">
+              {dummyColorVariations.map((color) => (
+                <div key={color.id} className="color-card">
+                  <div className="color-img-wrapper">
+                    <img 
+                      src={color.image} 
+                      alt={color.name}
+                      className="color-img"
+                    />
+                  </div>
+                  <div className="color-info">
+                    <h4 className="color-name-en">{color.name}</h4>
+                    <p className="color-name-ja">{color.nameJa}</p>
+                    <p className="color-desc">{color.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
           <div className="infographic-footer">
-            {/* タグ (左寄せクラスを適用) */}
             <div className="keyword-tags left-align">
               <span>#4月</span>
               <span>#4C</span>
