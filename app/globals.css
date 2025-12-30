@@ -7,34 +7,64 @@
   --header-height: 80px;
   --font-jp: var(--font-jp), sans-serif;
   --font-en: var(--font-en), sans-serif;
+  
+  /* 背景のベース色 */
+  --base-bg-color: #F9F7F2;
 }
 
 * { box-sizing: border-box; }
 
+/* =========================================
+   王道設定: HTML/BODY
+   - htmlに背景色を塗る（隙間ができてもこの色が見えるので白線にならない）
+   - overflow-x: hidden で横スクロールを物理的に禁止
+========================================= */
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--base-bg-color); /* ★ここがポイント */
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
-  margin: 0; padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
   font-family: var(--font-jp);
-  background-color: var(--bg-color);
   color: var(--text-main);
+  background-color: transparent; /* bodyは透明にしてhtmlの色やfixed-bgを見せる */
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
+  position: relative;
 }
 
 a { text-decoration: none; color: inherit; }
 
 /* =========================================
    Background Atmosphere (Orbs)
+   - position: fixed と inset: 0 で画面いっぱいに広げる（最も標準的な全画面配置）
+   - z-index: -1 でコンテンツの裏側に回す
 ========================================= */
 .fixed-bg {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: -10;
-  background-color: #F9F7F2;
-  overflow: hidden; pointer-events: none;
+  position: fixed;
+  inset: 0; /* top:0; right:0; bottom:0; left:0; と同義 */
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* 最背面 */
+  background-color: var(--base-bg-color); /* 重ねて塗っておく */
+  overflow: hidden; 
+  pointer-events: none;
 }
+
 .orb {
   position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.6;
   will-change: transform; animation: floatLoop linear infinite;
 }
+/* オーブの定義はそのまま */
 .orb-1 { width: 500px; height: 500px; background: #a8edea; left: 10%; animation-duration: 25s; }
 .orb-2 { width: 400px; height: 400px; background: #fed6e3; left: 60%; animation-duration: 20s; animation-delay: -10s; }
 .orb-3 { width: 300px; height: 300px; background: #fff1eb; left: 30%; animation-duration: 30s; animation-delay: -5s; }
@@ -97,6 +127,7 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
   display: flex; flex-direction: column;
   padding-top: var(--header-height);
+  position: relative; /* z-indexを効かせるため */
 }
 
 .hero-center-content {
@@ -152,7 +183,6 @@ a { text-decoration: none; color: inherit; }
   min-height: 180px; display: flex; align-items: center;
 }
 
-/* Swiper Override (PC) */
 .category-swiper .swiper-wrapper {
   transition-timing-function: linear !important;
 }
@@ -190,7 +220,7 @@ a { text-decoration: none; color: inherit; }
 }
 .category-card:hover .category-name { color: var(--accent-blue); }
 
-/* Skeleton Loader */
+/* Skeleton */
 .skeleton-container {
   display: flex; width: 100%; justify-content: center;
   gap: 40px; padding: 0 20px; overflow: hidden;
@@ -206,7 +236,7 @@ a { text-decoration: none; color: inherit; }
 }
 @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
 
-/* Fade In Animation */
+/* Fade In */
 @keyframes fadeInUp {
   0% { opacity: 0; transform: translateY(0); }
   100% { opacity: 1; transform: translateY(0); }
@@ -219,7 +249,7 @@ a { text-decoration: none; color: inherit; }
 ========================================= */
 .main-container { max-width: 1400px; margin: 60px auto 0; padding: 0 24px; }
 
-/* Masonry Container (PC default) */
+/* Masonry: gapを使用した標準的なレイアウト */
 .my-masonry-grid {
   display: flex;
   margin-left: auto; margin-right: auto;
@@ -234,7 +264,7 @@ a { text-decoration: none; color: inherit; }
 }
 .my-masonry-grid_column > div { margin-bottom: 24px; }
 
-/* Card Styles */
+/* Cards */
 .pin-card { margin-bottom: 24px; position: relative; cursor: pointer; }
 .pin-image-wrapper {
   position: relative; border-radius: 16px; overflow: hidden;
@@ -351,20 +381,15 @@ a { text-decoration: none; color: inherit; }
 .info-content-row { display: flex; align-items: center; gap: 20px; text-align: left; }
 .rough-stone-img-wrapper {
   position: relative;
-  width: 150px;
-  height: 150px;
+  width: 100px;
+  height: 100px;
   flex-shrink: 0;
-  /* box-shadow, border-radius, overflow を削除して四角い枠を消す */
 }
-/* 画像本体の設定 */
 .rough-stone-img-wrapper img {
-  /* 画像の形に合わせて影を落とす */
   filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
-  /* 枠からはみ出さないように収める */
   object-fit: contain !important; 
 }
 .info-thumb {
-  /* width: 80px; height: 80px; */ /* ← サイズ指定を削除またはコメントアウト */
   object-fit: cover; border-radius: 12px; flex-shrink: 0;
 }
 .info-text-col { display: flex; flex-direction: column; justify-content: center; }
@@ -455,7 +480,7 @@ a { text-decoration: none; color: inherit; }
   line-height: 1.5; margin: 0; font-weight: 300;
 }
 
-/* Footer & Tags in Infographic */
+/* Footer & Tags */
 .infographic-footer {
   margin-top: 50px; display: flex; justify-content: space-between;
   align-items: flex-end; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 30px;
@@ -540,12 +565,11 @@ a { text-decoration: none; color: inherit; }
   .breadcrumb { padding: 16px; }
   .category-items-container { padding: 0 16px; }
   
-  /* ▼▼▼ 修正1: Encyclopedia枠の左右余白確保 ▼▼▼ */
-  /* marginで左右にスペースを作り、幅は自動調整 */
+  /* Encyclopedia枠の左右余白確保 */
   .gem-infographic-section {
     padding: 30px 20px;
-    margin: 30px 16px; /* 左右に16pxのマージンを追加 */
-    width: auto;       /* 幅を自動計算させる */
+    margin: 30px 16px;
+    width: auto;
   }
   
   .infographic-grid { grid-template-columns: 1fr; }
@@ -553,10 +577,10 @@ a { text-decoration: none; color: inherit; }
   .location-flags-container { gap: 12px; }
   .flag-icon { font-size: 1.5rem; }
 
-  /* ▼▼▼ 修正2: Color Variation 2列維持 ▼▼▼ */
-  /* スマホでも2列 (repeat(2, 1fr)) を適用 */
+  /* Color Variation 2列維持 */
   .color-grid { grid-template-columns: repeat(2, 1fr); }
 
+  /* 原石画像 SPサイズ: 80px */
   .rough-stone-img-wrapper {
     width: 80px;
     height: 80px;
@@ -565,6 +589,5 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 600px) {
   /* Small Mobile Only */
-  /* .color-grid { grid-template-columns: 1fr; }  ← ここにあった1列化のコードを削除 */
   .color-section-title { font-size: 1.6rem; }
 }

@@ -182,7 +182,7 @@ export default async function CategoryPage({ params }) {
                         src={category.roughStones.image.url}
                         alt={category.roughStones.name}
                         fill
-                        sizes="(max-width: 768px) 100px, 150px"
+                        sizes="80px"
                         style={{ objectFit: 'cover' }}
                       />
                     </div>
