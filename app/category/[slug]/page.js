@@ -175,19 +175,19 @@ export default async function CategoryPage({ params }) {
 
               {category.roughStones ? (
                 <div className="info-content-row">
-                  {/* ▼▼▼ Image化: 原石画像 ▼▼▼ */}
+                  {/* ▼▼▼ 修正: クラス適用＆インラインスタイル削除 ▼▼▼ */}
                   {category.roughStones.image && (
-                    <div className="info-thumb-wrapper" style={{ position: 'relative', width: '150px', height: '150px', flexShrink: 0 }}>
+                    <div className="rough-stone-img-wrapper">
                       <Image
                         src={category.roughStones.image.url}
                         alt={category.roughStones.name}
                         fill
-                        sizes="150px"
-                        style={{ objectFit: 'cover', borderRadius: '12px' }}
-                        className="info-thumb"
+                        sizes="(max-width: 768px) 100px, 150px"
+                        style={{ objectFit: 'cover' }}
                       />
                     </div>
                   )}
+                  {/* ▲▲▲ 修正ここまで ▲▲▲ */}
                   
                   <div className="info-text-col">
                     <span className="info-main-name">{category.roughStones.name}</span>
@@ -205,7 +205,6 @@ export default async function CategoryPage({ params }) {
                 </div>
               )}
             </div>
-
             {/* --- ACCESSORY --- */}
             <div className="info-glass-card full-width">
               <div className="info-header-row">

@@ -22,7 +22,9 @@ body {
 
 a { text-decoration: none; color: inherit; }
 
-/* --- Background Atmosphere --- */
+/* =========================================
+   Background Atmosphere (Orbs)
+========================================= */
 .fixed-bg {
   position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
   z-index: -10;
@@ -46,7 +48,9 @@ a { text-decoration: none; color: inherit; }
   100% { top: -50%; transform: translateY(-100px) scale(1.1); opacity: 0; }
 }
 
-/* --- Header --- */
+/* =========================================
+   Header
+========================================= */
 .site-header {
   position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
   z-index: 1000;
@@ -64,7 +68,6 @@ a { text-decoration: none; color: inherit; }
 .header-left { display: flex; align-items: center; gap: 20px; }
 .header-icons { display: flex; gap: 20px; align-items: center; }
 
-/* Header Logo */
 .header-logo-container {
   display: flex; flex-direction: column; align-items: center;
   line-height: 1; text-decoration: none; color: #1a1a1a;
@@ -79,22 +82,16 @@ a { text-decoration: none; color: inherit; }
   margin-top: 4px; text-transform: uppercase;
 }
 
-/* Icons */
 .icon-btn {
   width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
   border-radius: 50%; cursor: pointer; transition: background 0.2s; position: relative;
 }
 .icon-btn:hover { background: rgba(0,0,0,0.05); }
 .icon-svg { width: 24px; height: 24px; color: #111; }
-.cart-badge {
-  position: absolute; top: 0; right: 0;
-  background: var(--accent-blue); color: white;
-  font-size: 0.7rem; font-weight: bold;
-  width: 18px; height: 18px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
 
-/* --- Hero Area --- */
+/* =========================================
+   Hero Area (TOP)
+========================================= */
 .hero-area {
   height: 100vh;
   width: 100%;
@@ -149,98 +146,93 @@ a { text-decoration: none; color: inherit; }
 .hero-search-input::placeholder { color: #888; font-family: var(--font-jp); }
 .hero-search-icon { color: #666; width: 20px; height: 20px; opacity: 0.8; }
 
-/* Categories (Marquee) */
-.hero-bottom-categories { flex-shrink: 0; width: 100%; padding-bottom: 20px; }
-.marquee-container {
-  width: 100%; overflow: hidden; white-space: nowrap; position: relative;
-  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
-  padding-top: 40px; padding-bottom: 20px; margin-top: -20px;
+/* Swiper / Categories */
+.hero-bottom-categories { 
+  flex-shrink: 0; width: 100%; padding-bottom: 20px;
+  min-height: 180px; display: flex; align-items: center;
 }
-.marquee-content {
-  display: inline-flex; gap: 40px;
-  animation: scrollLeft 80s linear infinite;
-  padding: 0 20px;
+
+/* Swiper Override (PC) */
+.category-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
 }
-@keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+.category-swiper {
+  padding-top: 40px !important;
+  padding-bottom: 40px !important;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-top: -40px; 
+  position: relative;
+  z-index: 10; 
+}
 
 .category-card {
   display: inline-flex; flex-direction: column; align-items: center;
   width: 100px; cursor: pointer; background: transparent;
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  /* ★追加：テキストの改行と配置設定 */
-  white-space: normal; /* テキストの自動改行を許可 */
-  text-align: center;  /* 中央揃え */
-  vertical-align: top; /* 上揃え */
+  white-space: normal; text-align: center; vertical-align: top;
 }
 .category-card:hover { transform: translateY(-7px) scale(1.02); }
+
 .category-thumb {
-  width: 70px; height: 70px; /* 画像の表示エリアサイズ */
-  
-  /* ★変更：画像をトリミングせず全体を表示 */
+  width: 70px; height: 70px;
   object-fit: contain; 
-  
-  /* ★削除：丸い背景と影をなくす */
-  /* border-radius: 50%; */
-  /* background: #fff; */
-  /* box-shadow: 0 4px 10px rgba(0,0,0,0.1); */
-
-  /* ★変更：ここがポイントです */
-  /* filterプロパティでドロップシャドウを指定します */
-  /* drop-shadow(X方向のズレ Y方向のズレ ぼかし具合 色) */
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
-
-  margin-bottom: 8px; /* テキストとの間隔を少し調整 */
-  transition: filter 0.3s ease; /* ホバー効果を影から明るさに変更 */
+  margin-bottom: 8px;
+  transition: filter 0.3s ease;
 }
-/* ★変更：ホバー時に影ではなく、少し明るくするエフェクトに */
 .category-card:hover .category-thumb {
-  /* box-shadow: 0 15px 30px rgba(0,0,0,0.2); */
   filter: brightness(1.1) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
 }
 .category-name {
   font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333; transition: color 0.3s;
-  /* ★追加：長い英単語などの改行設定と行間 */
-  word-break: break-word; 
-  line-height: 1.2;
+  word-break: break-word; line-height: 1.2;
 }
 .category-card:hover .category-name { color: var(--accent-blue); }
 
-/* --- Main Layout & Masonry Grid --- */
+/* Skeleton Loader */
+.skeleton-container {
+  display: flex; width: 100%; justify-content: center;
+  gap: 40px; padding: 0 20px; overflow: hidden;
+}
+.skeleton-item { display: flex; flex-direction: column; align-items: center; }
+.skeleton-circle {
+  width: 70px; height: 70px; border-radius: 50%; background: #eee; margin-bottom: 8px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+.skeleton-text {
+  width: 50px; height: 10px; background: #eee; border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+/* Fade In Animation */
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(0); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.8s ease-out forwards; }
+
+
+/* =========================================
+   Main Layout & Masonry Grid
+========================================= */
 .main-container { max-width: 1400px; margin: 60px auto 0; padding: 0 24px; }
 
-/* app/globals.css */
-
-/* Masonryコンテナ全体の設定 */
+/* Masonry Container (PC default) */
 .my-masonry-grid {
   display: flex;
-  margin-left: auto;   /* ★左の余白を自動調整 */
-  margin-right: auto;  /* ★右の余白を自動調整 */
-  width: auto;
-  max-width: 1200px;   /* サイトの最大幅に合わせて調整してください */
-  justify-content: center; /* ★中身を中央に寄せる（重要） */
-}
-
-/* 各カラムの設定 */
-.my-masonry-grid_column {
-  padding-left: 20px;  /* カラム間の溝（gutter） */
-  background-clip: padding-box;
-  
-  /* ★カードが少ない時にカラム自体が広がりすぎないようにする */
-  max-width: 300px;    /* 1つのカードの理想的な最大幅 */
-  min-width: 250px;    /* モバイル等の最小幅 */
-}
-
-/* 商品一覧を囲むセクションも中央寄せを保証 */
-.category-items-container {
-  display: flex;
+  margin-left: auto; margin-right: auto;
+  width: auto; max-width: 1200px;
   justify-content: center;
-  width: 100%;
-  padding: 40px 20px;
+  gap: 24px;
 }
-.my-masonry-grid_column > div {
-  margin-bottom: 24px; /* カード下の隙間 (PC) */
+.my-masonry-grid_column {
+  padding-left: 0 !important; 
+  background-clip: border-box;
+  max-width: 300px; min-width: 250px;
 }
+.my-masonry-grid_column > div { margin-bottom: 24px; }
 
 /* Card Styles */
 .pin-card { margin-bottom: 24px; position: relative; cursor: pointer; }
@@ -271,7 +263,208 @@ a { text-decoration: none; color: inherit; }
 .pin-price { font-family: var(--font-en); font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
 .pin-meta { font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
 
-/* --- Footer --- */
+/* =========================================
+   Category Detail Page
+========================================= */
+.category-main {
+  padding-top: var(--header-height);
+  max-width: 1200px; margin: 0 auto; padding-bottom: 80px;
+}
+.breadcrumb {
+  padding: 20px 24px; font-size: 0.85rem; color: #888; font-family: var(--font-en);
+}
+.breadcrumb-inner { display: flex; align-items: center; gap: 8px; }
+.breadcrumb a:hover { color: var(--accent-blue); text-decoration: underline; }
+.separator { font-size: 0.7rem; color: #ccc; }
+.current { color: #333; font-weight: 500; }
+
+.category-header {
+  text-align: center; padding: 40px 20px 60px; max-width: 800px; margin: 0 auto;
+}
+.category-header-icon-wrapper { width: 100px; height: 100px; margin: 0 auto 20px; }
+.category-header-img {
+  width: 100%; height: 100%; object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+}
+.category-title-en {
+  font-family: var(--font-en); font-size: 3rem; font-weight: 400; margin: 0 0 5px; color: #111;
+  background-image: linear-gradient(135deg, #1a1a1a 0%, #47371b 100%);
+  background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.category-title-ja {
+  font-size: 0.9rem; color: #888; letter-spacing: 0.1em; margin: 0 0 24px;
+}
+.category-desc {
+  font-size: 0.95rem; line-height: 1.8; color: #555;
+  text-align: left; text-align-last: left; margin: 0 auto; max-width: 700px;
+}
+.category-desc p { margin-bottom: 1.5em; }
+.category-desc p:last-child { margin-bottom: 0; }
+
+.category-items-container { padding: 0 24px; display: flex; justify-content: center; width: 100%; }
+
+/* =========================================
+   Gem Infographic Section
+========================================= */
+.gem-infographic-section {
+  max-width: 1000px; margin: 64px auto; padding: 60px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4));
+  backdrop-filter: blur(20px); border-radius: 40px; border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+}
+.infographic-header { text-align: center; margin-bottom: 50px; }
+.concept-label {
+  font-family: var(--font-en); text-transform: uppercase; font-size: 0.7rem;
+  letter-spacing: 0.3em; color: #a3937d; display: block; margin-bottom: 10px;
+}
+.infographic-title {
+  font-family: var(--font-en); font-size: 2.2rem; font-weight: 300; color: #222;
+}
+.infographic-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+}
+
+/* Card Common */
+.info-glass-card {
+  background: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 30px; border-radius: 24px; transition: transform 0.3s ease;
+  display: flex; flex-direction: column; height: 100%;
+}
+.info-glass-card:hover {
+  transform: translateY(-5px); background: rgba(255, 255, 255, 0.6);
+}
+.info-glass-card.full-width { grid-column: span 2; }
+
+/* Card Header */
+.info-header-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.info-icon {
+  width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+  color: #a3937d; margin-bottom: 0;
+}
+.info-icon svg { width: 100%; height: 100%; display: block; }
+.info-label {
+  font-family: var(--font-en); font-size: 0.75rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: #888; margin: 0; line-height: 1; padding-top: 2px;
+}
+
+/* Card Content (Rough Stone) */
+.info-content-row { display: flex; align-items: center; gap: 20px; text-align: left; }
+.rough-stone-img-wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  flex-shrink: 0;
+  /* box-shadow, border-radius, overflow を削除して四角い枠を消す */
+}
+/* 画像本体の設定 */
+.rough-stone-img-wrapper img {
+  /* 画像の形に合わせて影を落とす */
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.2));
+  /* 枠からはみ出さないように収める */
+  object-fit: contain !important; 
+}
+.info-thumb {
+  /* width: 80px; height: 80px; */ /* ← サイズ指定を削除またはコメントアウト */
+  object-fit: cover; border-radius: 12px; flex-shrink: 0;
+}
+.info-text-col { display: flex; flex-direction: column; justify-content: center; }
+.info-main-name {
+  font-family: var(--font-en); font-size: 1.2rem; font-weight: 500; color: #333;
+  line-height: 1.2; display: block;
+}
+.info-sub-name {
+  display: block; font-size: 0.7rem; color: #888; margin-bottom: 8px; margin-top: 2px;
+}
+.info-desc-text {
+  font-size: 0.8rem; color: #666; line-height: 1.5; margin: 0;
+}
+.info-content p { font-size: 0.95rem; color: #333; line-height: 1.6; }
+
+/* Mining Locations */
+.location-flags-container {
+  display: flex; gap: 8px; justify-content: space-evenly; flex-wrap: nowrap;
+  padding: 10px 0; width: 100%; flex: 1; align-items: center;
+}
+.flag-item {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  min-width: 0; flex: 1;
+}
+.flag-icon { font-size: 1.8rem; line-height: 1; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+.flag-name {
+  font-family: var(--font-en); font-size: 0.65rem; letter-spacing: 0.05em;
+  text-transform: uppercase; color: #8c7e6a; white-space: nowrap;
+}
+
+/* Accessory Section */
+.accessory-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 10px;
+}
+.accessory-item { display: flex; gap: 16px; align-items: center; }
+.acc-thumb {
+  width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+  flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.acc-text { flex: 1; }
+.acc-text h4 {
+  font-family: var(--font-en); font-size: 1.1rem; font-weight: 500;
+  color: #333; margin: 0 0 6px 0; line-height: 1.1;
+}
+.acc-text p {
+  font-family: var(--font-jp); font-size: 0.8rem; color: #555;
+  line-height: 1.6; margin: 0; font-weight: 300;
+}
+
+/* Color Variation Block */
+.color-variation-block { margin-top: 60px; margin-bottom: 20px; width: 100%; }
+.color-section-title {
+  font-family: var(--font-en); font-size: 2.0rem; font-weight: 400;
+  text-align: center; margin-bottom: 30px; color: #222;
+}
+.color-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+}
+.color-card {
+  background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px; padding: 20px 16px; text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: transform 0.3s ease, background 0.3s;
+  display: flex; flex-direction: column; align-items: center;
+}
+.color-card:hover {
+  transform: translateY(-5px); background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+.color-img-wrapper {
+  height: 60px; width: 100%; display: flex; align-items: center;
+  justify-content: center; margin-bottom: 16px;
+}
+.color-img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+}
+.color-name-en {
+  font-family: var(--font-en); font-size: 1.1rem; font-weight: 500;
+  color: #111; margin: 0 0 4px 0; line-height: 1.2;
+}
+.color-name-ja {
+  font-family: var(--font-jp); font-size: 0.75rem; color: #555;
+  margin: 0 0 12px 0; font-weight: 400;
+}
+.color-desc {
+  font-family: var(--font-jp); font-size: 0.7rem; color: #666;
+  line-height: 1.5; margin: 0; font-weight: 300;
+}
+
+/* Footer & Tags in Infographic */
+.infographic-footer {
+  margin-top: 50px; display: flex; justify-content: space-between;
+  align-items: flex-end; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 30px;
+}
+.keyword-tags.left-align { margin-left: 0; }
+.keyword-tags.left-align span { margin-left: 15px; font-size: 0.8rem; color: #a3937d; }
+.keyword-tags.left-align span:first-child { margin-left: 0; }
+
+/* Footer (Site Wide) */
 .gem-footer {
   background-color: #111; color: #fff; padding: 80px 20px; text-align: center;
   margin-top: 100px; position: relative; z-index: 10;
@@ -286,705 +479,92 @@ a { text-decoration: none; color: inherit; }
 .footer-links a { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
 .footer-links a:hover { color: #fff; }
 
+
 /* =========================================
-   Mobile Optimization (max-width: 768px)
+   Mobile Optimization (Media Queries)
    スマホ用スタイル一括設定
 ========================================= */
+@media (max-width: 900px) {
+  /* Tablet/Small PC */
+  .accessory-grid { grid-template-columns: 1fr; gap: 32px; }
+  .color-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
 @media (max-width: 768px) {
-  /* 1st View: 全画面表示とテキスト位置調整 */
-  .hero-area { 
-    height: 100svh; /* アドレスバー対策 */
-    min-height: 600px;
-  }
-  .hero-center-content { margin-top: -40px; /* 視覚的中央補正 */ }
+  /* Mobile General */
+  .hero-area { height: 100svh; min-height: 600px; }
+  .hero-center-content { margin-top: -40px; }
   .hero-title { font-size: 2.5rem; }
   .site-header { padding: 0 16px; }
-
-  /* Categories: 密度を高める */
+  
   .marquee-content { gap: 20px; }
-  .category-card {
-    width: 70px; /* ★スマホでのカード幅。狭いので改行されやすくなります */
-    will-change: transform;
-  }
-  .category-thumb {
-    width: 60px; height: 60px;
-    object-fit: contain; /* スマホも同様に全体表示 */
-  }
-  /* Main Container: 左右の余白を狭く(8px) */
-  .main-container { padding: 0 8px; }
+  .category-card { width: 70px; will-change: transform; }
+  .category-thumb { width: 60px; height: 60px; }
 
-  /* Masonry Grid (Mobile): 隙間10pxの調整 */
-  /* gapの代用として padding-left を使用 */
-  .my-masonry-grid {
-    margin-left: -10px; /* ネガティブマージンで左端を揃える */
-    width: auto;
-  }
-  .my-masonry-grid_column {
-    padding-left: 10px; /* 列同士の間隔 */
-    background-clip: padding-box;
-  }
-  .my-masonry-grid_column > div {
-    margin-bottom: 16px; /* カード下の隙間も少し詰める */
-  }
-}
-/* app/globals.css の一番下に追加 */
+  /* Main Container (TOPページ商品一覧)の左右余白を 16px に */
+  .main-container { padding: 0 16px; }
 
-/* --- Swiper Custom Styles --- */
-.category-swiper .swiper-wrapper {
-  transition-timing-function: linear !important;
-}
-
-/* ★修正：天井（padding-top）をこれでもか！というくらい高くします */
-.category-swiper {
-  /* 上下に40pxずつの余白を確保（これで絶対に頭が切れません） */
-  padding-top: 40px !important;
-  padding-bottom: 40px !important;
-  padding-left: 20px;
-  padding-right: 20px;
-
-  /* 余白で膨らんだ分、全体の位置が下がるので、ネガティブマージンで上に引き上げます */
-  margin-top: -40px; 
-  
-  /* 念のため重なり順を上げて、他の要素の下に潜り込まないようにします */
-  position: relative;
-  z-index: 10; 
-}
-
-/* スマホ用設定 */
-@media (max-width: 768px) {
+  /* Swiper Shadow Fix & Padding Match */
+  .hero-bottom-categories { min-height: 140px; }
   .category-swiper {
-    /* スマホでも30pxは確保 */
-    padding-top: 30px !important;
-    padding-bottom: 30px !important;
-    padding-left: 10px;
-    padding-right: 10px;
-    
-    margin-top: -30px;
+    padding-top: 40px !important;
+    padding-bottom: 60px !important;
+    padding-left: 16px !important;  
+    padding-right: 16px !important; 
+    margin-top: -40px;
   }
-}
+  .skeleton-container { justify-content: flex-start; gap: 12px; }
+  .skeleton-circle { width: 60px; height: 60px; }
 
-/* app/globals.css の一番下に追加 */
-
-/* --- Loading Skeleton --- */
-
-/* 1. 高さ確保：データがなくてもこの高さはキープする */
-.hero-bottom-categories {
-  min-height: 180px; /* アイコン+テキスト+余白分のおよその高さ */
-  display: flex;     /* 中身（スケルトン）を配置しやすくする */
-  align-items: center;
-  /* 読み込み中も中央寄せなどで違和感を減らす */
-}
-
-/* 2. スケルトン（グレーの丸）のコンテナ */
-.skeleton-container {
-  display: flex;
-  width: 100%;
-  justify-content: center; /* PCでは中央寄せ */
-  gap: 40px; /* アイコンの間隔に合わせる */
-  padding: 0 20px;
-  overflow: hidden; /* 画面外は見せない */
-}
-
-/* 個々のスケルトンアイテム */
-.skeleton-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* 丸い部分 */
-.skeleton-circle {
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: #eee; /* 薄いグレー */
-  margin-bottom: 8px;
-  
-  /* キラキラ光るアニメーション */
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-/* テキスト部分（棒線） */
-.skeleton-text {
-  width: 50px;
-  height: 10px;
-  background: #eee;
-  border-radius: 4px;
-  animation: pulse 1.5s infinite ease-in-out;
-}
-
-/* 点滅アニメーション */
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-/* スマホ調整 */
-@media (max-width: 768px) {
-  .hero-bottom-categories {
-    min-height: 140px; /* スマホは少し小さめに */
-  }
-  .skeleton-container {
-    justify-content: flex-start; /* スマホは左から並べる */
+  /* Masonry Grid Fix (横スクロール対策) */
+  .my-masonry-grid {
+    margin-left: 0;
+    width: 100%;
     gap: 12px;
   }
-  .skeleton-circle {
-    width: 60px; height: 60px;
+  .my-masonry-grid_column {
+    padding-left: 0 !important;
+    background-clip: border-box;
+    min-width: 0 !important; 
+    max-width: none !important;
   }
-}
-
-/* app/globals.css の一番下に追加 */
-
-/* --- Fade In Animation --- */
-
-/* アニメーションの定義：透明＆少し下 → 不透明＆元の位置 */
-@keyframes fadeInUp {
-  0% {
-    opacity: 0;
-    transform: translateY(0); /* 10px下に沈んでいる状態 */
+  .my-masonry-grid_column > div {
+    margin-bottom: 16px;
   }
-  100% {
-    opacity: 1;
-    transform: translateY(0);    /* 元の位置 */
-  }
-}
 
-/* 適用するためのクラス */
-.fade-in {
-  /* 0.8秒かけて、ふわっと表示 */
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-
-/* --- Category Page Styles --- */
-.category-main {
-  padding-top: var(--header-height);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-bottom: 80px;
-}
-
-/* Breadcrumb */
-.breadcrumb {
-  padding: 20px 24px;
-  font-size: 0.85rem;
-  color: #888;
-  font-family: var(--font-en);
-}
-.breadcrumb-inner {
-  display: flex; align-items: center; gap: 8px;
-}
-.breadcrumb a:hover { color: var(--accent-blue); text-decoration: underline; }
-.separator { font-size: 0.7rem; color: #ccc; }
-.current { color: #333; font-weight: 500; }
-
-/* Category Header */
-.category-header {
-  text-align: center;
-  padding: 40px 20px 60px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-.category-header-icon-wrapper {
-  width: 100px; height: 100px;
-  margin: 0 auto 20px;
-}
-.category-header-img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.2));
-}
-
-.category-title-en {
-  font-family: var(--font-en);
-  font-size: 3rem;
-  font-weight: 400;
-  margin: 0 0 5px;
-  color: #111;
-  background-image: linear-gradient(135deg, #1a1a1a 0%, #47371b 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-.category-title-ja {
-  font-size: 0.9rem;
-  color: #888;
-  letter-spacing: 0.1em;
-  margin: 0 0 24px;
-}
-.category-desc {
-  font-size: 0.95rem;
-  line-height: 1.8;      /* 行間を広げて読みやすく */
-  color: #555;
-  text-align: left;      /* ★左寄せに強制 */
-  text-align-last: left; /* ★最後の行も左寄せ */
-  margin: 0 auto;
-  max-width: 700px;      /* ★一行が長すぎないよう幅を絞る */
-}
-
-/* Items Container */
-.category-items-container {
-  padding: 0 24px;
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
+  /* Category Detail Mobile */
   .category-title-en { font-size: 2rem; }
   .category-desc { text-align: left; text-align-last: left; }
-  .breadcrumb { padding: 16px; }
-  .category-items-container { padding: 0 8px; }
-}
-
-/* app/globals.css */
-.category-desc p {
-  margin-bottom: 1.5em; /* 段落の間に余白を作る */
-}
-.category-desc p:last-child {
-  margin-bottom: 0;
-}
-
-/* --- Gem Infographic Section --- */
-.gem-infographic-section {
-  max-width: 1000px;
-  margin: 64px auto;
-  padding: 60px;
-  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.4));
-  backdrop-filter: blur(20px);
-  border-radius: 40px;
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
-}
-
-.infographic-header {
-  text-align: center;
-  margin-bottom: 50px;
-}
-
-.concept-label {
-  font-family: var(--font-en);
-  text-transform: uppercase;
-  font-size: 0.7rem;
-  letter-spacing: 0.3em;
-  color: #a3937d;
-  display: block;
-  margin-bottom: 10px;
-}
-
-.infographic-title {
-  font-family: var(--font-en);
-  font-size: 2.2rem;
-  font-weight: 300;
-  color: #222;
-}
-
-.infographic-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-/* 1. カード自体の設定を変更 (CSSの下の方にある info-glass-card を探して修正) */
-.info-glass-card {
-  background: rgba(255, 255, 255, 0.4);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  padding: 30px;
-  border-radius: 24px;
-  transition: transform 0.3s ease;
   
-  /* ▼▼▼ 追加: 中身を縦方向に並べて制御できるようにする ▼▼▼ */
-  display: flex;
-  flex-direction: column;
-  height: 100%; /* グリッド内で高さを最大まで広げる */
-}
-
-.info-glass-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.6);
-}
-
-.info-glass-card.full-width {
-  grid-column: span 2;
-}
-
-.info-icon {
-  width: 32px;
-  height: 32px;
-  color: #a3937d;
-  margin-bottom: 20px;
-}
-
-.info-label {
-  font-family: var(--font-en);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #888;
-  margin-bottom: 15px;
-}
-
-.info-content p {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.6;
-}
-
-.info-4c-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
-
-.c-item {
-  text-align: center;
-  border-left: 1px solid #eee;
-}
-.c-item:first-child { border: none; }
-
-.c-item span {
-  display: block;
-  font-family: var(--font-en);
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-.c-item small {
-  font-size: 0.7rem;
-  color: #999;
-}
-
-.infographic-footer {
-  margin-top: 50px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  border-top: 1px solid rgba(0,0,0,0.05);
-  padding-top: 30px;
-}
-
-.raw-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
-.keyword-tags span {
-  font-size: 0.8rem;
-  color: #a3937d;
-  margin-left: 15px;
-}
-
-@media (max-width: 768px) {
+  /* 共通余白 16px に統一 */
+  .breadcrumb { padding: 16px; }
+  .category-items-container { padding: 0 16px; }
+  
+  /* ▼▼▼ 修正1: Encyclopedia枠の左右余白確保 ▼▼▼ */
+  /* marginで左右にスペースを作り、幅は自動調整 */
+  .gem-infographic-section {
+    padding: 30px 20px;
+    margin: 30px 16px; /* 左右に16pxのマージンを追加 */
+    width: auto;       /* 幅を自動計算させる */
+  }
+  
   .infographic-grid { grid-template-columns: 1fr; }
   .info-glass-card.full-width { grid-column: span 1; }
-  .info-4c-container { grid-template-columns: repeat(2, 1fr); }
-  .gem-infographic-section { padding: 30px 20px; }
-}
+  .location-flags-container { gap: 12px; }
+  .flag-icon { font-size: 1.5rem; }
 
-/* app/globals.css */
+  /* ▼▼▼ 修正2: Color Variation 2列維持 ▼▼▼ */
+  /* スマホでも2列 (repeat(2, 1fr)) を適用 */
+  .color-grid { grid-template-columns: repeat(2, 1fr); }
 
-/* ... (前略) ... */
-
-/* --- Mining Location Flags --- */
-.location-flags-container {
-  display: flex;
-  gap: 8px;
-  justify-content: space-evenly;
-  flex-wrap: nowrap;
-  padding: 10px 0;
-  width: 100%;
-  
-  /* ▼▼▼ 追加: 余白を埋めて、中身を垂直中央にする ▼▼▼ */
-  flex: 1;             /* 上下の余白を自動で埋める */
-  align-items: center; /* 垂直方向の中央揃え */
-}
-
-.flag-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;            /* ★変更: コンテンツ幅以下の縮小を許可 */
-  flex: 1;                 /* 均等な幅を確保 */
-}
-
-.flag-icon {
-  font-size: 1.8rem;       /* ★微調整: 少しだけ小さくしてバランス調整 */
-  line-height: 1;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
-}
-
-.flag-name {
-  font-family: var(--font-en);
-  font-size: 0.65rem;      /* ★微調整: フォントサイズを少し下げてはみ出し防止 */
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: #8c7e6a;
-  white-space: nowrap;     /* テキストの折り返しを禁止 */
-}
-
-/* スマホ対応（既存のメディアクエリ内も確認してください） */
-@media (max-width: 768px) {
-  .location-flags-container {
-    gap: 12px; /* スマホ時は少し広げてもOK */
-  }
-  .flag-icon {
-    font-size: 1.5rem;
+  .rough-stone-img-wrapper {
+    width: 80px;
+    height: 80px;
   }
 }
 
-/* ... (後略) ... */
-
-/* ...既存のコードの続き... */
-
-/* =========================================
-   Infographic Custom Layout (New)
-   インフォグラフィックセクションの追加スタイル
-========================================= */
-
-/* --- Header: Icon + Title Row --- */
-.info-header-row {
-  display: flex;
-  align-items: center; /* 垂直方向の中央揃え */
-  gap: 12px;           /* アイコンとタイトルの間隔 */
-  margin-bottom: 20px;
-}
-
-/* アイコン設定 */
-.info-header-row .info-icon {
-  margin-bottom: 0;    /* 既存の下余白を打ち消し */
-  display: flex;       /* SVGを中央に配置 */
-  align-items: center;
-  justify-content: center;
-  height: 32px;        /* 高さ固定 */
-  width: 32px;         /* 幅固定 */
-}
-
-/* SVGがアイコン枠からはみ出ないようにする */
-.info-header-row .info-icon svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-/* タイトル設定 */
-.info-header-row .info-label {
-  margin: 0;           /* ★重要: h3のデフォルト余白(上下)を全て削除 */
-  line-height: 1;      /* ★重要: 行間を詰めて垂直中央を合わせやすくする */
-  padding-top: 2px;    /* 視覚的な微調整（フォントによって少し下がるのを補正） */
-}
-
-/* --- Content: Image + Text Row --- */
-.info-content-row {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  text-align: left;
-}
-
-.info-thumb {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 12px;
-  flex-shrink: 0;
-}
-
-.info-text-col {
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* テキスト全体も垂直中央に */
-}
-
-.info-main-name {
-  font-family: var(--font-en);
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #333;
-  line-height: 1.2;
-  display: block;
-}
-
-.info-sub-name {
-  display: block;
-  font-size: 0.7rem;
-  color: #888;
-  margin-bottom: 8px;
-  margin-top: 2px;
-}
-
-.info-desc-text {
-  font-size: 0.8rem;
-  color: #666;
-  line-height: 1.5;
-  margin: 0;
-}
-
-/* --- Footer: Tags Alignment --- */
-.keyword-tags.left-align {
-  margin-left: 0;
-}
-.keyword-tags.left-align span {
-  margin-left: 15px;
-}
-.keyword-tags.left-align span:first-child {
-  margin-left: 0;
-}
-
-/* app/globals.css の一番下に追加 */
-
-/* --- Accessory Section Design --- */
-
-.accessory-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3列均等割り */
-  gap: 24px;
-  margin-top: 10px;
-}
-
-.accessory-item {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-}
-
-.acc-thumb {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%; /* 丸く切り抜き */
-  object-fit: cover;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.acc-text {
-  flex: 1;
-}
-
-.acc-text h4 {
-  font-family: var(--font-en);
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #333;
-  margin: 0 0 6px 0;
-  line-height: 1.1;
-}
-
-.acc-text p {
-  font-family: var(--font-jp);
-  font-size: 0.8rem;
-  color: #555;
-  line-height: 1.6;
-  margin: 0;
-  font-weight: 300;
-  /* 長体などの微調整があればここに */
-}
-
-/* モバイル対応：縦積み */
-@media (max-width: 900px) {
-  .accessory-grid {
-    grid-template-columns: 1fr; /* 1列に変更 */
-    gap: 32px;
-  }
-}
-
-/* app/globals.css の末尾 */
-
-/* --- Color Variation (Inside Infographic) --- */
-
-.color-variation-block {
-  margin-top: 60px;    /* 上のカードとの間隔 */
-  margin-bottom: 20px; /* 下のタグとの間隔 */
-  width: 100%;
-}
-
-.color-section-title {
-  font-family: var(--font-en);
-  font-size: 2.0rem;   /* 少しサイズを調整 */
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 30px;
-  color: #222;
-}
-
-/* グリッド設定 (4列) */
-.color-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px; /* 狭いスペースに合わせて少し詰める */
-}
-
-/* カードスタイル */
-.color-card {
-  background: rgba(255, 255, 255, 0.7); /* 半透明の白にして背景に馴染ませる */
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 24px;
-  padding: 20px 16px;
-  text-align: center;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-  transition: transform 0.3s ease, background 0.3s;
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.color-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.9); /* ホバー時は白くはっきりさせる */
-  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
-
-/* 画像エリア */
-.color-img-wrapper {
-  height: 60px; /* スペースに合わせて少しコンパクトに */
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-}
-
-.color-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-}
-
-/* テキスト */
-.color-name-en {
-  font-family: var(--font-en);
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: #111;
-  margin: 0 0 4px 0;
-  line-height: 1.2;
-}
-
-.color-name-ja {
-  font-family: var(--font-jp);
-  font-size: 0.75rem;
-  color: #555;
-  margin: 0 0 12px 0;
-  font-weight: 400;
-}
-
-.color-desc {
-  font-family: var(--font-jp);
-  font-size: 0.7rem;
-  color: #666;
-  line-height: 1.5;
-  margin: 0;
-  font-weight: 300;
-}
-
-/* レスポンシブ */
-@media (max-width: 900px) {
-  .color-grid {
-    grid-template-columns: repeat(2, 1fr); /* タブレット以下は2列 */
-  }
-}
 @media (max-width: 600px) {
-  .color-grid {
-    grid-template-columns: 1fr; /* スマホは1列 */
-  }
-  .color-section-title {
-    font-size: 1.6rem;
-  }
+  /* Small Mobile Only */
+  /* .color-grid { grid-template-columns: 1fr; }  ← ここにあった1列化のコードを削除 */
+  .color-section-title { font-size: 1.6rem; }
 }
