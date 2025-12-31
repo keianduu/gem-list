@@ -68,7 +68,7 @@ export default function Home() {
     let animationId;
     
     // ▼▼▼ 速度設定（0.1でも動くようになります） ▼▼▼
-    const speed = 0.3; 
+    const speed = 0.4; 
     // ▲▲▲ お好みで調整してください（例: 0.1, 0.15, 0.2） ▲▲▲
 
     const scrollLoop = () => {
