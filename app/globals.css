@@ -546,7 +546,13 @@ a { text-decoration: none; color: inherit; }
 @media (max-width: 768px) {
   /* Mobile General */
   .hero-area { height: 100svh; min-height: 600px; }
-  .hero-center-content { margin-top: -40px; }
+  .hero-center-content { 
+    margin-top: 0; /* 以前の -40px を解除 */
+    
+    /* スライダーがある分、計算上の中央が上寄りになるため、
+       パディングを足して視覚的に下に押し下げて「ど真ん中」に見せる */
+    padding-top: 80px; 
+  }
   .hero-title { font-size: 2.5rem; }
   .site-header { padding: 0 16px; }
   
@@ -563,11 +569,11 @@ a { text-decoration: none; color: inherit; }
   .category-swiper {
     /* パディングで影のスペース確保 */
     padding-top: 60px !important;
-    padding-bottom: 90px !important; /* 下の影が長いので多めに */
+    padding-bottom: 30px !important; /* 下の影が長いので多めに */
     
     /* 位置調整: PCよりさらに下へ */
     margin-top: 20px; 
-    margin-bottom: -60px; 
+    margin-bottom: -30px; 
   }
   .skeleton-container { justify-content: flex-start; gap: 12px; }
   .skeleton-circle { width: 60px; height: 60px; }

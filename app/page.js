@@ -119,7 +119,7 @@ export default function Home() {
               freeMode={true}
               allowTouchMove={true}
               breakpoints={{
-                320: { spaceBetween: 12, speed: 5000 },
+                320: { spaceBetween: 24, speed: 5000 },
                 768: { spaceBetween: 40 }
               }}
               className="category-swiper fade-in"
