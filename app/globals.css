@@ -560,6 +560,32 @@ a { text-decoration: none; color: inherit; }
   .category-card { width: 70px; will-change: transform; }
   .category-thumb { width: 60px; height: 60px; }
 
+  /* 1. オーブの数を減らす（3つ消して2つだけにする） */
+  .orb-3, .orb-4, .orb-5 {
+    display: none !important;
+  }
+
+  /* 2. 残ったオーブの動きをゆっくり＆ぼかしを軽くする */
+  .orb {
+    /* ぼかし半径を小さくして計算負荷を下げる (60px -> 30px) */
+    filter: blur(30px) !important;
+    
+    /* アニメーション時間を長くしてゆっくり動かす (例: 60秒かけて1周) */
+    animation-duration: 60s !important;
+  }
+
+  /* 3. 残った2つの配置バランスを調整（画面全体をカバーするように） */
+  .orb-1 {
+    top: 10%; left: 10%;
+    width: 300px; height: 300px; /* サイズも少し調整 */
+    background: #a8edea; /* 色はそのまま */
+  }
+  .orb-2 {
+    top: 60%; left: 50%;
+    width: 250px; height: 250px;
+    background: #fed6e3;
+  }
+
   /* Main Container (TOPページ商品一覧)の左右余白を 16px に */
   .main-container { padding: 0 16px; }
 
