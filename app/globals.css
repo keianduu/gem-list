@@ -454,8 +454,15 @@ a { text-decoration: none; color: inherit; }
 }
 .accessory-item { display: flex; gap: 16px; align-items: center; }
 .acc-thumb {
-  width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
-  flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  /* width: 50px; height: 50px; border-radius: 50%; object-fit: cover; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); */
+  /* 上記の元のスタイルを以下のように変更します */
+  
+  width: 50px;
+  height: 50px;
+  object-fit: contain; /* 画像全体が表示されるように変更 */
+  flex-shrink: 0;
+  /* ボックスシャドウではなく、ドロップシャドウフィルターを使用 */
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.15));
 }
 .acc-text { flex: 1; }
 .acc-text h4 {

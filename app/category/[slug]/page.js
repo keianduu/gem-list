@@ -1,6 +1,6 @@
 /* app/category/[slug]/page.js */
 import Link from "next/link";
-import Image from "next/image"; // ★Imageコンポーネント
+import Image from "next/image";
 import { client } from "@/libs/microcms";
 import { items } from "@/libs/data"; 
 import MasonryGrid from "@/components/MasonryGrid";
@@ -12,16 +12,13 @@ export async function generateMetadata({ params }) {
 }
 
 export default async function CategoryPage({ params }) {
-  // 1. URLの [slug] を取得
   const resolvedParams = await params;
   const urlSlug = decodeURIComponent(resolvedParams.slug);
 
-  // 2. microCMSからデータを取得
   const data = await client.get({
     endpoint: "jewelry-categories",
     queries: { 
       filters: `slug[equals]${urlSlug}`,
-      // 開発中のためキャッシュしない設定
       customRequestInit: {
         cache: "no-store", 
       },
@@ -44,36 +41,12 @@ export default async function CategoryPage({ params }) {
 
   const categoryItems = items.filter(item => item.category === category.name);
 
-  // ダミーデータ
+  // ダミーデータ（Color Variation用）
   const dummyColorVariations = [
-    {
-      id: 1,
-      name: "Color less",
-      nameJa: "カラーレス",
-      description: "無色透明",
-      image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0"
-    },
-    {
-      id: 2,
-      name: "Pink",
-      nameJa: "ピンク",
-      description: "天然は希少",
-      image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65"
-    },
-    {
-      id: 3,
-      name: "Blue",
-      nameJa: "ブルー",
-      description: "現在主流。色の濃さでスカイ、スイス、ロンドンと呼び分けられる",
-      image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e"
-    },
-    {
-      id: 4,
-      name: "Sherry",
-      nameJa: "シェリー（インペリアル）",
-      description: "最高級とされる、赤みがかった黄金色",
-      image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75"
-    }
+    { id: 1, name: "Color less", nameJa: "カラーレス", description: "無色透明", image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0" },
+    { id: 2, name: "Pink", nameJa: "ピンク", description: "天然は希少", image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65" },
+    { id: 3, name: "Blue", nameJa: "ブルー", description: "現在主流。色の濃さでスカイ、スイス、ロンドンと呼び分けられる", image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e" },
+    { id: 4, name: "Sherry", nameJa: "シェリー（インペリアル）", description: "最高級とされる、赤みがかった黄金色", image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75" }
   ];
 
   return (
@@ -97,7 +70,6 @@ export default async function CategoryPage({ params }) {
         </nav>
 
         <section className="category-header">
-          {/* ▼▼▼ Image化: ヘッダーアイコン ▼▼▼ */}
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
              {category.image && (
                <Image 
@@ -175,7 +147,6 @@ export default async function CategoryPage({ params }) {
 
               {category.roughStones ? (
                 <div className="info-content-row">
-                  {/* ▼▼▼ 修正: クラス適用＆インラインスタイル削除 ▼▼▼ */}
                   {category.roughStones.image && (
                     <div className="rough-stone-img-wrapper">
                       <Image
@@ -187,7 +158,6 @@ export default async function CategoryPage({ params }) {
                       />
                     </div>
                   )}
-                  {/* ▲▲▲ 修正ここまで ▲▲▲ */}
                   
                   <div className="info-text-col">
                     <span className="info-main-name">{category.roughStones.name}</span>
@@ -205,7 +175,8 @@ export default async function CategoryPage({ params }) {
                 </div>
               )}
             </div>
-            {/* --- ACCESSORY --- */}
+
+            {/* --- ACCESSORY (microCMS連携版) --- */}
             <div className="info-glass-card full-width">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -219,62 +190,40 @@ export default async function CategoryPage({ params }) {
               </div>
 
               <div className="accessory-grid">
-                
-                {/* Item 1 */}
-                <div className="accessory-item">
-                  {/* ▼▼▼ Image化 ▼▼▼ */}
-                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
-                    <Image 
-                      src="https://images.unsplash.com/photo-1605100804763-247f67b3557e" 
-                      alt="Ring" 
-                      fill
-                      sizes="50px"
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
-                      className="acc-thumb" 
-                    />
-                  </div>
-                  <div className="acc-text">
-                    <h4>RING</h4>
-                    <p>劈開性があるため、ぶつけないよう注意が必要。</p>
-                  </div>
-                </div>
-
-                {/* Item 2 */}
-                <div className="accessory-item">
-                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
-                    <Image 
-                      src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908" 
-                      alt="Earring" 
-                      fill
-                      sizes="50px"
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
-                      className="acc-thumb" 
-                    />
-                  </div>
-                  <div className="acc-text">
-                    <h4>Earing</h4>
-                    <p>顔色を明るく健康的に見せる効果が高い。</p>
-                  </div>
-                </div>
-
-                {/* Item 3 */}
-                <div className="accessory-item">
-                  <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
-                    <Image 
-                      src="https://images.unsplash.com/photo-1605100804763-247f67b3557e" 
-                      alt="Ring" 
-                      fill
-                      sizes="50px"
-                      style={{ objectFit: 'cover', borderRadius: '50%' }}
-                      className="acc-thumb" 
-                    />
-                  </div>
-                  <div className="acc-text">
-                    <h4>RING</h4>
-                    <p>劈開性があるため、ぶつけないよう注意が必要。</p>
-                  </div>
-                </div>
-
+                {/* ▼▼▼ microCMSから取得したアクセサリ情報を表示 ▼▼▼ */}
+                {category.accessories && category.accessories.length > 0 ? (
+                  category.accessories.map((acc, index) => (
+                    <div key={index} className="accessory-item">
+                      <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
+                        {acc.item?.image?.url ? (
+                          <Image 
+                            src={acc.item.image.url} 
+                            alt={acc.item.name} 
+                            fill
+                            sizes="50px"
+                            /* ▼▼▼ 修正: borderRadiusを削除し、objectFitをcontainに変更 ▼▼▼ */
+                            style={{ objectFit: 'contain' }}
+                            /* ▲▲▲ 修正ここまで ▲▲▲ */
+                            className="acc-thumb" 
+                          />
+                        ) : (
+                          <div style={{ width: '100%', height: '100%', background: '#eee', borderRadius: '50%' }}></div>
+                        )}
+                      </div>
+                      <div className="acc-text">
+                        {/* アクセサリ名 */}
+                        <h4>{acc.item?.name}</h4>
+                        {/* 独自の説明文 */}
+                        <p>{acc.description}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: '#999', fontSize: '0.8rem', padding: '10px 0' }}>
+                    No accessory data available.
+                  </p>
+                )}
+                {/* ▲▲▲ 修正ここまで ▲▲▲ */}
               </div>
             </div>
 
@@ -287,7 +236,6 @@ export default async function CategoryPage({ params }) {
             <div className="color-grid">
               {dummyColorVariations.map((color) => (
                 <div key={color.id} className="color-card">
-                  {/* ▼▼▼ Image化: カラーバリエーション ▼▼▼ */}
                   <div className="color-img-wrapper" style={{ position: 'relative', height: '60px', width: '100%' }}>
                     <Image 
                       src={color.image} 
