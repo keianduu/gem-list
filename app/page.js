@@ -2,18 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image"; // ★Imageコンポーネント
-import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import Masonry from 'react-masonry-css';
 import { client } from "@/libs/microcms";
-
-// Swiper関連
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, FreeMode } from 'swiper/modules';
-
-// Swiperスタイル
-import 'swiper/css';
-import 'swiper/css/free-mode';
 
 const items = [
   { id: 1, type: "product", name: "北欧風ダイニングチェア オーク材", price: "¥12,990", image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?w=600&q=80" },
@@ -30,6 +22,14 @@ const items = [
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [categories, setCategories] = useState([]);
+  
+  // スクロール要素への参照
+  const scrollRef = useRef(null);
+  // アニメーションの一時停止フラグ
+  const isPaused = useRef(false);
+  
+  // ▼▼▼ 追加: 正確な位置（小数）を管理するための変数 ▼▼▼
+  const scrollPos = useRef(0);
 
   const breakpointColumnsObj = { default: 4, 1024: 3, 768: 2 };
 
@@ -57,8 +57,52 @@ export default function Home() {
     fetchCategories();
   }, []);
 
+  // 自動スクロール処理 (高精度版)
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container || categories.length === 0) return;
+
+    // 初期位置を同期
+    scrollPos.current = container.scrollLeft;
+
+    let animationId;
+    
+    // ▼▼▼ 速度設定（0.1でも動くようになります） ▼▼▼
+    const speed = 0.2; 
+    // ▲▲▲ お好みで調整してください（例: 0.1, 0.15, 0.2） ▲▲▲
+
+    const scrollLoop = () => {
+      if (container) {
+        if (!isPaused.current) {
+          // 自動モード: 裏側の正確な数値を増やして、それを反映させる
+          scrollPos.current += speed;
+          container.scrollLeft = scrollPos.current;
+
+          // ループ処理
+          if (container.scrollLeft >= container.scrollWidth / 2) {
+            container.scrollLeft = 0;
+            scrollPos.current = 0; // 裏側の数値もリセット
+          }
+        } else {
+          // 手動モード中: ユーザーが動かした位置を裏側の数値に同期させる
+          // (これをしないと、指を離した瞬間に元の位置に引き戻されてしまうため)
+          scrollPos.current = container.scrollLeft;
+        }
+      }
+      animationId = requestAnimationFrame(scrollLoop);
+    };
+
+    // アニメーション開始
+    animationId = requestAnimationFrame(scrollLoop);
+
+    return () => cancelAnimationFrame(animationId);
+  }, [categories]);
+
+  const pauseScroll = () => { isPaused.current = true; };
+  const resumeScroll = () => { isPaused.current = false; };
+
   const loopCategories = categories.length > 0 
-    ? [...categories, ...categories, ...categories, ...categories] 
+    ? [...categories, ...categories]
     : [];
 
   return (
@@ -104,61 +148,46 @@ export default function Home() {
         </div>
 
         <div className="hero-bottom-categories">
-          {loopCategories.length > 0 ? (
-            <Swiper
-              modules={[Autoplay, FreeMode]}
-              spaceBetween={40}
-              slidesPerView="auto"
-              loop={true}
-              speed={6000}
-              autoplay={{
-                delay: 0,
-                disableOnInteraction: false,
-                pauseOnMouseEnter: false // ★変更：マウスオーバーで停止しない設定
-              }}
-              freeMode={true}
-              allowTouchMove={true}
-              breakpoints={{
-                320: { spaceBetween: 24, speed: 5000 },
-                768: { spaceBetween: 40 }
-              }}
-              className="category-swiper fade-in"
+          {categories.length > 0 ? (
+            <div 
+              className="category-scroll-wrap" 
+              ref={scrollRef}
+              onMouseEnter={pauseScroll}
+              onMouseLeave={resumeScroll}
+              onTouchStart={pauseScroll}
+              onTouchEnd={resumeScroll}
             >
               {loopCategories.map((cat, index) => (
-                <SwiperSlide key={index} style={{ width: 'auto' }}>
-                <Link href={`/category/${cat.slug}`} className="category-card">
-                      {/* ▼▼▼ Image化: 高解像度対応のため2倍サイズ指定 ▼▼▼ */}
-                      {cat.image?.url && (
-                        <Image 
-                          src={cat.image.url} 
-                          alt={cat.name}
-                          width={140}
-                          height={140}
-                          className="category-thumb" 
-                        />
-                      )}
-                      
-                      <span className="category-name">{cat.name}</span>
-                      
-                      {cat.yomigana && (
-                        <span style={{ 
-                          fontSize: '0.65rem', 
-                          color: '#888', 
-                          marginTop: '2px', 
-                          fontFamily: 'var(--font-jp)',
-                          whiteSpace: 'normal',
-                          wordBreak: 'break-word',
-                          lineHeight: '1.2',
-                          display: 'block',
-                          width: '100%'
-                        }}>
-                          {cat.yomigana}
-                        </span>
-                      )}
+                <Link key={`${cat.id}-${index}`} href={`/category/${cat.slug}`} className="category-card">
+                  {cat.image?.url && (
+                    <Image 
+                      src={cat.image.url} 
+                      alt={cat.name}
+                      width={140}
+                      height={140}
+                      className="category-thumb" 
+                    />
+                  )}
+                  <span className="category-name">{cat.name}</span>
+                  {cat.yomigana && (
+                    <span style={{ 
+                      fontSize: '0.65rem', 
+                      color: '#888', 
+                      marginTop: '2px', 
+                      fontFamily: 'var(--font-jp)',
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-word',
+                      lineHeight: '1.2',
+                      display: 'block',
+                      width: '100%',
+                      textAlign: 'center'
+                    }}>
+                      {cat.yomigana}
+                    </span>
+                  )}
                 </Link>
-                </SwiperSlide>
               ))}
-            </Swiper>
+            </div>
           ) : (
             <div className="skeleton-container fade-in">
               {[...Array(7)].map((_, i) => (
@@ -181,7 +210,6 @@ export default function Home() {
           {items.map((item) => (
             <div key={item.id} className="pin-card">
               <div className="pin-image-wrapper">
-                {/* ▼▼▼ Image化: Masonry用のレスポンシブ設定 ▼▼▼ */}
                 <Image 
                   src={item.image} 
                   alt={item.name} 

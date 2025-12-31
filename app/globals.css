@@ -184,56 +184,81 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* =========================================
-   Swiper Override (Category Slider)
+   Hybrid Marquee (JS自動 + 手動スワイプ)
 ========================================= */
-.category-swiper .swiper-wrapper {
-  transition-timing-function: linear !important;
-}
-
-.category-swiper {
-  /* ▼ 修正: visibleは削除し、width: 100%を明示して消失を防ぐ */
-  width: 100% !important;
-  overflow: hidden; /* 通常の設定に戻す */
+.category-scroll-wrap {
+  display: flex;
+  gap: 32px; /* PCでの間隔 */
   
-  /* ▼ 修正: パディングで影の描画エリアを物理的に確保する */
-  padding-top: 50px !important;    /* 上の影用スペース */
-  padding-bottom: 80px !important; /* 下の影用スペース */
+  /* ▼ 横スクロールを有効化 ▼ */
+  overflow-x: auto;
   
-  /* 左右の余白 */
-  padding-left: 0;
-  padding-right: 0;
+  /* ▼ 修正: スナップ(scroll-snap-type)は削除します ▼ */
+  /* scroll-snap-type: x mandatory; ← これを消すことでスムーズに流れます */
+  
+  /* スクロールバーを隠す */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  
+  width: 100%;
+  
+  /* 影が切れないようパディング確保 */
+  padding-top: 50px;
+  padding-bottom: 80px;
+  
+  /* 左右の余白はJSループのために詰めてもOKですが、
+     手動時に端が見えないように少し開けておきます */
+  padding-left: 20px;
+  padding-right: 20px;
 
-  /* ▼ 位置調整: スライド全体を下に下げる */
-  margin-top: 10px;  /* プラスにして下に押し下げる */
-  margin-bottom: -60px; /* 下の要素が離れすぎないように引き上げる */
+  /* 位置調整 */
+  margin-top: 10px;
+  margin-bottom: -60px;
   
   position: relative;
-  z-index: 10; 
-}
-
-.category-card {
-  display: inline-flex; flex-direction: column; align-items: center;
-  width: 100px; cursor: pointer; background: transparent;
-  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
-  white-space: normal; text-align: center; vertical-align: top;
+  z-index: 10;
   
-  /* iOSでのチラつき防止 */
-  transform: translate3d(0,0,0); 
+  /* 慣性スクロールを滑らかに（iOS用） */
+  -webkit-overflow-scrolling: touch;
 }
 
-.category-card:hover { 
-  transform: translateY(-7px) scale(1.02) translate3d(0,0,0); 
+/* Chrome/Safariでスクロールバーを隠す */
+.category-scroll-wrap::-webkit-scrollbar {
+  display: none;
 }
 
+/* カード共通スタイル */
+.category-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  cursor: pointer;
+  background: transparent;
+  flex-shrink: 0; /* 潰れないようにする */
+  
+  /* ▼ 修正: スナップ合わせ位置も削除 */
+  /* scroll-snap-align: center; ← 削除 */
+  
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-card:hover {
+  transform: translateY(-7px) scale(1.02);
+}
+
+/* サムネイル画像 */
 .category-thumb {
-  width: 70px; height: 70px;
-  object-fit: contain; 
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
   margin-bottom: 8px;
   transition: filter 0.3s ease;
   
-  /* ▼▼▼ 重要: 影切れ対策の決定版 ▼▼▼ */
-  /* GPUアクセラレーションを強力に効かせて、描画領域を強制確保する */
+  /* 影の設定 */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  
+  /* GPU描画（影切れ防止） */
   transform: translate3d(0, 0, 0);
   will-change: filter, transform;
 }
@@ -242,11 +267,19 @@ a { text-decoration: none; color: inherit; }
   filter: brightness(1.1) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
 }
 
+/* カテゴリ名 */
 .category-name {
-  font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333; transition: color 0.3s;
-  word-break: break-word; line-height: 1.2;
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #333;
+  transition: color 0.3s;
+  word-break: break-word;
+  line-height: 1.2;
 }
-.category-card:hover .category-name { color: var(--accent-blue); }
+.category-card:hover .category-name {
+  color: var(--accent-blue);
+}
 
 /* Skeleton */
 .skeleton-container {
@@ -563,8 +596,35 @@ a { text-decoration: none; color: inherit; }
   .hero-title { font-size: 2.5rem; }
   .site-header { padding: 0 16px; }
   
-  .marquee-content { gap: 20px; }
-  .category-card { width: 70px; will-change: transform; }
+  .marquee-wrap {
+    padding-top: 60px;
+    padding-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: -30px;
+  }
+  .marquee-content {
+    gap: 24px; /* スマホでのアイテム間隔 */
+    animation-duration: 600s; /* スマホは少し速くてもOK */
+  }
+  .category-scroll-wrap {
+    gap: 24px; /* スマホでの間隔 */
+    
+    /* スマホの位置調整 */
+    padding-top: 60px;
+    padding-bottom: 30px;
+    margin-top: 20px;
+    margin-bottom: -30px;
+    
+    padding-left: 16px;
+    padding-right: 16px;
+    
+    /* スナップ設定の削除（上書き解除） */
+    /* scroll-snap-type: x mandatory; ← 不要 */
+  }
+  
+  .category-card {
+    /* scroll-snap-align: start; ← 不要 */
+  }
   .category-thumb { width: 60px; height: 60px; }
 
   /* 1. オーブの数を減らす（3つ消して2つだけにする） */
