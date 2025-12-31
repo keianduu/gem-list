@@ -67,9 +67,11 @@ export default function Home() {
 
     let animationId;
     
-    // ▼▼▼ 速度設定（0.1でも動くようになります） ▼▼▼
-    const speed = 0.4; 
-    // ▲▲▲ お好みで調整してください（例: 0.1, 0.15, 0.2） ▲▲▲
+    /* ▼▼▼ 修正: 画面幅に応じて速度を変える ▼▼▼ */
+    // 768px以下（スマホ）なら 0.6、それ以外（PC）なら 0.2 にする
+    const isMobile = window.innerWidth <= 768;
+    const speed = isMobile ? 0.6 : 0.2;
+    /* ▲▲▲ 修正 ▲▲▲ */
 
     const scrollLoop = () => {
       if (container) {
