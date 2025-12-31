@@ -183,15 +183,30 @@ a { text-decoration: none; color: inherit; }
   min-height: 180px; display: flex; align-items: center;
 }
 
+/* =========================================
+   Swiper Override (Category Slider)
+========================================= */
 .category-swiper .swiper-wrapper {
   transition-timing-function: linear !important;
 }
+
 .category-swiper {
-  padding-top: 40px !important;
-  padding-bottom: 40px !important;
-  padding-left: 20px;
-  padding-right: 20px;
-  margin-top: -40px; 
+  /* ▼ 修正: visibleは削除し、width: 100%を明示して消失を防ぐ */
+  width: 100% !important;
+  overflow: hidden; /* 通常の設定に戻す */
+  
+  /* ▼ 修正: パディングで影の描画エリアを物理的に確保する */
+  padding-top: 50px !important;    /* 上の影用スペース */
+  padding-bottom: 80px !important; /* 下の影用スペース */
+  
+  /* 左右の余白 */
+  padding-left: 0;
+  padding-right: 0;
+
+  /* ▼ 位置調整: スライド全体を下に下げる */
+  margin-top: 10px;  /* プラスにして下に押し下げる */
+  margin-bottom: -60px; /* 下の要素が離れすぎないように引き上げる */
+  
   position: relative;
   z-index: 10; 
 }
@@ -201,8 +216,14 @@ a { text-decoration: none; color: inherit; }
   width: 100px; cursor: pointer; background: transparent;
   transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
   white-space: normal; text-align: center; vertical-align: top;
+  
+  /* iOSでのチラつき防止 */
+  transform: translate3d(0,0,0); 
 }
-.category-card:hover { transform: translateY(-7px) scale(1.02); }
+
+.category-card:hover { 
+  transform: translateY(-7px) scale(1.02) translate3d(0,0,0); 
+}
 
 .category-thumb {
   width: 70px; height: 70px;
@@ -210,10 +231,17 @@ a { text-decoration: none; color: inherit; }
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
   margin-bottom: 8px;
   transition: filter 0.3s ease;
+  
+  /* ▼▼▼ 重要: 影切れ対策の決定版 ▼▼▼ */
+  /* GPUアクセラレーションを強力に効かせて、描画領域を強制確保する */
+  transform: translate3d(0, 0, 0);
+  will-change: filter, transform;
 }
+
 .category-card:hover .category-thumb {
   filter: brightness(1.1) drop-shadow(0 8px 12px rgba(0, 0, 0, 0.2));
 }
+
 .category-name {
   font-family: var(--font-en); font-size: 0.85rem; font-weight: 500; color: #333; transition: color 0.3s;
   word-break: break-word; line-height: 1.2;
@@ -530,13 +558,16 @@ a { text-decoration: none; color: inherit; }
   .main-container { padding: 0 16px; }
 
   /* Swiper Shadow Fix & Padding Match */
+  /* ▼ MobileでのSwiper位置調整 ▼ */
   .hero-bottom-categories { min-height: 140px; }
   .category-swiper {
-    padding-top: 40px !important;
-    padding-bottom: 60px !important;
-    padding-left: 16px !important;  
-    padding-right: 16px !important; 
-    margin-top: -40px;
+    /* パディングで影のスペース確保 */
+    padding-top: 60px !important;
+    padding-bottom: 90px !important; /* 下の影が長いので多めに */
+    
+    /* 位置調整: PCよりさらに下へ */
+    margin-top: 20px; 
+    margin-bottom: -60px; 
   }
   .skeleton-container { justify-content: flex-start; gap: 12px; }
   .skeleton-circle { width: 60px; height: 60px; }
