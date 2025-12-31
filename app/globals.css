@@ -607,7 +607,7 @@ a { text-decoration: none; color: inherit; }
     animation-duration: 600s; /* スマホは少し速くてもOK */
   }
   .category-scroll-wrap {
-    gap: 24px; /* スマホでの間隔 */
+    gap: 8px; /* スマホでの間隔 */
     
     /* スマホの位置調整 */
     padding-top: 60px;
