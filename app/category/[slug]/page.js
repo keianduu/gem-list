@@ -4,6 +4,7 @@ import Image from "next/image";
 import { client } from "@/libs/microcms";
 import { items } from "@/libs/data"; 
 import MasonryGrid from "@/components/MasonryGrid";
+import { COUNTRY_FLAGS } from "@/libs/constants";
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -48,6 +49,10 @@ export default async function CategoryPage({ params }) {
     { id: 3, name: "Blue", nameJa: "ブルー", description: "現在主流。色の濃さでスカイ、スイス、ロンドンと呼び分けられる", image: "https://images.unsplash.com/photo-1615655114865-4cc1bda5901e" },
     { id: 4, name: "Sherry", nameJa: "シェリー（インペリアル）", description: "最高級とされる、赤みがかった黄金色", image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75" }
   ];
+
+  // ▼▼▼ 修正: miningLocations (複数形) を優先して取得 ▼▼▼
+  // 万が一単数形で返ってきても動くように || で繋いでいます
+  const miningLocations = category.miningLocations || category.miningLocation || [];
 
   return (
     <>
@@ -115,22 +120,28 @@ export default async function CategoryPage({ params }) {
               </div>
 
               <div className="location-flags-container">
-                <div className="flag-item">
-                  <span className="flag-icon">🇷🇺</span>
-                  <span className="flag-name">Russia</span>
-                </div>
-                <div className="flag-item">
-                  <span className="flag-icon">🇧🇼</span>
-                  <span className="flag-name">Botswana</span>
-                </div>
-                <div className="flag-item">
-                  <span className="flag-icon">🇨🇦</span>
-                  <span className="flag-name">Canada</span>
-                </div>
-                <div className="flag-item">
-                  <span className="flag-icon">🇦🇺</span>
-                  <span className="flag-name">Australia</span>
-                </div>
+                {/* 取得した miningLocations をループ表示 */}
+                {miningLocations.length > 0 ? (
+                  miningLocations.map((loc, index) => {
+                    const rawName = loc.name;
+                    const nameStr = Array.isArray(rawName) ? rawName[0] : rawName;
+                    const countryName = nameStr ? String(nameStr).trim() : "";
+                    
+                    // 辞書から国旗を取得
+                    const flag = COUNTRY_FLAGS[countryName] || "🌍";
+                    
+                    return (
+                      <div key={index} className="flag-item">
+                        <span className="flag-icon">{flag}</span>
+                        <span className="flag-name">{countryName}</span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p style={{ color: '#999', fontSize: '0.8rem', width:'100%', textAlign:'center' }}>
+                    No location data.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -190,7 +201,6 @@ export default async function CategoryPage({ params }) {
               </div>
 
               <div className="accessory-grid">
-                {/* ▼▼▼ microCMSから取得したアクセサリ情報を表示 ▼▼▼ */}
                 {category.accessories && category.accessories.length > 0 ? (
                   category.accessories.map((acc, index) => (
                     <div key={index} className="accessory-item">
@@ -201,9 +211,7 @@ export default async function CategoryPage({ params }) {
                             alt={acc.item.name} 
                             fill
                             sizes="50px"
-                            /* ▼▼▼ 修正: borderRadiusを削除し、objectFitをcontainに変更 ▼▼▼ */
                             style={{ objectFit: 'contain' }}
-                            /* ▲▲▲ 修正ここまで ▲▲▲ */
                             className="acc-thumb" 
                           />
                         ) : (
@@ -211,9 +219,7 @@ export default async function CategoryPage({ params }) {
                         )}
                       </div>
                       <div className="acc-text">
-                        {/* アクセサリ名 */}
                         <h4>{acc.item?.name}</h4>
-                        {/* 独自の説明文 */}
                         <p>{acc.description}</p>
                       </div>
                     </div>
@@ -223,7 +229,6 @@ export default async function CategoryPage({ params }) {
                     No accessory data available.
                   </p>
                 )}
-                {/* ▲▲▲ 修正ここまで ▲▲▲ */}
               </div>
             </div>
 
