@@ -3,11 +3,13 @@ import MasonryGrid from "@/components/MasonryGrid";
 import Link from "next/link";
 import { client } from "@/libs/microcms";
 
+// ▼▼▼ 追加: これでビルド時の静的生成エラーを回避し、常に最新データを取得します ▼▼▼
+export const dynamic = 'force-dynamic'; 
+
 export const metadata = {
   title: 'Products List - Management Only',
   robots: { index: false, follow: false },
 };
-
 export default async function ProductsListPage() {
   // Productのみ取得 (typeにproductが含まれるもの)
   const data = await client.get({ 

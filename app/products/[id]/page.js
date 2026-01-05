@@ -1,6 +1,9 @@
 /* app/products/[id]/page.js */
 import { client } from "@/libs/microcms";
 
+// ▼▼▼ 追加: こちらも動的レンダリングを強制します ▼▼▼
+export const dynamic = 'force-dynamic';
+
 export const metadata = {
   title: 'Product Detail - Management Only',
   robots: { index: false, follow: false },
