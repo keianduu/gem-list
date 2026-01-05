@@ -4,41 +4,49 @@ import Image from "next/image";
 import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
 
-// ★修正: 提示されたHTML形式 (<a href="/items/...">) に確実にマッチさせる正規表現
+// ★開発中はキャッシュを無効化して即時反映させる設定（本番では外してもOK）
+// これを入れると、npm run build時に静的化されなくなりますが、今は動作確認優先です。
+export const dynamic = 'force-dynamic';
+
 async function processBodyWithProducts(bodyContent) {
   if (!bodyContent) return "";
 
-  // 正規表現の解説:
-  // <a[^>]+href= ... <a タグの後に何か（スペース等）があり、href属性が来るパターン
-  // ["']\/(?:items|products)\/ ... hrefの値が '/items/' または '/products/' で始まる
-  // ([^"']+) ... その後の文字列（slug）をキャプチャする
-  // ["'] ... 閉じクォート
-  // [^>]*> ... 閉じタグまでの残り
-  // [\s\S]*?<\/a> ... リンクテキスト（改行含む）と </a> 閉じタグ
-  const regex = /<a[^>]+href=["']\/(?:items|products)\/([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi;
+  // ★最強正規表現: 
+  // href="/product/..." も "/products/..." も許容
+  // href='...' (シングルクォート) も許容
+  // 前後に属性があってもOK
+  const regex = /<a[^>]+href=["']\/?(?:items|products?)\/([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi;
   
   const matches = [...bodyContent.matchAll(regex)];
 
-  // デバッグ用: マッチした個数と内容をサーバーログに出力
+  // ★このログは「VS Codeのターミナル」に出ます
   console.log(`[Journal] Body processing matches: ${matches.length}`);
 
   if (matches.length === 0) return bodyContent;
 
-  // Slug抽出
   const slugs = [...new Set(matches.map(m => m[1]))];
   console.log(`[Journal] Target slugs:`, slugs);
 
-  // データ取得
   let productsData = { contents: [] };
   if (slugs.length > 0) {
     try {
+      // 修正: [in] ではなく [equals] を [or] で繋ぐクエリを作成
+      const filtersQuery = slugs.map(slug => `slug[equals]${slug}`).join('[or]');
+      
+      console.log(`[Journal] Fetching filters: ${filtersQuery}`); // デバッグログ
+
       productsData = await client.get({
         endpoint: "archive",
         queries: { 
-          filters: `slug[in]${slugs.join(',')}`,
+          filters: filtersQuery, // ここを変更
           limit: 100
-        }
+        },
+        customRequestInit: { next: { revalidate: 0 } }
       });
+      
+      // デバッグログ：何件取れたか確認
+      console.log(`[Journal] Fetched count: ${productsData.contents.length}`);
+
     } catch (e) {
       console.error("[Journal] Product fetch failed:", e);
     }
@@ -46,22 +54,21 @@ async function processBodyWithProducts(bodyContent) {
 
   let newBody = bodyContent;
 
-  // 置換実行
   for (const match of matches) {
-    const matchedString = match[0]; // <a ...>...</a> 全体
-    const slug = match[1];          // slug部分
+    const matchedString = match[0];
+    const slug = match[1];
     
     const product = productsData.contents.find(p => p.slug === slug);
 
     if (product) {
+      console.log(`[Journal] Found product data for: ${slug}`); // 見つかったか確認ログ
       const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
       const description = product.description || "";
       
-      // 商品カードHTML (画像は img タグを使用)
       const cardHtml = `
         <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
           <div class="embed-thumb">
-            <img src="${product.thumbnailUrl}" alt="${product.title}" />
+            <img src="${product.thumbnailUrl}" alt="${product.title}" style="width:100%; height:100%; object-fit:contain;" />
           </div>
           <div class="embed-info">
             <span class="embed-label">PICK UP ITEM</span>
@@ -72,8 +79,9 @@ async function processBodyWithProducts(bodyContent) {
           </div>
         </a>
       `;
-      
       newBody = newBody.replace(matchedString, cardHtml);
+    } else {
+      console.warn(`[Journal] Product data NOT found for slug: ${slug}`);
     }
   }
 
@@ -102,7 +110,9 @@ export default async function JournalPage({ params }) {
     queries: { 
       filters: `slug[equals]${id}`,
       depth: 2 
-    }
+    },
+    // ★開発中はキャッシュなし（0）にして、修正がすぐ反映されるようにします
+    customRequestInit: { next: { revalidate: 0 } } 
   });
   const journal = data.contents[0];
 
