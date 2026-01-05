@@ -41,6 +41,8 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 .
 ├── app/
 │   ├── category/[slug]/    # 宝石カテゴリ別詳細ページ
+│   ├── items/[id]/         # 商品詳細ページ (Product/Item)
+│   ├── journals/[id]/      # 記事詳細ページ (Journal/Article)
 │   ├── globals.css         # グローバルスタイル・デザインシステム
 │   └── page.js             # トップページ（ヒーローエリア・Swiper）
 ├── components/
@@ -48,11 +50,35 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   └── MasonryGrid.js      # 商品/記事カードのグリッド表示
 ├── libs/
 │   ├── microcms.js         # microCMS APIクライアント設定
+│   ├── constants.js        # 定数ファイル（国旗マッピング等）
 │   └── data.js             # ローカルモックデータ（開発用）
 ├── public/                 # 静的資産（ロゴ、アイコン）
 └── README.md
 
 ```
+
+## URL設計 / ルーティング (Routing)
+
+本プロジェクトでは、リソース管理のしやすさとSEO/ユーザー体験（UX）のバランスを考慮し、以下のハイブリッド構成を採用しています。
+
+### URL構造とID運用ルール
+
+URL構造はリソースごとにフラット化しつつ、IDの命名規則によってSEOと管理性を使い分けます。
+
+| ページ種類 | URLパターン | Next.js Page | ID運用 (microCMS) | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| **Top** | `/` | `app/page.js` | - | |
+| **宝石カテゴリ** | `/category/[slug]` | `app/category/[slug]/` | **宝石名 (英語)** | 例: `topaz`, `emerald` |
+| **記事詳細 (Journal)** | `/journals/[id]` | `app/journals/[id]/` | **手動設定 (SEO重視)** | 記事内容を表す英単語<br>例: `topaz-history` |
+| **商品詳細 (Item)** | `/items/[id]` | `app/items/[id]/` | **手動設定 (管理重視)** | 管理番号や型番<br>例: `item0001`, `R-001` |
+
+### パンくずリスト設計 (Breadcrumbs)
+
+URL構造はフラットですが、パンくずリストでは「どの宝石の文脈か（Encyclopedia）」を重視し、**宝石カテゴリを経由する階層構造**として表現します。
+
+* **表示ルール**: `HOME` > `[宝石カテゴリ]` > `[詳細ページタイトル]`
+* **実装ロジック**: 記事や商品データに紐付いている `category` (microCMS参照フィールド) の情報を取得し、親カテゴリへのリンクを生成します。
+
 
 ## microCMS データ設計 (Schema)
 
