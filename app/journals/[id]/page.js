@@ -31,6 +31,9 @@ const DUMMY_JOURNAL = {
       <div class="embed-info">
         <span class="embed-label">PICK UP ITEM</span>
         <h4 class="embed-title">K18 Pigeon Blood Ruby Ring - Antique Style</h4>
+        <p class="embed-description">
+          ミャンマー産ルビーを使用した、一点物のアンティークデザインリング。繊細なミル打ちが施されたアームに、深く鮮やかな真紅のルビーが輝きます。
+        </p>
         <p class="embed-price">¥128,000</p>
         <div class="embed-btn">View Details</div>
       </div>
