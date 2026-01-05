@@ -5,6 +5,8 @@ import { client } from "@/libs/microcms";
 import { items } from "@/libs/data"; 
 import MasonryGrid from "@/components/MasonryGrid";
 import { COUNTRY_FLAGS } from "@/libs/constants";
+import SiteHeader from "@/components/SiteHeader"; // ★追加
+import SiteFooter from "@/components/SiteFooter"; // ★追加
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -56,14 +58,7 @@ export default async function CategoryPage({ params }) {
 
   return (
     <>
-      <header className="site-header scrolled">
-         <div className="header-left">
-          <Link href="/" className="header-logo-container">
-            <span className="logo-main">Jewelism</span>
-            <span className="logo-sub">MARKET</span>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="category-main">
         <nav className="breadcrumb">
@@ -281,9 +276,7 @@ export default async function CategoryPage({ params }) {
         </section>
       </main>
       
-      <footer className="gem-footer">
-        <p className="copyright">&copy; 2025 Jewelism Market.</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

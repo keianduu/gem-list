@@ -2,6 +2,7 @@
 import MasonryGrid from "@/components/MasonryGrid";
 import Link from "next/link";
 import { client } from "@/libs/microcms";
+import SiteHeader from "@/components/SiteHeader"; // ★追加
 
 // ▼▼▼ 追加: これでビルド時の静的生成エラーを回避し、常に最新データを取得します ▼▼▼
 export const dynamic = 'force-dynamic'; 
@@ -34,14 +35,7 @@ export default async function ProductsListPage() {
 
   return (
     <>
-      <header className="site-header scrolled">
-         <div className="header-left">
-          <Link href="/" className="header-logo-container">
-            <span className="logo-main">Jewelism</span>
-            <span className="logo-sub">MARKET</span>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="main-container" style={{ paddingTop: "120px" }}>
         <div style={{ marginBottom: "40px", padding: "20px", background: "#f0f0f0", borderRadius: "8px", textAlign: "center" }}>

@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import MasonryGrid from "@/components/MasonryGrid";
 import CategorySlider from "@/components/CategorySlider"; // ★追加
+import SiteHeader from "@/components/SiteHeader"; // ★追加
+import SiteFooter from "@/components/SiteFooter"; // ★追加
 import { client } from "@/libs/microcms";
 
 // アーカイブ取得
@@ -54,17 +56,7 @@ export default async function Home() {
 
   return (
     <>
-      <header className="site-header scrolled">
-         <div className="header-left">
-          <Link href="/" className="header-logo-container">
-            <span className="logo-main">Jewelism</span>
-            <span className="logo-sub">MARKET</span>
-          </Link>
-        </div>
-        <div className="header-icons">
-          {/* アイコン類が必要であれば記述 */}
-        </div>
-      </header>
+      <SiteHeader />
 
       <section className="hero-area">
         <div className="hero-center-content">
@@ -97,19 +89,7 @@ export default async function Home() {
         )}
       </main>
 
-      <footer className="gem-footer">
-        <Link href="/" className="footer-logo-container">
-          <span className="logo-main">Jewelism</span>
-          <span className="logo-sub">MARKET</span>
-        </Link>
-        <div className="footer-links">
-           <Link href="#">ブランドについて</Link>
-           <Link href="#">お問い合わせ</Link>
-           <Link href="#">プライバシーポリシー</Link>
-           <Link href="#">特定商取引法に基づく表記</Link>
-        </div>
-        <p className="copyright">&copy; 2025 Jewelism Market. All Rights Reserved.</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

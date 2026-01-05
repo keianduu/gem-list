@@ -37,24 +37,29 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 
 ## ディレクトリ構成
 
-```text
 .
 ├── app/
+│   ├── about/              # 運営者情報・免責事項・お問い合わせ
 │   ├── category/[slug]/    # 宝石カテゴリ別詳細ページ
 │   ├── journals/[id]/      # 記事詳細ページ (Journal/Article)
+│   ├── privacy-policy/     # プライバシーポリシー
+│   ├── products/           # [管理用] 全商品リスト (noindex)
+│   │   └── [id]/           # [管理用] 商品詳細・リンク確認 (noindex)
 │   ├── globals.css         # グローバルスタイル・デザインシステム
+│   ├── layout.js           # 共通レイアウト（背景オーブ含む）
 │   └── page.js             # トップページ（ヒーローエリア・Swiper）
 ├── components/
 │   ├── CategorySlider.js   # 共通スライダーコンポーネント
-│   └── MasonryGrid.js      # 商品/記事カードのグリッド表示
+│   ├── ContactForm.js      # お問い合わせフォーム (Server Actions + Resend)
+│   ├── MasonryGrid.js      # 商品/記事カードのグリッド表示
+│   ├── RichTextRenderer.js # リッチテキスト内の商品埋め込み処理
+│   ├── SiteHeader.js       # 共通ヘッダー
+│   └── SiteFooter.js       # 共通フッター
 ├── libs/
 │   ├── microcms.js         # microCMS APIクライアント設定
-│   ├── constants.js        # 定数ファイル（国旗マッピング等）
-│   └── data.js             # ローカルモックデータ（開発用）
+│   └── constants.js        # 定数ファイル（国旗マッピング等）
 ├── public/                 # 静的資産（ロゴ、アイコン）
 └── README.md
-
-```
 
 ## URL設計 / ルーティング (Routing)
 
@@ -134,19 +139,66 @@ URL構造はフラットですが、パンくずリストでは「どの宝石�
 | :--- | :--- | :--- | :--- |
 | `name` | 国名 | セレクト | `libs/constants.js` に定義された英語名と一致させること |
 
+### 4. アーカイブAPI (`archive`)
+記事（Journal）および商品（Product/Item）を統合管理するメインコンテンツです。
+
+| フィールドID | 表示名 | 種類 | 必須 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| `title` | タイトル | テキスト | 〇 | 記事タイトルまたは商品名 |
+| `slug` | スラッグ | テキスト | 〇 | URL末尾 (例: `ruby-ring-001`) |
+| `type` | 投稿タイプ | 複数選択 | 〇 | `product` (商品) / `journal` (記事) |
+| `thumbnail` | サムネイル画像 | 画像 | - | microCMSに直接アップロードする場合 |
+| `thumbnailUrl` | サムネイルURL | テキスト | - | 外部画像URLを使用する場合 (Amazon/楽天など) |
+| `description` | 概要 / ディスクリプション | テキストエリア | - | 一覧表示やmeta description用 |
+| `body` | 本文 | リッチエディタ | - | 記事本文。商品紹介の場合は空でも可 |
+| `price` | 価格 | 数値 | - | 商品の場合のみ入力 (カンマなし数値) |
+| `affiliateUrl` | アフィリエイトURL | テキスト | - | 商品の購入先リンク |
+| `relatedJewelries` | 関連宝石カテゴリ | コンテンツ参照 | - | 参照先API: `jewelry-categories` |
+
 ## 画像処理・最適化 (Image Optimization)
 
 本プロジェクトでは、パフォーマンス向上（LCP短縮）と転送量削減のため、原則として Next.js 標準の `<Image />` コンポーネントを使用します。
 
-### `next/image` の採用理由
-通常の `<img>` タグではなく `<Image />` を使用することで、以下の最適化が自動的に適用されます。
+### 画像タグの使い分けルール
 
-1.  **自動リサイズ & 圧縮**: アクセスするデバイス（スマホ/PC）に合わせて、最適なサイズ・WebP形式等の画像をサーバーサイドで生成・配信します。
-2.  **遅延読み込み (Lazy Load)**: 画面に入っていない画像は読み込まず、初期表示速度を向上させます。
-3.  **レイアウトシフトの防止**: 画像読み込み時のガタつき（CLS）を防ぎます。
+Next.jsの `<Image />` は、`next.config.mjs` で許可されたドメイン（microCMS等）の画像しか最適化できません。
+そのため、アフィリエイトリンクなど**ドメインが動的または多岐にわたる外部画像**については、例外的に標準の `<img>` タグを使用します。
+
+| 画像の種類 | 使用タグ | 理由 |
+| :--- | :--- | :--- |
+| **microCMS画像** | `<Image />` | ドメイン許可済み。自動最適化・CLS防止のため必須。 |
+| **静的アセット** (`/public`) | `<Image />` | 内部画像のため最適化可能。 |
+| **外部URL画像** (Amazon等) | `<img />` | ドメインが不定のため、Next.jsの最適化を通さず直接表示する。 |
 
 ### 外部画像の許可設定 (`next.config.mjs`)
 microCMSやUnsplashなどの外部ドメインの画像を最適化対象とするため、以下の設定を行っています。
+
+## お問い合わせ機能 (Contact Form)
+
+ユーザーからのお問い合わせを受け付け、管理者へメール通知を行う機能を実装しています。
+microCMSのAPI制限（無料枠API数）を回避するため、外部メール配信サービス「Resend」とNext.jsのServer Actionsを組み合わせた構成を採用しています。
+
+### 技術スタックと構成
+
+* **Email Service**: [Resend](https://resend.com/) (API経由でのメール配信)
+* **Backend**: Next.js Server Actions (サーバーサイド処理)
+* **Frontend**: React Hook Form (状態管理) ※今回は標準のHTML formActionを使用
+
+### 実装ファイル
+
+| ファイルパス | 役割 |
+| :--- | :--- |
+| `app/actions/contact.js` | **Server Action**。フォームデータを受け取り、Resend APIを叩いてメールを送信するサーバーサイド関数。 |
+| `components/ContactForm.js` | **Client Component**。お問い合わせフォームのUI。送信状態（送信中、完了、エラー）の管理を行う。 |
+| `app/about/page.js` | フォーム設置ページ。`ContactForm` コンポーネントを呼び出して表示。 |
+
+### 環境変数 (.env.local)
+
+機能の動作には以下の環境変数が必要です。
+
+```bash
+RESEND_API_KEY=re_12345678...  # Resendから発行されたAPIキー
+CONTACT_EMAIL=admin@example.com # お問い合わせを受信する管理者のメールアドレス
 
 ```javascript
 // next.config.mjs

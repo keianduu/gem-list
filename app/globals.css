@@ -807,129 +807,153 @@ a { text-decoration: none; color: inherit; }
 
 /* 商品カード */
 
+/* app/globals.css */
+
 /* =========================================
-   Product Embed Card (Final Adjustment)
+   Product Embed Card (Pickup Item)
+   修正版: 
+   - 画像シャドウ完全削除
+   - SP: 画像MAX幅 / テキスト左寄せ / 価格中央寄せ
+   - 各余白を16pxに統一
 ========================================= */
 .product-embed-card {
   display: flex;
-  width: 100%;
-  height: auto;
-  min-height: 160px;
-  
-  padding: 24px;
-  gap: 24px;
-  
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #f0f0f0;
-  border-radius: 16px;
-  margin: 40px 0;
-  text-decoration: none;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  
   align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  margin: 40px auto;
+  
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px;
+  
+  /* カード自体の影（ふんわりと） */
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
+  
+  /* pタグ対策 */
+  position: relative;
+  z-index: 1;
 }
 
 .product-embed-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-  border-color: #fff;
-  background: #fff;
+  transform: translateY(-4px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
 }
 
-/* 画像エリア */
+/* --- 画像エリア (左側) --- */
 .embed-thumb {
-  width: 128px;
-  height: 128px;
-  flex-shrink: 0;
-  background: #f9f9f9;
-  border-radius: 8px;
-  
   display: flex;
+  width: 240px;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+  
+  background: #f7f7f7;
+  border-radius: 16px;
+  padding: 20px;
+  
   align-items: center;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
+  
+  /* ★修正: 影を完全削除 */
+  box-shadow: none !important; 
+  filter: none !important;
 }
 
 .embed-thumb img {
   width: 100%;
   height: 100%;
-  object-fit: contain !important;
-  margin: 0;
+  object-fit: contain;
   display: block;
+  mix-blend-mode: multiply; /* 背景なじませ */
+  
+  /* ★修正: 画像自体の影も削除 */
+  box-shadow: none !important;
+  filter: none !important; 
 }
 
-/* テキスト情報エリア */
+/* --- テキスト情報エリア (右側) --- */
 .embed-info {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+  padding-left: 40px;
   justify-content: center;
-  min-width: 0;
+  text-align: left;
 }
 
-/* ▼セレクタを強化して .rich-text-body p の影響を回避▼ */
-
-.product-embed-card .embed-label {
+/* ラベル */
+.embed-label {
+  display: block;
   font-family: var(--font-en);
-  font-size: 0.65rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
   color: #a3937d;
+  margin-bottom: 12px;
   font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: 1;
-  margin: 0 0 8px 0;
+  text-transform: uppercase;
 }
 
-.product-embed-card .embed-title {
+/* タイトル */
+.embed-title {
+  display: block;
   font-family: var(--font-en);
-  font-size: 1.3rem;
-  font-weight: 500;
+  font-size: 1.6rem;
   color: #111;
+  font-weight: 400;
   line-height: 1.3;
-  margin: 0 0 8px 0;
+  margin-bottom: 16px; /* ★余白16px */
 }
 
-/* ★修正: セレクタに親クラスを追加して詳細度を上げる */
-.product-embed-card .embed-description {
+/* 説明文 */
+.embed-description {
+  display: block;
   font-family: var(--font-jp);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   color: #666;
-  line-height: 1.6;
-  
-  /* これで .rich-text-body p の 2.5em に勝ちます */
-  margin: 0 0 16px 0;
+  line-height: 1.8;
+  margin-bottom: 16px; /* ★余白16px */
 }
 
-/* ★修正: セレクタに親クラスを追加 */
-.product-embed-card .embed-price {
+/* 価格 */
+.embed-price {
+  display: block;
   font-family: var(--font-en);
-  font-size: 1.3rem;
-  font-weight: 600;
+  font-size: 1.6rem; /* タイトルと同サイズ */
   color: #111;
+  font-weight: 600;
+  margin-bottom: 16px; /* ★余白16px */
   line-height: 1;
-  
-  /* これで確実に16pxになります */
-  margin: 0 0 16px 0;
 }
 
+/* ボタン */
 .embed-btn {
   display: inline-block;
-  align-self: flex-start;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: #fff;
   background: #333;
-  padding: 10px 24px;
+  color: #fff;
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  padding: 12px 32px;
   border-radius: 50px;
+  align-self: flex-start; /* PCでは左寄せ */
   transition: background 0.3s;
-  line-height: 1;
-  margin: 0;
 }
 
 .product-embed-card:hover .embed-btn {
-  background: #a3937d;
+  background: #555;
+}
+
+/* =========================================
+   Mobile Optimization (SP表示)
+========================================= */
+@media (max-width: 768px) {
+
 }
 
 /* =========================================
@@ -1045,10 +1069,161 @@ a { text-decoration: none; color: inherit; }
   user-select: all; /* 選択しやすく */
 }
 
-@media (max-width: 768px) {
+/* app/globals.css */
 
+/* =========================================
+   Privacy Policy Page
+========================================= */
+.policy-page-wrapper {
+  padding-top: 140px; /* ヘッダー被り防止 */
+  padding-bottom: 100px;
+  max-width: 800px; /* 読みやすい幅に制限 */
+  margin: 0 auto;
 }
 
+.policy-title {
+  font-family: var(--font-en);
+  font-size: 3rem;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 60px;
+  color: #111;
+  letter-spacing: 0.02em;
+}
+
+.policy-content {
+  font-family: var(--font-jp);
+  line-height: 1.8;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.policy-content section {
+  margin-bottom: 40px;
+}
+
+.policy-content h2 {
+  font-family: var(--font-jp);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e5e5e5;
+  color: #111;
+}
+
+.policy-content p {
+  margin-bottom: 1.2em;
+}
+
+.policy-content ul {
+  list-style: disc;
+  margin-left: 24px;
+  margin-bottom: 1.5em;
+  color: #555;
+}
+
+.policy-content li {
+  margin-bottom: 0.5em;
+}
+
+.policy-contact-info {
+  /* 以前の白/グレー背景を廃止し、透過グラデーションに変更 */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7));
+  
+  /* すりガラス効果 */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  /* 境界線と影で立体感を出す */
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+  
+  /* 余白と角丸を調整 */
+  padding: 40px;
+  border-radius: 24px;
+  margin-top: 30px;
+  
+  /* 中身のテキスト調整 */
+  color: #333;
+}
+
+.policy-contact-info p {
+  margin-bottom: 5px;
+}
+
+.policy-contact-info a {
+  color: var(--accent-blue);
+  text-decoration: underline;
+}
+
+.policy-dates {
+  margin-top: 60px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+/* app/globals.css */
+
+/* Contact Form */
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-family: var(--font-jp);
+  background: rgba(255, 255, 255, 0.8);
+  font-size: 1rem;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: #333;
+  background: #fff;
+}
+
+.contact-success {
+  text-align: center;
+  padding: 40px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 12px;
+}
+
+.error-msg {
+  color: #cc0000;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.text-link {
+  background: none;
+  border: none;
+  color: #0058a3;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: 16px;
+}
 /* ... (後略) ... */
 /* =========================================
    Mobile Optimization (Media Queries)
@@ -1209,29 +1384,49 @@ a { text-decoration: none; color: inherit; }
   
   .product-embed-card {
     flex-direction: column;
+    padding: 30px 24px;
     align-items: stretch;
-    padding: 24px 20px;
-    gap: 16px;
   }
-  
+  .product-embed-card {
+    flex-direction: column;
+    padding: 30px 24px;
+    align-items: stretch; /* 子要素を幅いっぱいに */
+  }
+
   .embed-thumb {
+    /* ★修正: SPでは幅100% (左右MAX) */
     width: 100%;
-    height: 220px;
-    margin: 0 auto 8px;
+    max-width: none; 
+    margin: 0 0 24px 0;
+  }
+
+  .embed-info {
+    padding-left: 0;
+    text-align: left; /* 基本は左寄せ */
   }
   
-  .product-embed-card .embed-title {
-    font-size: 1.2rem;
+  .embed-title {
+    font-size: 1.4rem;
+    text-align: left; /* ★タイトル左寄せ */
+  }
+
+  .embed-description {
+    text-align: left; /* ★説明文左寄せ */
   }
   
-  .product-embed-card .embed-description {
+  .embed-price {
+    font-size: 1.5rem;
+    text-align: center; /* ★価格は中央寄せ（画像指示通り） */
+    margin-top: 8px;    /* 少し間隔調整 */
     margin-bottom: 20px;
   }
   
-  .product-embed-card .embed-price {
-    margin-bottom: 20px;
+  .embed-btn {
+    align-self: center; /* ★ボタンは中央寄せ */
+    width: 100%;        /* ボタン幅を広げてタップしやすく */
+    max-width: 320px;   /* 広がりすぎ防止 */
+    text-align: center;
   }
-  
   .item-detail-card { grid-template-columns: 1fr; }
   .item-image { height: 300px; }
 }

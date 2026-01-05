@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
+import SiteHeader from "@/components/SiteHeader"; // ★追加
+import SiteFooter from "@/components/SiteFooter"; // ★追加
 
 // ★開発中はキャッシュを無効化して即時反映させる設定（本番では外してもOK）
 // これを入れると、npm run build時に静的化されなくなりますが、今は動作確認優先です。
@@ -61,26 +63,27 @@ async function processBodyWithProducts(bodyContent) {
     const product = productsData.contents.find(p => p.slug === slug);
 
     if (product) {
-      console.log(`[Journal] Found product data for: ${slug}`); // 見つかったか確認ログ
-      const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
-      const description = product.description || "";
-      
-      const cardHtml = `
-        <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
-          <div class="embed-thumb">
-            <img src="${product.thumbnailUrl}" alt="${product.title}" style="width:100%; height:100%; object-fit:contain;" />
-          </div>
-          <div class="embed-info">
-            <span class="embed-label">PICK UP ITEM</span>
-            <h4 class="embed-title">${product.title}</h4>
-            <p class="embed-description">${description}</p>
-            <p class="embed-price">${priceStr}</p>
-            <div class="embed-btn">View Details</div>
-          </div>
-        </a>
-      `;
-      newBody = newBody.replace(matchedString, cardHtml);
-    } else {
+        console.log(`[Journal] Found product data for: ${slug}`);
+        const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
+        const description = product.description || "";
+        
+        // ▼▼▼ 修正箇所: div を span に変更し、入れ子構造を安全にする ▼▼▼
+        const cardHtml = `
+          <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
+            <span class="embed-thumb">
+              <img src="${product.thumbnailUrl}" alt="${product.title}" />
+            </span>
+            <span class="embed-info">
+              <span class="embed-label">PICK UP ITEM</span>
+              <span class="embed-title">${product.title}</span>
+              <span class="embed-description">${description}</span>
+              <span class="embed-price">${priceStr}</span>
+              <span class="embed-btn">View Details</span>
+            </span>
+          </a>
+        `;
+        newBody = newBody.replace(matchedString, cardHtml);
+      } else {
       console.warn(`[Journal] Product data NOT found for slug: ${slug}`);
     }
   }
@@ -131,14 +134,7 @@ export default async function JournalPage({ params }) {
 
   return (
     <>
-      <header className="site-header scrolled">
-         <div className="header-left">
-          <Link href="/" className="header-logo-container">
-            <span className="logo-main">Jewelism</span>
-            <span className="logo-sub">MARKET</span>
-          </Link>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="journal-main">
         <nav className="breadcrumb">
@@ -189,9 +185,7 @@ export default async function JournalPage({ params }) {
         </article>
       </main>
 
-      <footer className="gem-footer">
-        <p className="copyright">&copy; 2025 Jewelism Market.</p>
-      </footer>
+      <SiteFooter />
     </>
   );
 }
