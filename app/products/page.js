@@ -1,0 +1,59 @@
+/* app/products/page.js */
+import MasonryGrid from "@/components/MasonryGrid";
+import Link from "next/link";
+import { client } from "@/libs/microcms";
+
+export const metadata = {
+  title: 'Products List - Management Only',
+  robots: { index: false, follow: false },
+};
+
+export default async function ProductsListPage() {
+  // Productのみ取得 (typeにproductが含まれるもの)
+  const data = await client.get({ 
+    endpoint: "archive", 
+    queries: { 
+      filters: 'type[contains]product',
+      limit: 100,
+      orders: "-publishedAt"
+    },
+    customRequestInit: { next: { revalidate: 0 } } // 管理用なのでキャッシュなし
+  });
+
+  const products = data.contents.map((content) => ({
+    id: content.slug,
+    type: "product",
+    name: content.title,
+    price: content.price ? `¥${Number(content.price).toLocaleString()}` : "",
+    image: content.thumbnailUrl, // 文字列を渡す
+    desc: content.description,
+    // linkを指定しない -> MasonryGridが /products/[id] を生成する
+  }));
+
+  return (
+    <>
+      <header className="site-header scrolled">
+         <div className="header-left">
+          <Link href="/" className="header-logo-container">
+            <span className="logo-main">Jewelism</span>
+            <span className="logo-sub">MARKET</span>
+          </Link>
+        </div>
+      </header>
+
+      <main className="main-container" style={{ paddingTop: "120px" }}>
+        <div style={{ marginBottom: "40px", padding: "20px", background: "#f0f0f0", borderRadius: "8px", textAlign: "center" }}>
+          <h1 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>Products Management List</h1>
+          <p style={{ fontSize: "0.9rem", color: "#666" }}>
+            ※管理用商品一覧（noindex）。クリックで詳細（ID/リンク確認）へ移動。
+          </p>
+        </div>
+        <MasonryGrid items={products} />
+      </main>
+
+      <footer className="gem-footer">
+        <p className="copyright">&copy; 2025 Jewelism Market.</p>
+      </footer>
+    </>
+  );
+}

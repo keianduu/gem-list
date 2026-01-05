@@ -806,25 +806,6 @@ a { text-decoration: none; color: inherit; }
 }
 
 /* 商品カード */
-/* app/globals.css の該当箇所を上書き */
-
-/* ... (前略) ... */
-
-/* =========================================
-   Product Embed Card (Compact & Square Image)
-========================================= */
-/* app/globals.css の該当箇所を上書き */
-
-/* ... (前略) ... */
-
-/* =========================================
-   Product Embed Card (Final Adjustment)
-   - 余白: Description下16px, Price下16px
-   - Price: タイトルと同等のサイズに拡大
-========================================= */
-/* app/globals.css の Product Embed Card セクションを修正 */
-
-/* ... (前略) ... */
 
 /* =========================================
    Product Embed Card (Final Adjustment)
@@ -951,7 +932,119 @@ a { text-decoration: none; color: inherit; }
   background: #a3937d;
 }
 
-/* スマホ対応 */
+/* =========================================
+   Admin / Hidden Item Page Styles
+========================================= */
+.item-admin-container {
+  padding: 120px 20px 60px;
+  background: #f4f4f4;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.admin-notice {
+  background: #ffcccc;
+  color: #cc0000;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-bottom: 30px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.item-detail-card {
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  overflow: hidden;
+  max-width: 900px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.item-image {
+  background: #eee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-info {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-badge {
+  display: inline-block;
+  background: #333;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 4px 10px;
+  border-radius: 4px;
+  align-self: flex-start;
+  margin-bottom: 16px;
+}
+
+.item-info h1 {
+  font-size: 1.8rem;
+  margin: 0 0 10px;
+  line-height: 1.3;
+}
+
+.item-info .price {
+  font-family: var(--font-en);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 20px;
+}
+
+.item-info .desc {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.affiliate-btn {
+  display: block;
+  text-align: center;
+  background: #cc0000; /* Amazon/楽天っぽい色 */
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  margin-bottom: 30px;
+  transition: opacity 0.2s;
+}
+.affiliate-btn:hover { opacity: 0.8; }
+
+.copy-area {
+  background: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px dashed #ccc;
+}
+.copy-area p { margin: 0 0 5px; font-size: 0.8rem; color: #888; }
+.copy-area code {
+  display: block;
+  font-family: monospace;
+  background: #eee;
+  padding: 5px;
+  font-size: 1rem;
+  user-select: all; /* 選択しやすく */
+}
+
 @media (max-width: 768px) {
 
 }
@@ -1138,6 +1231,9 @@ a { text-decoration: none; color: inherit; }
   .product-embed-card .embed-price {
     margin-bottom: 20px;
   }
+  
+  .item-detail-card { grid-template-columns: 1fr; }
+  .item-image { height: 300px; }
 }
 
 @media (max-width: 600px) {

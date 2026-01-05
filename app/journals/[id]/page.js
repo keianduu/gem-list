@@ -1,72 +1,122 @@
 /* app/journals/[id]/page.js */
 import Link from "next/link";
 import Image from "next/image";
+import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
 
-// ★ダミーデータ
-const DUMMY_JOURNAL = {
-  id: "dummy-001",
-  title: "宝石の女王、ルビーが秘める情熱と歴史の物語",
-  description: "古代より勝利と情熱の象徴として愛されてきたルビー。その深い赤色の秘密と、知られざる歴史的背景に迫ります。ミャンマー産「ピジョン・ブラッド」の真価とは。",
-  publishedAt: "2025-04-12T10:00:00Z",
-  category: {
-    name: "Ruby", 
-    slug: "ruby",
-    icon: "https://gem-list-seven.vercel.app/_next/image?url=https%3A%2F%2Fimages.microcms-assets.io%2Fassets%2F6d7124b9fc1b47d5a5579cbebaf7fa4c%2Fb00f95722ea34c478efa2fed719a56d4%2Fruby.png&w=384&q=75" 
-  },
-  coverImage: {
-    url: "https://images.unsplash.com/photo-1639189728127-eabab9a524cd?q=80"
-  },
-  body: `
-    <p>ルビーの語源はラテン語で「赤」を意味する「rubeus（ルベウス）」に由来します。古代インドでは「宝石の王（Ratnaraj）」と呼ばれ、戦場での勝利や長寿をもたらすと信じられていました。</p>
-    <p>コランダムという鉱物の中で、クロムによって赤く発色したものだけがルビーと呼ばれ、それ以外の色はすべてサファイアに分類されます。</p>
+// ★修正: 提示されたHTML形式 (<a href="/items/...">) に確実にマッチさせる正規表現
+async function processBodyWithProducts(bodyContent) {
+  if (!bodyContent) return "";
 
-    <h2>Recommended Item</h2>
-    <p>Jewelism MARKETが厳選した、特別なコレクションをご紹介します。日常に寄り添う、確かな輝きを。</p>
+  // 正規表現の解説:
+  // <a[^>]+href= ... <a タグの後に何か（スペース等）があり、href属性が来るパターン
+  // ["']\/(?:items|products)\/ ... hrefの値が '/items/' または '/products/' で始まる
+  // ([^"']+) ... その後の文字列（slug）をキャプチャする
+  // ["'] ... 閉じクォート
+  // [^>]*> ... 閉じタグまでの残り
+  // [\s\S]*?<\/a> ... リンクテキスト（改行含む）と </a> 閉じタグ
+  const regex = /<a[^>]+href=["']\/(?:items|products)\/([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi;
+  
+  const matches = [...bodyContent.matchAll(regex)];
 
-    <a href="/items/ruby-ring-001" class="product-embed-card">
-      <div class="embed-thumb">
-        <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" alt="Ruby Ring" style="width:100%; height:100%; object-fit:cover; margin:0;" />
-      </div>
-      <div class="embed-info">
-        <span class="embed-label">PICK UP ITEM</span>
-        <h4 class="embed-title">K18 Pigeon Blood Ruby Ring - Antique Style</h4>
-        <p class="embed-description">
-          ミャンマー産ルビーを使用した、一点物のアンティークデザインリング。繊細なミル打ちが施されたアームに、深く鮮やかな真紅のルビーが輝きます。
-        </p>
-        <p class="embed-price">¥128,000</p>
-        <div class="embed-btn">View Details</div>
-      </div>
-    </a>
+  // デバッグ用: マッチした個数と内容をサーバーログに出力
+  console.log(`[Journal] Body processing matches: ${matches.length}`);
 
-    <h2>Origin & History</h2>
-    <p>もっとも価値が高いとされるのは「ピジョン・ブラッド（鳩の血）」と呼ばれる深い赤色のルビーです。主にミャンマーのモゴック地方で産出されますが、近年ではモザンビーク産も高品質なものが多く流通しています。</p>
-    <blockquote>
-      "Ruby is the king of gems, and the gem of kings."
-    </blockquote>
-    <p>タイ産のルビーは鉄分を多く含むため、少し黒みがかった落ち着いた赤色が特徴です。</p>
-  `
-};
+  if (matches.length === 0) return bodyContent;
+
+  // Slug抽出
+  const slugs = [...new Set(matches.map(m => m[1]))];
+  console.log(`[Journal] Target slugs:`, slugs);
+
+  // データ取得
+  let productsData = { contents: [] };
+  if (slugs.length > 0) {
+    try {
+      productsData = await client.get({
+        endpoint: "archive",
+        queries: { 
+          filters: `slug[in]${slugs.join(',')}`,
+          limit: 100
+        }
+      });
+    } catch (e) {
+      console.error("[Journal] Product fetch failed:", e);
+    }
+  }
+
+  let newBody = bodyContent;
+
+  // 置換実行
+  for (const match of matches) {
+    const matchedString = match[0]; // <a ...>...</a> 全体
+    const slug = match[1];          // slug部分
+    
+    const product = productsData.contents.find(p => p.slug === slug);
+
+    if (product) {
+      const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
+      const description = product.description || "";
+      
+      // 商品カードHTML (画像は img タグを使用)
+      const cardHtml = `
+        <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
+          <div class="embed-thumb">
+            <img src="${product.thumbnailUrl}" alt="${product.title}" />
+          </div>
+          <div class="embed-info">
+            <span class="embed-label">PICK UP ITEM</span>
+            <h4 class="embed-title">${product.title}</h4>
+            <p class="embed-description">${description}</p>
+            <p class="embed-price">${priceStr}</p>
+            <div class="embed-btn">View Details</div>
+          </div>
+        </a>
+      `;
+      
+      newBody = newBody.replace(matchedString, cardHtml);
+    }
+  }
+
+  return newBody;
+}
 
 export async function generateMetadata({ params }) {
-  return { 
-    title: `${DUMMY_JOURNAL.title} - Jewelism MARKET`,
-    description: DUMMY_JOURNAL.description,
-  };
+  const { id } = await params;
+  try {
+    const data = await client.get({ endpoint: "archive", queries: { filters: `slug[equals]${id}` } });
+    const journal = data.contents[0];
+    return { 
+      title: `${journal.title} - Jewelism MARKET`,
+      description: journal.description,
+    };
+  } catch(e) {
+    return { title: "Journal not found" };
+  }
 }
 
 export default async function JournalPage({ params }) {
-  const journal = DUMMY_JOURNAL;
+  const { id } = await params;
 
-  const category = journal.category || null;
+  const data = await client.get({
+    endpoint: "archive",
+    queries: { 
+      filters: `slug[equals]${id}`,
+      depth: 2 
+    }
+  });
+  const journal = data.contents[0];
+
+  if (!journal) return <div className="main-container" style={{padding:100}}>Journal Not Found</div>;
+
+  const processedBody = await processBodyWithProducts(journal.body);
+
+  const category = journal.relatedJewelries?.[0] || null;
   const categoryLink = category ? `/category/${category.slug}` : "/";
   const categoryName = category ? category.name : "Journal";
-  const categoryIcon = category ? category.icon : null;
+  const categoryIcon = category?.image?.url || null;
 
   const publishedDate = new Date(journal.publishedAt).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+    year: "numeric", month: "long", day: "numeric",
   });
 
   return (
@@ -80,9 +130,7 @@ export default async function JournalPage({ params }) {
         </div>
       </header>
 
-      {/* ▼▼▼ 修正: カテゴリページと同じ構造に合わせる ▼▼▼ */}
       <main className="journal-main">
-        {/* パンくず（カテゴリページと全く同じクラスを使用） */}
         <nav className="breadcrumb">
           <div className="breadcrumb-inner">
             <Link href="/">Home</Link>
@@ -97,19 +145,13 @@ export default async function JournalPage({ params }) {
           </div>
         </nav>
 
-        {/* 記事本体エリア（ここは中央寄せ） */}
         <article className="journal-article-container">
-          
-          {/* Header Area (左寄せ・700px制限) */}
           <div className="journal-header">
             <div className="journal-meta">
               <Link href={categoryLink} className="journal-category-badge">
                 {categoryIcon && (
-                  <img 
-                    src={categoryIcon} 
-                    alt="" 
-                    className="category-badge-icon" 
-                  />
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img src={categoryIcon} alt="" className="category-badge-icon" />
                 )}
                 <span>{categoryName}</span>
               </Link>
@@ -119,12 +161,11 @@ export default async function JournalPage({ params }) {
             <p className="journal-description">{journal.description}</p>
           </div>
 
-          {/* Body Area (枠内) */}
           <div className="journal-content-glass">
-            {journal.coverImage && (
+            {journal.thumbnail && (
               <div className="journal-cover-in-glass">
                 <Image
-                  src={journal.coverImage.url}
+                  src={journal.thumbnail.url}
                   alt={journal.title}
                   fill
                   priority
@@ -133,8 +174,7 @@ export default async function JournalPage({ params }) {
                 />
               </div>
             )}
-            
-            <RichTextRenderer content={journal.body} />
+            <RichTextRenderer content={processedBody} />
           </div>
         </article>
       </main>
