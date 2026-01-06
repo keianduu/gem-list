@@ -604,6 +604,322 @@ a { text-decoration: none; color: inherit; }
   z-index: 10;
   pointer-events: none;      /* クリックを邪魔しない */
 }
+
+/* app/globals.css の末尾に追加 */
+
+/* =========================================
+   Filter UI Design
+========================================= */
+.filter-glass-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  
+  max-width: 900px;
+  margin: 0 auto 50px;
+  padding: 12px 24px;
+  
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 100px; /* 丸みのあるバー形状 */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), 0 2px 4px rgba(0, 0, 0, 0.02);
+  
+  transition: all 0.3s ease;
+}
+
+.filter-glass-bar:hover {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+/* カスタムセレクトラッパー */
+.custom-select-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* アイコン（絶対配置） */
+.select-icon {
+  position: absolute;
+  left: 14px;
+  width: 18px;
+  height: 18px;
+  color: #8c7e6a; /* テーマカラーに合わせる */
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* セレクト本体 */
+.custom-select {
+  appearance: none;
+  -webkit-appearance: none;
+  
+  padding: 12px 40px 12px 40px; /* アイコン分の余白 */
+  font-family: var(--font-en);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1;
+  
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  
+  min-width: 160px;
+}
+
+.custom-select:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.custom-select:focus {
+  background-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 2px rgba(0, 88, 163, 0.1);
+}
+
+/* 矢印アイコン（右側） */
+.select-arrow {
+  position: absolute;
+  right: 14px;
+  width: 14px;
+  height: 14px;
+  color: #999;
+  pointer-events: none;
+}
+
+/* 仕切り線 */
+.filter-divider {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* トグルスイッチ */
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 50px;
+  transition: background 0.2s;
+  cursor: pointer; /* disabledでなければ */
+}
+
+.toggle-switch {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  background-color: #ddd;
+  border-radius: 22px;
+  transition: background-color 0.3s;
+}
+
+/* チェックされた状態 */
+.toggle-checkbox:checked + .toggle-switch {
+  background-color: #333;
+}
+
+/* つまみ部分 */
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.toggle-checkbox:checked + .toggle-switch::after {
+  transform: translateX(18px);
+}
+
+.toggle-label {
+  font-family: var(--font-en);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #666;
+  user-select: none;
+}
+
+/* 無効化状態のデザイン調整 */
+.toggle-wrapper.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+
+}
+
+/* app/globals.css の末尾に追記 */
+
+/* =========================================
+   Floating Filter Button (CTA)
+========================================= */
+.floating-filter-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 100;
+  
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  
+  padding: 14px 24px;
+  background: #111;
+  color: #fff;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* 初期状態: 隠す */
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+}
+
+.floating-filter-btn.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.floating-filter-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+.floating-filter-btn .btn-text {
+  font-family: var(--font-en);
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+/* =========================================
+   Filter Modal / Popup
+========================================= */
+.filter-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 2000;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.filter-modal-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.filter-modal-content {
+  width: 100%;
+  max-width: 500px;
+  background: #fff;
+  padding: 40px;
+  border-radius: 32px;
+  position: relative;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+  
+  transform: translateY(20px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.filter-modal-overlay.open .filter-modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.filter-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.filter-modal-title {
+  font-family: var(--font-en);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #111;
+}
+
+.close-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.close-btn:hover { background: #eee; }
+
+/* Modal内フォーム */
+.filter-section {
+  margin-bottom: 24px;
+}
+.filter-section label {
+  display: block;
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* モーダル用のアクションボタン */
+.modal-actions {
+  margin-top: 40px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.apply-btn {
+  background: #111;
+  color: #fff;
+  padding: 14px 40px;
+  border-radius: 50px;
+  font-family: var(--font-en);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.apply-btn:hover { transform: scale(1.02); }
+
+@media (max-width: 768px) {
+
+}
+
 /* =========================================
    Category Detail Page
 ========================================= */
@@ -875,7 +1191,88 @@ a { text-decoration: none; color: inherit; }
 .footer-links a { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
 .footer-links a:hover { color: #fff; }
 
-/* app/globals.css の Journal Detail Page 以降をこれに書き換え */
+/* app/globals.css (末尾の該当箇所を上書き) */
+
+/* =========================================
+   Top Content Header (Title & Tabs)
+========================================= */
+.content-header-wrapper {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 0 20px;
+  opacity: 0;
+  animation: fadeInUp 0.8s ease-out 0.2s forwards;
+}
+
+.section-title {
+  font-family: var(--font-en);
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: #111;
+  margin-bottom: 8px;
+  letter-spacing: 0.02em;
+}
+
+.section-subtitle {
+  font-family: var(--font-jp);
+  font-size: 0.85rem;
+  color: #888;
+  letter-spacing: 0.1em;
+  margin-bottom: 30px;
+}
+
+/* コンテンツ切り替えタブ */
+.content-type-tabs {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(10px);
+  padding: 6px;
+  border-radius: 50px;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  gap: 6px; /* ボタン間の隙間を少し調整 */
+}
+
+.type-tab {
+  /* ★修正: 幅を固定して等間隔にする設定 */
+  width: 110px; /* PCでの統一幅 */
+  padding: 10px 0; /* 左右パディングは削除し、幅で制御 */
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  border-radius: 40px;
+  border: none;
+  background: transparent;
+  color: #666;
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-transform: uppercase;
+}
+
+.type-tab:hover {
+  color: #111;
+  background: rgba(0,0,0,0.03); /* ホバー時にうっすら背景を出す */
+}
+
+.type-tab.active {
+  background: #111;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+.type-tab.active:hover {
+  background: #111; /* アクティブ時のホバーは黒のまま */
+}
+
+@media (max-width: 768px) {
+
+}
 
 /* =========================================
    Journal Detail Page (Fixed Layout)
@@ -1197,13 +1594,6 @@ a { text-decoration: none; color: inherit; }
 
 .product-embed-card:hover .embed-btn {
   background: #555;
-}
-
-/* =========================================
-   Mobile Optimization (SP表示)
-========================================= */
-@media (max-width: 768px) {
-
 }
 
 /* =========================================
@@ -1588,6 +1978,67 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: 16px;
   }
 
+  .filter-glass-bar {
+    border-radius: 24px; /* スマホでは角丸を少し抑える */
+    padding: 16px;
+    gap: 12px;
+    flex-direction: column; /* 縦積みに */
+    align-items: stretch;
+  }
+  
+  .custom-select-wrapper {
+    width: 100%;
+    background: rgba(255,255,255,0.5); /* 背景色を少し足して視認性確保 */
+    border-radius: 12px;
+  }
+  
+  .custom-select {
+    width: 100%;
+    border-radius: 12px;
+  }
+  
+  .filter-divider {
+    display: none; /* スマホでは仕切り線不要 */
+  }
+  
+  .toggle-wrapper {
+    justify-content: center;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+  }
+  /* スマホでは下から出るシート風に */
+  .filter-modal-overlay {
+    align-items: flex-end; /* 下寄せ */
+  }
+  .filter-modal-content {
+    max-width: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    padding: 30px 24px 40px;
+  }
+  .floating-filter-btn {
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 20px;
+  }
+
+  .section-title { font-size: 1.8rem; }
+  
+  /* スマホでの調整 */
+  .content-type-tabs {
+    display: flex;       /* inline-flexからflexへ */
+    width: 100%;         /* 幅いっぱい */
+    max-width: 340px;    /* 広がりすぎないように制限 */
+    margin: 0 auto;      /* 中央寄せ */
+  }
+  
+  .type-tab {
+    width: auto; /* 固定幅を解除 */
+    flex: 1;     /* 均等に3等分 */
+    font-size: 0.75rem;
+    padding: 9px 0;
+  }
+  
 
   /* Category Detail Mobile */
   .category-title-en { font-size: 2rem; }

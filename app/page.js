@@ -1,10 +1,11 @@
-/* app/page.js */
 import Link from "next/link";
 import Image from "next/image";
-import MasonryGrid from "@/components/MasonryGrid";
+// MasonryGridはTopContentManagerの中で使うのでここでは不要になりますが、念のため残しておいてもエラーにはなりません
 import CategorySlider from "@/components/CategorySlider";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+// ★追加: これを忘れていたのがエラーの原因です
+import TopContentManager from "@/components/TopContentManager";
 import { client } from "@/libs/microcms";
 
 // アーカイブ取得
@@ -56,6 +57,7 @@ export default async function Home() {
       type: isProduct ? 'product' : 'journal',
       name: content.title,
       price: isProduct && content.price ? `¥${Number(content.price).toLocaleString()}` : null,
+      rawPrice: isProduct && content.price ? Number(content.price) : 0, // ★フィルタ用に追加
       desc: content.description,
       image: isProduct ? content.thumbnailUrl : content.thumbnail,
       link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
@@ -89,11 +91,7 @@ export default async function Home() {
       </section>
 
       <main className="main-container">
-        {items.length > 0 ? (
-          <MasonryGrid items={items} />
-        ) : (
-          <p style={{textAlign:"center", padding: "40px", color: "#999"}}>No Contents...</p>
-        )}
+        <TopContentManager initialItems={items} categories={categories} />
       </main>
 
       <SiteFooter />
