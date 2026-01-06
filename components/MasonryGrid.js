@@ -17,6 +17,7 @@ export default function MasonryGrid({ items }) {
       {items.map((item) => {
         const href = item.link || (item.id ? `/products/${item.id}` : "#");
         const isExternal = href.startsWith("http");
+        const isProduct = item.type === 'product';
 
         return (
           <div key={item.id} className="pin-card-wrapper">
@@ -25,47 +26,78 @@ export default function MasonryGrid({ items }) {
               className="pin-card"
               target={isExternal ? "_blank" : "_self"}
               rel={isExternal ? "noopener noreferrer" : undefined}
-              style={{ display: 'block', textDecoration: 'none', color: 'inherit' }}
             >
               <div className="pin-image-wrapper">
-                {/* ▼▼▼ 画像表示ロジック修正 ▼▼▼ */}
+                {/* メイン画像 */}
                 {typeof item.image === 'string' ? (
-                  /* アフィリエイト画像(URL文字列) -> 通常のimgタグ (キャッシュ回避・設定不要) */
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="pin-image"
-                    style={{ width: '100%', height: 'auto', display: 'block' }}
-                  />
+                  <img src={item.image} alt={item.name} className="pin-image" />
                 ) : item.image?.url ? (
-                  /* microCMS画像(オブジェクト) -> Next/Image (最適化有効) */
                   <Image 
                     src={item.image.url} 
                     alt={item.name} 
-                    width={item.image.width || 600}
-                    height={item.image.height || 800}
-                    className="pin-image"
-                    style={{ width: '100%', height: 'auto', display: 'block' }}
+                    width={item.image.width || 600} 
+                    height={item.image.height || 800} 
+                    className="pin-image" 
                   />
                 ) : (
-                  <div style={{width:'100%', height:'200px', background:'#eee'}}></div>
+                  <div className="no-image-placeholder">No Image</div>
                 )}
                 
-                <span className={`type-badge ${item.type === 'product' ? 'type-product' : 'type-article'}`}>
-                  {item.type === 'product' ? 'ITEM' : 'JOURNAL'}
-                </span>
+                {/* ★移動: 広告・PR表記を画像の上に配置 */}
+                {isProduct && (
+                  <span className="ad-label">広告・PR</span>
+                )}
                 
+                {/* オーバーレイ */}
                 <div className="pin-overlay">
-                    <div className="save-btn">{item.type === 'product' ? 'Shop' : 'Read'}</div>
+                  <div className={`action-btn ${isProduct ? 'btn-shop' : 'btn-read'}`}>
+                    {isProduct ? (
+                      <>
+                        <span>Shop Now</span>
+                        <svg className="btn-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                      </>
+                    ) : (
+                      <>
+                        <span>Read Story</span>
+                        <svg className="btn-arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
+
+              {/* テキスト情報エリア */}
               <div className="pin-info">
+                
+                {/* (ここにあった ad-label は削除) */}
+
+                {/* カテゴリ (アイコン + テキスト) */}
+                <div className="pin-category-row">
+                  {item.categoryIcon && (
+                    <Image 
+                      src={item.categoryIcon} 
+                      alt="" 
+                      width={20} 
+                      height={20}
+                      className="pin-category-icon"
+                    />
+                  )}
+                  <span className="pin-category">{item.category}</span>
+                </div>
+                
                 <h3 className="pin-title">{item.name}</h3>
-                {item.type === 'product' ? (
+                
+                {item.desc && (
+                  <p className="pin-desc">{item.desc}</p>
+                )}
+
+                {isProduct && item.price && (
                   <p className="pin-price">{item.price}</p>
-                ) : (
-                  <p className="pin-meta">{item.desc}</p>
                 )}
               </div>
             </Link>

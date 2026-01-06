@@ -305,53 +305,253 @@ a { text-decoration: none; color: inherit; }
 .fade-in { animation: fadeInUp 0.8s ease-out forwards; }
 
 
+/* app/globals.css */
+
+/* ... (前略) ... */
+
 /* =========================================
-   Main Layout & Masonry Grid
+   Masonry Grid & Cards (Glassmorphism Style)
+   Encyclopediaセクションに合わせた、透明感と大きな角丸のあるデザイン
 ========================================= */
 .main-container { max-width: 1400px; margin: 60px auto 0; padding: 0 24px; }
 
-/* Masonry: gapを使用した標準的なレイアウト */
 .my-masonry-grid {
   display: flex;
   margin-left: auto; margin-right: auto;
   width: auto; max-width: 1200px;
   justify-content: center;
-  gap: 24px;
+  gap: 32px;
 }
 .my-masonry-grid_column {
-  padding-left: 0 !important; 
+  padding-left: 0 !important;
   background-clip: border-box;
-  max-width: 300px; min-width: 250px;
 }
-.my-masonry-grid_column > div { margin-bottom: 24px; }
+.my-masonry-grid_column > div { margin-bottom: 40px; }
 
-/* Cards */
-.pin-card { margin-bottom: 24px; position: relative; cursor: pointer; }
+/* カード本体 (グラスモーフィズム) */
+.pin-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  
+  /* ボーダー削除 */
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  
+  border-radius: 24px;
+  overflow: hidden;
+  height: 100%;
+  
+  /* 影のみで立体感を出す */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  
+  /* ★修正: アニメーション時間を統一 */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.pin-card:hover {
+  transform: translateY(-8px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* 画像ラッパー */
 .pin-image-wrapper {
-  position: relative; border-radius: 16px; overflow: hidden;
-  background: #f0f0f0; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: transparent;
+  /* 画像の角丸は親要素で切られるため指定なし */
 }
-.pin-image { width: 100%; height: auto; display: block; transition: transform 0.5s; }
-.pin-card:hover .pin-image { transform: scale(1.03); }
 
-.type-badge {
-  position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 20px;
-  font-size: 0.7rem; font-weight: bold; letter-spacing: 0.05em; color: #fff; z-index: 2;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+.pin-image {
+  width: 100%; height: auto; display: block;
+  object-fit: cover;
+  
+  /* ★修正: 画像拡大もカード本体と同じリズムに合わせる */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.type-product { background: #333; }
-.type-article { background: #C5A059; }
 
+.pin-card:hover .pin-image { 
+  transform: scale(1.05); 
+}
+
+/* --- オーバーレイ & ボタン --- */
 .pin-overlay {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.1); opacity: 0; transition: opacity 0.2s;
-  display: flex; justify-content: flex-end; align-items: flex-start; padding: 12px;
+  position: absolute; inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  display: flex; align-items: center; justify-content: center;
+  
+  /* ★修正: 出現タイミングを統一 */
+  transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
+
 .pin-card:hover .pin-overlay { opacity: 1; }
-.save-btn { background: #E60023; color: white; font-weight: bold; padding: 8px 16px; border-radius: 24px; font-size: 0.9rem; }
-.pin-info { padding: 10px 4px; }
-.pin-title { font-size: 0.95rem; font-weight: 500; margin: 0 0 6px; line-height: 1.5; }
-.pin-price { font-family: var(--font-en); font-weight: 700; font-size: 1.1rem; color: var(--text-main); }
+
+.action-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-family: var(--font-en);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  
+  /* 初期位置 */
+  transform: translateY(15px); /* 少し下から */
+  
+  /* ★修正: 移動アニメーションを統一 */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), 
+              background 0.3s ease; /* 背景色変化だけは少し早くてもOK */
+}
+
+.pin-card:hover .action-btn { 
+  transform: translateY(0); 
+}
+
+.btn-shop {
+  background: rgba(255, 255, 255, 0.95); 
+  color: #111;
+}
+.btn-read {
+  background: rgba(50, 50, 50, 0.8);
+  color: #fff;
+}
+.btn-arrow { width: 14px; height: 14px; }
+
+/* --- テキスト情報エリア --- */
+/* app/globals.css */
+
+/* ... (前略) ... */
+
+/* --- テキスト情報エリア --- */
+.pin-info {
+  background: transparent;
+  padding: 20px 24px 28px; 
+  text-align: left;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+.ad-label {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 5; /* 画像より手前、オーバーレイより奥 */
+  
+  display: inline-block;
+  font-family: var(--font-jp);
+  font-size: 0.6rem;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  line-height: 1;
+  color: #333;
+  
+  /* アイコン風のデザイン */
+  background: rgba(255, 255, 255, 0.85); /* 半透明の白 */
+  padding: 5px 8px;
+  border-radius: 16px; /* 小さめの角丸 */
+  border: 1px solid rgba(0, 0, 0, 0.05); /* ほんのり枠線 */
+  backdrop-filter: blur(4px); /* すりガラス効果 */
+  /* box-shadow: 0 2px 4px rgba(0,0,0,0.05); */
+}
+
+/* カテゴリ行のラッパー (Flexboxで横並び) */
+.pin-category-row {
+  display: flex;
+  align-items: center; /* 垂直方向中央揃え */
+  gap: 8px;            /* アイコンと文字の間隔 */
+  margin-bottom: 10px; /* タイトルとの間隔 */
+}
+
+/* カテゴリアイコン */
+.pin-category-icon {
+  width: 20px;         /* 控えめなサイズ */
+  height: 20px;
+  object-fit: contain; /* 画像全体を表示 */
+  /* 少しだけ影を落として立体感を */
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.15));
+}
+
+/* カテゴリテキスト */
+.pin-category {
+  display: block;
+  font-family: var(--font-en);
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  color: #a3937d;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1; /* アイコンと高さを合わせやすくする */
+  margin-bottom: 0; /* ラッパーで余白管理するためゼロに */
+}
+
+/* ... (後略) ... */
+/* タイトル */
+.pin-title {
+  font-family: var(--font-jp);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #222; /* 濃いグレーで柔らかく */
+  line-height: 1.6;
+  margin: 0 0 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ディスクリプション */
+.pin-desc {
+  font-family: var(--font-jp);
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.8;
+  font-weight: 300;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  /* 下端を揃えるためのマージン調整 */
+  margin-bottom: auto; 
+}
+
+/* 価格 */
+.pin-price {
+  font-family: var(--font-en);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #111;
+  margin: 0;
+  letter-spacing: 0.02em;
+  padding-top: 16px;
+  display: block;
+  width: 100%;
+}
+
+/* SP調整 */
+@media (max-width: 768px) {
+
+}
+
+/* SP調整 */
+@media (max-width: 768px) {
+
+}
+
+/* SP調整 */
+@media (max-width: 768px) {
+
+}
 .pin-meta { font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
 
 /* =========================================
@@ -1324,20 +1524,20 @@ a { text-decoration: none; color: inherit; }
   .skeleton-circle { width: 60px; height: 60px; }
 
   /* Masonry Grid Fix (横スクロール対策) */
-  .my-masonry-grid {
-    margin-left: 0;
-    width: 100%;
-    gap: 12px;
-  }
-  .my-masonry-grid_column {
-    padding-left: 0 !important;
-    background-clip: border-box;
-    min-width: 0 !important; 
-    max-width: none !important;
-  }
+  .my-masonry-grid { gap: 16px; }
+  .my-masonry-grid_column > div { margin-bottom: 24px; }
+  
+  .pin-card { border-radius: 16px; } /* スマホでは角丸を少し小さく */
+  .pin-image-wrapper { border-top-left-radius: 16px; border-top-right-radius: 16px; }
+  
+  .pin-info { padding: 20px; }
+  .pin-title { font-size: 1.0rem; }
+  .pin-desc { -webkit-line-clamp: 2; }
+
   .my-masonry-grid_column > div {
     margin-bottom: 16px;
   }
+
 
   /* Category Detail Mobile */
   .category-title-en { font-size: 2rem; }

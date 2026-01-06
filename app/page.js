@@ -2,9 +2,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import MasonryGrid from "@/components/MasonryGrid";
-import CategorySlider from "@/components/CategorySlider"; // ★追加
-import SiteHeader from "@/components/SiteHeader"; // ★追加
-import SiteFooter from "@/components/SiteFooter"; // ★追加
+import CategorySlider from "@/components/CategorySlider";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import { client } from "@/libs/microcms";
 
 // アーカイブ取得
@@ -12,6 +12,8 @@ async function getArchives() {
   try {
     const data = await client.get({
       endpoint: "archive",
+      // relatedJewelries (カテゴリ) を取得したいため depth を指定するか、デフォルトで取得されるか確認
+      // 通常microCMSは深度1まで取得しますが、念のため
       queries: { limit: 100, orders: "-publishedAt" },
       customRequestInit: { next: { revalidate: 60 } } 
     });
@@ -43,6 +45,12 @@ export default async function Home() {
   // MasonryGrid用にデータを整形
   const items = archives.map((content) => {
     const isProduct = content.type.includes('product');
+    // 関連カテゴリの情報を取得
+    const relatedCategory = content.relatedJewelries?.[0];
+    const categoryName = relatedCategory?.name || (isProduct ? "Item" : "Journal");
+    // ★追加: カテゴリのメイン画像があれば取得
+    const categoryIcon = relatedCategory?.image?.url || null;
+
     return {
       id: content.slug,
       type: isProduct ? 'product' : 'journal',
@@ -51,6 +59,8 @@ export default async function Home() {
       desc: content.description,
       image: isProduct ? content.thumbnailUrl : content.thumbnail,
       link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
+      category: categoryName,
+      categoryIcon: categoryIcon, // ★追加: アイコン用URL
     };
   });
 
@@ -63,7 +73,6 @@ export default async function Home() {
           <h1 className="hero-title">Discover the Unseen <br /> Brilliance</h1>
           <p className="hero-subtitle">歴史に磨かれた一石との出会い。洗練された宝石の世界へ。</p>
           
-          {/* ▼▼▼ 復活: 検索バー ▼▼▼ */}
           <div className="hero-search-wrapper">
             <div className="hero-search-container">
               <svg className="hero-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,11 +81,9 @@ export default async function Home() {
               <input type="text" className="hero-search-input" placeholder="宝石名、色などで検索..." />
             </div>
           </div>
-          {/* ▲▲▲ ここまで ▲▲▲ */}
         </div>
 
         <div className="hero-bottom-categories">
-          {/* ▼▼▼ 復活: スライダーコンポーネント呼び出し ▼▼▼ */}
           <CategorySlider categories={categories} />
         </div>
       </section>
