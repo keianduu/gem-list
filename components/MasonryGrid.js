@@ -4,9 +4,11 @@
 import Masonry from 'react-masonry-css';
 import Link from "next/link";
 import Image from "next/image";
+import { useFavorites } from '@/hooks/useFavorites';
 
 export default function MasonryGrid({ items }) {
   const breakpointColumnsObj = { default: 4, 1024: 3, 768: 2 };
+  const { toggleFavorite, checkIsFavorite, isLoaded } = useFavorites();
 
   return (
     <Masonry
@@ -18,6 +20,8 @@ export default function MasonryGrid({ items }) {
         const href = item.link || (item.id ? `/products/${item.id}` : "#");
         const isExternal = href.startsWith("http");
         const isProduct = item.type === 'product';
+        
+        const isFav = isLoaded ? checkIsFavorite(item.id) : false;
 
         return (
           <div key={item.id} className="pin-card-wrapper">
@@ -44,11 +48,13 @@ export default function MasonryGrid({ items }) {
                   <div className="no-image-placeholder">No Image</div>
                 )}
                 
-                {/* ★移動: 広告・PR表記を画像の上に配置 */}
+                {/* 広告・PRラベル (画像上) */}
                 {isProduct && (
                   <span className="ad-label">広告・PR</span>
                 )}
                 
+                {/* (ここにあったお気に入りボタンを削除) */}
+
                 {/* オーバーレイ */}
                 <div className="pin-overlay">
                   <div className={`action-btn ${isProduct ? 'btn-shop' : 'btn-read'}`}>
@@ -71,34 +77,48 @@ export default function MasonryGrid({ items }) {
                 </div>
               </div>
 
-              {/* テキスト情報エリア */}
+              {/* テキスト情報 */}
               <div className="pin-info">
-                
-                {/* (ここにあった ad-label は削除) */}
-
-                {/* カテゴリ (アイコン + テキスト) */}
+                {/* カテゴリ行 (ここにボタンを追加) */}
                 <div className="pin-category-row">
-                  {item.categoryIcon && (
-                    <Image 
-                      src={item.categoryIcon} 
-                      alt="" 
-                      width={20} 
-                      height={20}
-                      className="pin-category-icon"
-                    />
-                  )}
-                  <span className="pin-category">{item.category}</span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {item.categoryIcon && (
+                      <Image 
+                        src={item.categoryIcon} 
+                        alt="" 
+                        width={20} 
+                        height={20}
+                        className="pin-category-icon"
+                      />
+                    )}
+                    <span className="pin-category">{item.category}</span>
+                  </div>
+
+                  {/* ★移動: お気に入りボタン (テキストエリア内へ) */}
+                  <button
+                    className={`fav-btn ${isFav ? 'active' : ''}`}
+                    onClick={(e) => {
+                      e.preventDefault(); 
+                      e.stopPropagation();
+                      toggleFavorite(item);
+                    }}
+                    aria-label="Add to favorites"
+                  >
+                    <svg 
+                      className="fav-icon" 
+                      fill={isFav ? "#E60023" : "none"} 
+                      stroke={isFav ? "#E60023" : "#ccc"} /* 未選択時は薄いグレーにして目立たなくする */
+                      viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                  </button>
                 </div>
                 
                 <h3 className="pin-title">{item.name}</h3>
                 
-                {item.desc && (
-                  <p className="pin-desc">{item.desc}</p>
-                )}
-
-                {isProduct && item.price && (
-                  <p className="pin-price">{item.price}</p>
-                )}
+                {item.desc && <p className="pin-desc">{item.desc}</p>}
+                {isProduct && item.price && <p className="pin-price">{item.price}</p>}
               </div>
             </Link>
           </div>

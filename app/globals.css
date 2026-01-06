@@ -467,9 +467,11 @@ a { text-decoration: none; color: inherit; }
 /* カテゴリ行のラッパー (Flexboxで横並び) */
 .pin-category-row {
   display: flex;
-  align-items: center; /* 垂直方向中央揃え */
-  gap: 8px;            /* アイコンと文字の間隔 */
-  margin-bottom: 10px; /* タイトルとの間隔 */
+  align-items: center; 
+  /* ★変更: アイコン+文字(左) と ハート(右) を両端に配置 */
+  justify-content: space-between; 
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 /* カテゴリアイコン */
@@ -537,23 +539,71 @@ a { text-decoration: none; color: inherit; }
   display: block;
   width: 100%;
 }
-
-/* SP調整 */
-@media (max-width: 768px) {
-
-}
-
-/* SP調整 */
-@media (max-width: 768px) {
-
-}
-
-/* SP調整 */
-@media (max-width: 768px) {
-
-}
 .pin-meta { font-size: 0.8rem; color: var(--text-sub); margin-top: 4px; }
 
+/* app/globals.css に追加 */
+
+/* お気に入りボタン */
+.fav-btn {
+  /* position: absolute;  ← 削除 (文書フローに従う) */
+  position: relative;
+  
+  /* テキストエリア内でのバランスを考え、少しだけ小さく調整 (元32px) */
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  
+  /* ★サークルデザインを維持 */
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08); /* ほんのり枠線 */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 0;
+  
+  /* 縮まないように固定 */
+  flex-shrink: 0;
+  margin-left: 8px; /* 左側の文字との余白 */
+}
+
+/* ホバー時の動き */
+.fav-btn:hover {
+  transform: translateY(-2px); /* 少し浮く */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: #fff;
+}
+
+.fav-btn:active {
+  transform: scale(0.95);
+}
+
+.fav-icon {
+  width: 16px; /* ボタンサイズに合わせて微調整 */
+  height: 16px;
+  color: #ccc;
+  transition: fill 0.2s, stroke 0.2s, color 0.2s;
+}
+
+/* アクティブ時の色 */
+.fav-btn.active .fav-icon {
+  color: #E60023;
+}
+
+.icon-badge-dot {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: #E60023; /* ハートと同じ赤色 */
+  border-radius: 50%;
+  border: 1px solid #fff;    /* 背景に埋もれないよう白フチをつける */
+  z-index: 10;
+  pointer-events: none;      /* クリックを邪魔しない */
+}
 /* =========================================
    Category Detail Page
 ========================================= */
