@@ -2196,3 +2196,95 @@ a { text-decoration: none; color: inherit; }
   padding-right: 0;
   width: 100%;
 }
+
+/* app/globals.css の末尾に追加 */
+
+/* =========================================
+   Category Index Page
+========================================= */
+.category-index-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* スマホでも見やすい幅 */
+  gap: 40px 24px;
+  width: 100%;
+  margin-top: 40px;
+}
+
+/* 一覧ページ用のカードスタイル（既存のcategory-cardをベースに調整） */
+.category-index-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.category-index-card:hover {
+  transform: translateY(-8px);
+}
+
+.category-index-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 6px 10px rgba(0, 0, 0, 0.15));
+  transition: filter 0.3s;
+}
+
+.category-index-card:hover .category-index-thumb {
+  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)) brightness(1.05);
+}
+
+.category-index-name {
+  font-family: var(--font-en);
+  font-size: 1.0rem;
+  font-weight: 500;
+  color: #333;
+  line-height: 1.2;
+}
+
+.category-index-name-ja {
+  font-family: var(--font-jp);
+  font-size: 0.7rem;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* app/globals.css の末尾付近 */
+
+/* TOPページ検索下のリンク */
+.hero-search-sublink {
+  margin-top: 16px;
+  font-family: var(--font-en);
+  font-size: 0.9rem;
+  
+  /* ★修正: 文字色を白(#fff)から濃いグレー(#333)に変更し、視認性を確保 */
+  color: #333; 
+  
+  text-decoration: none;
+  opacity: 0.8;
+  transition: all 0.3s ease; /* transitionをまとめて指定 */
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  
+  /* ★修正: 背景の白さを強めて文字を浮き立たせる */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 8px 20px; /* 少しパディングを広げて押しやすく */
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  
+  /* 影を追加して立体感を出す */
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.hero-search-sublink:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  /* ホバー時は背景をより白く、影を濃く */
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  color: #000;
+}
