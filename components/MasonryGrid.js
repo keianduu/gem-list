@@ -53,8 +53,6 @@ export default function MasonryGrid({ items }) {
                   <span className="ad-label">広告・PR</span>
                 )}
                 
-                {/* (ここにあったお気に入りボタンを削除) */}
-
                 {/* オーバーレイ */}
                 <div className="pin-overlay">
                   <div className={`action-btn ${isProduct ? 'btn-shop' : 'btn-read'}`}>
@@ -81,7 +79,8 @@ export default function MasonryGrid({ items }) {
               <div className="pin-info">
                 {/* カテゴリ行 (ここにボタンを追加) */}
                 <div className="pin-category-row">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {/* ★修正: インラインスタイルを削除し、クラス名を付与 */}
+                  <div className="pin-category-wrapper">
                     {item.categoryIcon && (
                       <Image 
                         src={item.categoryIcon} 
@@ -94,7 +93,7 @@ export default function MasonryGrid({ items }) {
                     <span className="pin-category">{item.category}</span>
                   </div>
 
-                  {/* ★移動: お気に入りボタン (テキストエリア内へ) */}
+                  {/* お気に入りボタン */}
                   <button
                     className={`fav-btn ${isFav ? 'active' : ''}`}
                     onClick={(e) => {
@@ -107,7 +106,7 @@ export default function MasonryGrid({ items }) {
                     <svg 
                       className="fav-icon" 
                       fill={isFav ? "#E60023" : "none"} 
-                      stroke={isFav ? "#E60023" : "#ccc"} /* 未選択時は薄いグレーにして目立たなくする */
+                      stroke={isFav ? "#E60023" : "#ccc"}
                       viewBox="0 0 24 24"
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />

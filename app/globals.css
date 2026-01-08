@@ -313,20 +313,38 @@ a { text-decoration: none; color: inherit; }
    Masonry Grid & Cards (Glassmorphism Style)
    Encyclopediaセクションに合わせた、透明感と大きな角丸のあるデザイン
 ========================================= */
+/* =========================================
+   Masonry Grid & Cards (Glassmorphism Style)
+   Encyclopediaセクションに合わせた、透明感と大きな角丸のあるデザイン
+========================================= */
 .main-container { max-width: 1400px; margin: 60px auto 0; padding: 0 24px; }
 
+/* Masonry Grid Base (PC) */
 .my-masonry-grid {
   display: flex;
-  margin-left: auto; margin-right: auto;
-  width: auto; max-width: 1200px;
-  justify-content: center;
-  gap: 32px;
+  /* width: auto にして、ネガティブマージンで横幅を広げる */
+  width: auto;
+  margin-left: -32px; /* PCでのガター分を左に食い込ませる */
+  
+  /* gapは廃止（ライブラリの計算と競合するため） */
+  gap: 0; 
+  
+  /* 中央寄せなどは不要（フレックスフローで自然に配置） */
 }
+
+/* カラム設定 (PC) */
 .my-masonry-grid_column {
-  padding-left: 0 !important;
-  background-clip: border-box;
+  /* 左側にパディングを入れて隙間を作る */
+  padding-left: 32px; 
+  background-clip: padding-box;
 }
-.my-masonry-grid_column > div { margin-bottom: 40px; }
+
+.my-masonry-grid_column > div { 
+  margin-bottom: 32px; /* 縦方向の隙間 */
+}
+
+/* カード本体 (グラスモーフィズム) */
+/* ... (以降の .pin-card などのスタイルは変更なし) ... */
 
 /* カード本体 (グラスモーフィズム) */
 .pin-card {
@@ -474,6 +492,18 @@ a { text-decoration: none; color: inherit; }
   width: 100%;
 }
 
+/* ★追加: カテゴリ名とアイコンを囲むラッパー */
+.pin-category-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  /* これらが重要: 幅を柔軟にしつつ、あふれたら縮める */
+  flex: 1; 
+  min-width: 0; 
+  overflow: hidden;
+}
+
 /* カテゴリアイコン */
 .pin-category-icon {
   width: 20px;         /* 控えめなサイズ */
@@ -494,6 +524,11 @@ a { text-decoration: none; color: inherit; }
   font-weight: 600;
   line-height: 1; /* アイコンと高さを合わせやすくする */
   margin-bottom: 0; /* ラッパーで余白管理するためゼロに */
+
+  /* ★追加: 長いテキストを「...」で省略する設定 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ... (後略) ... */
@@ -1872,6 +1907,10 @@ a { text-decoration: none; color: inherit; }
    Mobile Optimization (Media Queries)
    スマホ用スタイル一括設定
 ========================================= */
+/* =========================================
+   Mobile Optimization (Media Queries)
+   スマホ用スタイル一括設定
+========================================= */
 @media (max-width: 900px) {
   /* Tablet/Small PC */
   .accessory-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -1882,10 +1921,7 @@ a { text-decoration: none; color: inherit; }
   /* Mobile General */
   .hero-area { height: 100svh; min-height: 600px; }
   .hero-center-content { 
-    margin-top: 0; /* 以前の -40px を解除 */
-    
-    /* スライダーがある分、計算上の中央が上寄りになるため、
-       パディングを足して視覚的に下に押し下げて「ど真ん中」に見せる */
+    margin-top: 0;
     padding-top: 80px; 
   }
   .hero-title { font-size: 2.5rem; }
@@ -1898,247 +1934,118 @@ a { text-decoration: none; color: inherit; }
     margin-bottom: -30px;
   }
   .marquee-content {
-    gap: 24px; /* スマホでのアイテム間隔 */
-    animation-duration: 600s; /* スマホは少し速くてもOK */
+    gap: 24px;
+    animation-duration: 600s;
   }
   .category-scroll-wrap {
-    gap: 8px; /* スマホでの間隔 */
-    
-    /* スマホの位置調整 */
+    gap: 8px;
     padding-top: 60px;
     padding-bottom: 30px;
     margin-top: 20px;
     margin-bottom: -30px;
-    
     padding-left: 16px;
     padding-right: 16px;
-    
-    /* スナップ設定の削除（上書き解除） */
-    /* scroll-snap-type: x mandatory; ← 不要 */
   }
   
-  .category-card {
-    /* scroll-snap-align: start; ← 不要 */
-  }
   .category-thumb { width: 60px; height: 60px; }
 
-  /* 1. オーブの数を減らす（3つ消して2つだけにする） */
-  .orb-3, .orb-4, .orb-5 {
-    display: none !important;
-  }
+  /* オーブ調整 */
+  .orb-3, .orb-4, .orb-5 { display: none !important; }
+  .orb { filter: blur(30px) !important; animation-duration: 60s !important; }
+  .orb-1 { top: 10%; left: 10%; width: 300px; height: 300px; background: #a8edea; }
+  .orb-2 { top: 60%; left: 50%; width: 250px; height: 250px; background: #fed6e3; }
 
-  /* 2. 残ったオーブの動きをゆっくり＆ぼかしを軽くする */
-  .orb {
-    /* ぼかし半径を小さくして計算負荷を下げる (60px -> 30px) */
-    filter: blur(30px) !important;
-    
-    /* アニメーション時間を長くしてゆっくり動かす (例: 60秒かけて1周) */
-    animation-duration: 60s !important;
-  }
-
-  /* 3. 残った2つの配置バランスを調整（画面全体をカバーするように） */
-  .orb-1 {
-    top: 10%; left: 10%;
-    width: 300px; height: 300px; /* サイズも少し調整 */
-    background: #a8edea; /* 色はそのまま */
-  }
-  .orb-2 {
-    top: 60%; left: 50%;
-    width: 250px; height: 250px;
-    background: #fed6e3;
-  }
-
-  /* Main Container (TOPページ商品一覧)の左右余白を 16px に */
-  .main-container { padding: 0 16px; }
-
-  /* ★追加: お気に入り・About・Privacy Policyページの左右余白も 16px に揃える */
-  .journal-main { 
-    padding-left: 16px; 
-    padding-right: 16px; 
-  }
-
-  /* Swiper Shadow Fix & Padding Match */
-  /* ▼ MobileでのSwiper位置調整 ▼ */
+  /* Swiper調整 */
   .hero-bottom-categories { min-height: 140px; }
-  .category-swiper {
-    /* パディングで影のスペース確保 */
-    padding-top: 60px !important;
-    padding-bottom: 30px !important; /* 下の影が長いので多めに */
-    
-    /* 位置調整: PCよりさらに下へ */
-    margin-top: 20px; 
-    margin-bottom: -30px; 
-  }
   .skeleton-container { justify-content: flex-start; gap: 12px; }
   .skeleton-circle { width: 60px; height: 60px; }
 
-  /* Masonry Grid Fix (横スクロール対策) */
-  .my-masonry-grid { gap: 16px; }
-  .my-masonry-grid_column > div { margin-bottom: 24px; }
+  .my-masonry-grid { 
+    /* スマホ用のネガティブマージン */
+    margin-left: -16px !important; 
+    gap: 0 !important;
+    width: auto !important;
+  }
   
-  .pin-card { border-radius: 16px; } /* スマホでは角丸を少し小さく */
+  .my-masonry-grid_column {
+    /* スマホ用のカラム間隔 */
+    padding-left: 16px !important;
+  }
+
+  .my-masonry-grid_column > div { 
+    margin-bottom: 16px !important; /* 縦方向もスマホ用に狭く */
+  }
+  .pin-card { border-radius: 16px; }
   .pin-image-wrapper { border-top-left-radius: 16px; border-top-right-radius: 16px; }
-  
   .pin-info { padding: 20px; }
   .pin-title { font-size: 1.0rem; }
   .pin-desc { -webkit-line-clamp: 2; }
 
-  .my-masonry-grid_column > div {
-    margin-bottom: 16px;
-  }
-
+  /* Filter UI */
   .filter-glass-bar {
-    border-radius: 24px; /* スマホでは角丸を少し抑える */
+    border-radius: 24px;
     padding: 16px;
     gap: 12px;
-    flex-direction: column; /* 縦積みに */
+    flex-direction: column;
     align-items: stretch;
   }
+  .custom-select-wrapper, .custom-select { width: 100%; border-radius: 12px; }
+  .custom-select-wrapper { background: rgba(255,255,255,0.5); }
+  .filter-divider { display: none; }
+  .toggle-wrapper { justify-content: center; background: rgba(255,255,255,0.5); border-radius: 12px; }
   
-  .custom-select-wrapper {
-    width: 100%;
-    background: rgba(255,255,255,0.5); /* 背景色を少し足して視認性確保 */
-    border-radius: 12px;
-  }
-  
-  .custom-select {
-    width: 100%;
-    border-radius: 12px;
-  }
-  
-  .filter-divider {
-    display: none; /* スマホでは仕切り線不要 */
-  }
-  
-  .toggle-wrapper {
-    justify-content: center;
-    background: rgba(255,255,255,0.5);
-    border-radius: 12px;
-  }
-  /* スマホでは下から出るシート風に */
-  .filter-modal-overlay {
-    align-items: flex-end; /* 下寄せ */
-  }
+  .filter-modal-overlay { align-items: flex-end; }
   .filter-modal-content {
     max-width: 100%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     padding: 30px 24px 40px;
   }
-  .floating-filter-btn {
-    bottom: 20px;
-    right: 20px;
-    padding: 12px 20px;
-  }
+  .floating-filter-btn { bottom: 20px; right: 20px; padding: 12px 20px; }
 
   .section-title { font-size: 1.8rem; }
   
-  /* スマホでの調整 */
-  .content-type-tabs {
-    display: flex;       /* inline-flexからflexへ */
-    width: 100%;         /* 幅いっぱい */
-    max-width: 340px;    /* 広がりすぎないように制限 */
-    margin: 0 auto;      /* 中央寄せ */
-  }
-  
-  .type-tab {
-    width: auto; /* 固定幅を解除 */
-    flex: 1;     /* 均等に3等分 */
-    font-size: 0.75rem;
-    padding: 9px 0;
-  }
-  
+  .content-type-tabs { display: flex; width: 100%; max-width: 340px; margin: 0 auto; }
+  .type-tab { width: auto; flex: 1; font-size: 0.75rem; padding: 9px 0; }
 
-  /* Category Detail Mobile */
+  /* Category & Page Layout */
   .category-title-en { font-size: 2rem; }
   .category-desc { text-align: left; text-align-last: left; }
   
-  /* 共通余白 16px に統一 */
-  .breadcrumb { padding: 16px; }
-  .category-items-container { padding: 0 16px; }
-  
-  /* Encyclopedia枠の左右余白確保 */
-  .gem-infographic-section {
-    padding: 30px 20px;
-    margin: 30px 16px;
-    width: auto;
-  }
-  
+  /* Encyclopedia */
+  .gem-infographic-section { padding: 30px 20px; margin: 30px 16px; width: auto; }
   .infographic-grid { grid-template-columns: 1fr; }
   .info-glass-card.full-width { grid-column: span 1; }
   .location-flags-container { gap: 12px; }
   .flag-icon { font-size: 1.5rem; }
-
-  /* Color Variation 2列維持 */
   .color-grid { grid-template-columns: repeat(2, 1fr); }
+  .rough-stone-img-wrapper { width: 80px; height: 80px; }
 
-  /* 原石画像 SPサイズ: 80px */
-  .rough-stone-img-wrapper {
-    width: 80px;
-    height: 80px;
-  }
-
-  /* =========================================
-    Journal Detail Page
-  ========================================= */
+  /* Journal & Embed */
   .journal-header { padding: 30px 20px; }
   .journal-title { font-size: 1.8rem; }
-  
-  .journal-content-glass { 
-    padding: 30px 20px; 
-    margin: 0 16px; 
-    width: auto; /* スマホでは最大幅解除 */
-    border-radius: 20px; 
-  }
+  .journal-content-glass { padding: 30px 20px; margin: 0 16px; width: auto; border-radius: 20px; }
   .journal-cover-in-glass { margin-bottom: 30px; border-radius: 12px; }
   
-  .product-embed-card {
-    flex-direction: column;
-    padding: 30px 24px;
-    align-items: stretch;
-  }
-  .product-embed-card {
-    flex-direction: column;
-    padding: 30px 24px;
-    align-items: stretch; /* 子要素を幅いっぱいに */
-  }
-
-  .embed-thumb {
-    /* ★修正: SPでは幅100% (左右MAX) */
-    width: 100%;
-    max-width: none; 
-    margin: 0 0 24px 0;
-  }
-
-  .embed-info {
-    padding-left: 0;
-    text-align: left; /* 基本は左寄せ */
-  }
+  .product-embed-card { flex-direction: column; padding: 30px 24px; align-items: stretch; }
+  .embed-thumb { width: 100%; max-width: none; margin: 0 0 24px 0; }
+  .embed-info { padding-left: 0; text-align: left; }
+  .embed-title { font-size: 1.4rem; text-align: left; }
+  .embed-description { text-align: left; }
+  .embed-price { font-size: 1.5rem; text-align: center; margin-top: 8px; margin-bottom: 20px; }
+  .embed-btn { align-self: center; width: 100%; max-width: 320px; text-align: center; }
   
-  .embed-title {
-    font-size: 1.4rem;
-    text-align: left; /* ★タイトル左寄せ */
-  }
-
-  .embed-description {
-    text-align: left; /* ★説明文左寄せ */
-  }
-  
-  .embed-price {
-    font-size: 1.5rem;
-    text-align: center; /* ★価格は中央寄せ（画像指示通り） */
-    margin-top: 8px;    /* 少し間隔調整 */
-    margin-bottom: 20px;
-  }
-  
-  .embed-btn {
-    align-self: center; /* ★ボタンは中央寄せ */
-    width: 100%;        /* ボタン幅を広げてタップしやすく */
-    max-width: 320px;   /* 広がりすぎ防止 */
-    text-align: center;
-  }
   .item-detail-card { grid-template-columns: 1fr; }
   .item-image { height: 300px; }
+
+  /* ★★★ コンテナ余白の統一 (16px) ★★★ */
+  .main-container,
+  .journal-main { 
+    padding-left: 16px; 
+    padding-right: 16px; 
+  }
+  
+  .category-items-container { padding: 0 16px; }
 }
 
 @media (max-width: 600px) {
@@ -2146,3 +2053,13 @@ a { text-decoration: none; color: inherit; }
   .color-section-title { font-size: 1.6rem; }
 }
 
+/* =========================================
+   共通修正: 二重余白の解消
+   ========================================= */
+/* .journal-main には既にpaddingがあるため、
+   中の .breadcrumb の左右paddingを削除して、左端をコンテナに揃える */
+.journal-main .breadcrumb {
+  padding-left: 0;
+  padding-right: 0;
+  width: 100%;
+}
