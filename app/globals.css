@@ -1282,12 +1282,15 @@ a { text-decoration: none; color: inherit; }
   padding-bottom: 120px;
   min-height: 100vh;
   position: relative;
-  z-index: 1; /* 背景より手前に */
+  z-index: 1;
   
-  /* ▼カテゴリページと幅・余白を合わせるための設定▼ */
   max-width: 1200px; 
   margin: 0 auto;
   width: 100%;
+
+  /* ★追加: TOPページ(.main-container)と同様の余白を確保 */
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
 /* 記事コンテンツを中央に配置するためのラッパー */
@@ -1947,6 +1950,12 @@ a { text-decoration: none; color: inherit; }
 
   /* Main Container (TOPページ商品一覧)の左右余白を 16px に */
   .main-container { padding: 0 16px; }
+
+  /* ★追加: お気に入り・About・Privacy Policyページの左右余白も 16px に揃える */
+  .journal-main { 
+    padding-left: 16px; 
+    padding-right: 16px; 
+  }
 
   /* Swiper Shadow Fix & Padding Match */
   /* ▼ MobileでのSwiper位置調整 ▼ */

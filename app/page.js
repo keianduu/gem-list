@@ -1,10 +1,9 @@
+/* app/page.js */
 import Link from "next/link";
 import Image from "next/image";
-// MasonryGridはTopContentManagerの中で使うのでここでは不要になりますが、念のため残しておいてもエラーにはなりません
 import CategorySlider from "@/components/CategorySlider";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-// ★追加: これを忘れていたのがエラーの原因です
 import TopContentManager from "@/components/TopContentManager";
 import { client } from "@/libs/microcms";
 
@@ -13,8 +12,7 @@ async function getArchives() {
   try {
     const data = await client.get({
       endpoint: "archive",
-      // relatedJewelries (カテゴリ) を取得したいため depth を指定するか、デフォルトで取得されるか確認
-      // 通常microCMSは深度1まで取得しますが、念のため
+      // ★修正: accessory (参照フィールド) も取得するため depth を確保
       queries: { limit: 100, orders: "-publishedAt" },
       customRequestInit: { next: { revalidate: 60 } } 
     });
@@ -39,30 +37,56 @@ async function getCategories() {
   }
 }
 
+// ★追加: アクセサリマスター取得
+async function getAccessories() {
+  try {
+    const data = await client.get({
+      endpoint: "accessories",
+      queries: { limit: 100 },
+      customRequestInit: { next: { revalidate: 3600 } }
+    });
+    return data.contents;
+  } catch (err) {
+    console.error("Accessories fetch error:", err);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const archives = await getArchives();
-  const categories = await getCategories();
+  // 並列でデータ取得
+  const [archives, categories, accessories] = await Promise.all([
+    getArchives(),
+    getCategories(),
+    getAccessories()
+  ]);
 
   // MasonryGrid用にデータを整形
   const items = archives.map((content) => {
     const isProduct = content.type.includes('product');
-    // 関連カテゴリの情報を取得
     const relatedCategory = content.relatedJewelries?.[0];
     const categoryName = relatedCategory?.name || (isProduct ? "Item" : "Journal");
-    // ★追加: カテゴリのメイン画像があれば取得
     const categoryIcon = relatedCategory?.image?.url || null;
+
+    // ★追加: アクセサリ情報の取得 (archive APIに accessory フィールドがある前提)
+    // 参照フィールドが配列か単体かで処理を分けますが、基本は単体を想定
+    const relatedAccessory = Array.isArray(content.accessory) 
+      ? content.accessory[0] 
+      : content.accessory;
+    
+    const accessoryName = relatedAccessory?.name || null;
 
     return {
       id: content.slug,
       type: isProduct ? 'product' : 'journal',
       name: content.title,
       price: isProduct && content.price ? `¥${Number(content.price).toLocaleString()}` : null,
-      rawPrice: isProduct && content.price ? Number(content.price) : 0, // ★フィルタ用に追加
+      rawPrice: isProduct && content.price ? Number(content.price) : 0,
       desc: content.description,
       image: isProduct ? content.thumbnailUrl : content.thumbnail,
       link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
       category: categoryName,
-      categoryIcon: categoryIcon, // ★追加: アイコン用URL
+      categoryIcon: categoryIcon,
+      accessory: accessoryName, // ★フィルタ用に追加
     };
   });
 
@@ -91,7 +115,12 @@ export default async function Home() {
       </section>
 
       <main className="main-container">
-        <TopContentManager initialItems={items} categories={categories} />
+        {/* ★修正: accessories も渡す */}
+        <TopContentManager 
+          initialItems={items} 
+          categories={categories} 
+          accessories={accessories}
+        />
       </main>
 
       <SiteFooter />

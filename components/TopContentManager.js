@@ -5,10 +5,11 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import MasonryGrid from './MasonryGrid';
 import FilterPopup from './FilterPopup';
 
-export default function TopContentManager({ initialItems, categories }) {
+export default function TopContentManager({ initialItems, categories, accessories }) { // ★accessories受け取り
   // フィルター状態
   const [filters, setFilters] = useState({
     category: "",
+    accessory: "", // ★追加
     priceRange: "",
     contentType: "all",
   });
@@ -30,12 +31,16 @@ export default function TopContentManager({ initialItems, categories }) {
   // 選択肢の計算
   const availableOptions = useMemo(() => {
     const activeCategoryNames = new Set();
+    const activeAccessoryNames = new Set(); // ★追加
     const activePriceKeys = new Set();
 
     initialItems.forEach(item => {
+      // コンテンツタイプでフィルタリングされた候補から選択肢を作る
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return;
 
       if (item.category) activeCategoryNames.add(item.category);
+      if (item.accessory) activeAccessoryNames.add(item.accessory); // ★追加
+
       if (item.type === 'product' && typeof item.rawPrice === 'number') {
         const p = item.rawPrice;
         if (p < 10000) activePriceKeys.add('under-10000');
@@ -54,15 +59,18 @@ export default function TopContentManager({ initialItems, categories }) {
 
     return {
       categories: categories.filter(cat => activeCategoryNames.has(cat.name)),
+      accessories: accessories ? accessories.filter(acc => activeAccessoryNames.has(acc.name)) : [], // ★追加: 存在するアクセサリのみ
       priceRanges: priceDefinitions.filter(p => activePriceKeys.has(p.value))
     };
-  }, [initialItems, categories, filters.contentType]);
+  }, [initialItems, categories, accessories, filters.contentType]);
 
   // フィルタリングロジック
   const filteredItems = useMemo(() => {
     return initialItems.filter(item => {
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return false;
       if (filters.category && item.category !== filters.category) return false;
+      if (filters.accessory && item.accessory !== filters.accessory) return false; // ★追加
+      
       if (filters.priceRange) {
         if (item.type !== 'product') return false;
         const price = item.rawPrice;
@@ -80,13 +88,15 @@ export default function TopContentManager({ initialItems, categories }) {
   };
 
   const handleResetFilters = () => {
-    setFilters({ category: "", priceRange: "", contentType: "all" });
+    setFilters({ category: "", accessory: "", priceRange: "", contentType: "all" });
   };
 
   // Refineボタン用のアクティブ数カウント
-  const activeFilterCount = (filters.category ? 1 : 0) + (filters.priceRange ? 1 : 0);
+  const activeFilterCount = 
+    (filters.category ? 1 : 0) + 
+    (filters.accessory ? 1 : 0) + // ★追加
+    (filters.priceRange ? 1 : 0);
   
-  // ★追加: Refine（カテゴリ・価格）による絞り込みが有効かどうか
   const isRefineActive = activeFilterCount > 0;
 
   return (
@@ -147,7 +157,6 @@ export default function TopContentManager({ initialItems, categories }) {
         onReset={handleResetFilters} 
       />
 
-      {/* ★変更: Refineで絞り込まれている時だけ表示 */}
       {isRefineActive && (
         <div className="fade-in" style={{ textAlign: 'center', marginBottom: '30px', color: '#888', fontSize: '0.8rem', letterSpacing: '0.1em' }}>
           {filteredItems.length} ITEMS FOUND
