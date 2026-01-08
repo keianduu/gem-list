@@ -2,11 +2,32 @@
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
-import { items } from "@/libs/data"; 
-import MasonryGrid from "@/components/MasonryGrid";
+// import { items } from "@/libs/data"; 
+//import MasonryGrid from "@/components/MasonryGrid"; // ★変更: MasonryGridに戻す
+import ItemCollection from "@/components/ItemCollection";
 import { COUNTRY_FLAGS } from "@/libs/constants";
-import SiteHeader from "@/components/SiteHeader"; // ★追加
-import SiteFooter from "@/components/SiteFooter"; // ★追加
+import SiteHeader from "@/components/SiteHeader"; 
+import SiteFooter from "@/components/SiteFooter"; 
+
+async function getCategoryArchives(categoryId) {
+  if (!categoryId) return [];
+  
+  try {
+    const data = await client.get({
+      endpoint: "archive",
+      queries: {
+        filters: `relatedJewelries[contains]${categoryId}`,
+        limit: 100, 
+        orders: "-publishedAt",
+      },
+      customRequestInit: { next: { revalidate: 60 } } 
+    });
+    return data.contents;
+  } catch (err) {
+    console.error("Category archives fetch error:", err);
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
@@ -42,9 +63,26 @@ export default async function CategoryPage({ params }) {
     );
   }
 
-  const categoryItems = items.filter(item => item.category === category.name);
+  const archives = await getCategoryArchives(category.id);
 
-  // ダミーデータ（Color Variation用）
+  const categoryItems = archives.map((content) => {
+    const isProduct = content.type.includes('product');
+    const displayCategoryName = category.name;
+    const displayCategoryIcon = category.image?.url || null;
+
+    return {
+      id: content.slug,
+      type: isProduct ? 'product' : 'journal',
+      name: content.title,
+      price: isProduct && content.price ? `¥${Number(content.price).toLocaleString()}` : null,
+      desc: content.description,
+      image: isProduct ? content.thumbnailUrl : content.thumbnail,
+      link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
+      category: displayCategoryName,
+      categoryIcon: displayCategoryIcon,
+    };
+  });
+
   const dummyColorVariations = [
     { id: 1, name: "Color less", nameJa: "カラーレス", description: "無色透明", image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0" },
     { id: 2, name: "Pink", nameJa: "ピンク", description: "天然は希少", image: "https://images.unsplash.com/photo-1600003014608-c2ccc1570a65" },
@@ -52,8 +90,6 @@ export default async function CategoryPage({ params }) {
     { id: 4, name: "Sherry", nameJa: "シェリー（インペリアル）", description: "最高級とされる、赤みがかった黄金色", image: "https://images.unsplash.com/photo-1599643478518-17488fbbcd75" }
   ];
 
-  // ▼▼▼ 修正: miningLocations (複数形) を優先して取得 ▼▼▼
-  // 万が一単数形で返ってきても動くように || で繋いでいます
   const miningLocations = category.miningLocations || category.miningLocation || [];
 
   return (
@@ -101,8 +137,8 @@ export default async function CategoryPage({ params }) {
           </div>
 
           <div className="infographic-grid">
-
-            {/* --- MAJOR MINING LOCATIONS --- */}
+            {/* ... (中略: Infographicの中身は変更なし) ... */}
+            
             <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -113,18 +149,13 @@ export default async function CategoryPage({ params }) {
                 </div>
                 <h3 className="info-label">MAJOR MINING LOCATIONS</h3>
               </div>
-
               <div className="location-flags-container">
-                {/* 取得した miningLocations をループ表示 */}
                 {miningLocations.length > 0 ? (
                   miningLocations.map((loc, index) => {
                     const rawName = loc.name;
                     const nameStr = Array.isArray(rawName) ? rawName[0] : rawName;
                     const countryName = nameStr ? String(nameStr).trim() : "";
-                    
-                    // 辞書から国旗を取得
                     const flag = COUNTRY_FLAGS[countryName] || "🌍";
-                    
                     return (
                       <div key={index} className="flag-item">
                         <span className="flag-icon">{flag}</span>
@@ -140,7 +171,6 @@ export default async function CategoryPage({ params }) {
               </div>
             </div>
 
-            {/* --- ROUGH STONE --- */}
             <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -150,7 +180,6 @@ export default async function CategoryPage({ params }) {
                 </div>
                 <h3 className="info-label">ROUGH STONE</h3>
               </div>
-
               {category.roughStones ? (
                 <div className="info-content-row">
                   {category.roughStones.image && (
@@ -164,14 +193,11 @@ export default async function CategoryPage({ params }) {
                       />
                     </div>
                   )}
-                  
                   <div className="info-text-col">
                     <span className="info-main-name">{category.roughStones.name}</span>
                     <span className="info-sub-name">{category.roughStones.yomigana}</span>
                     {category.roughStones.subtitle && (
-                      <p className="info-desc-text">
-                        {category.roughStones.subtitle}
-                      </p>
+                      <p className="info-desc-text">{category.roughStones.subtitle}</p>
                     )}
                   </div>
                 </div>
@@ -182,7 +208,6 @@ export default async function CategoryPage({ params }) {
               )}
             </div>
 
-            {/* --- ACCESSORY (microCMS連携版) --- */}
             <div className="info-glass-card full-width">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -194,7 +219,6 @@ export default async function CategoryPage({ params }) {
                 </div>
                 <h3 className="info-label">ACCESSORY</h3>
               </div>
-
               <div className="accessory-grid">
                 {category.accessories && category.accessories.length > 0 ? (
                   category.accessories.map((acc, index) => (
@@ -226,13 +250,10 @@ export default async function CategoryPage({ params }) {
                 )}
               </div>
             </div>
-
           </div>
 
-          {/* Color Variation */}
           <div className="color-variation-block">
             <h3 className="color-section-title">{category.name} Color Variation</h3>
-            
             <div className="color-grid">
               {dummyColorVariations.map((color) => (
                 <div key={color.id} className="color-card">
@@ -265,15 +286,12 @@ export default async function CategoryPage({ params }) {
           </div>
         </section>
 
-        <section className="category-items-container">
-           {categoryItems.length > 0 ? (
-             <MasonryGrid items={categoryItems} />
-           ) : (
-             <p style={{textAlign:"center", color:"#999", marginTop: 40}}>
-               現在、関連するアイテムはありません。
-             </p>
-           )}
-        </section>
+        <ItemCollection 
+          items={categoryItems}
+          title={`${category.name} Collection`}
+          subtitle="Curated Selection"
+          emptyMessage="現在、関連するアイテムはありません。"
+        />
       </main>
       
       <SiteFooter />

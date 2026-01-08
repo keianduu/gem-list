@@ -3,52 +3,72 @@ import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
-import SiteHeader from "@/components/SiteHeader"; // ★追加
-import SiteFooter from "@/components/SiteFooter"; // ★追加
+import SiteHeader from "@/components/SiteHeader"; 
+import SiteFooter from "@/components/SiteFooter";
+//import MasonryGrid from "@/components/MasonryGrid"; // ★変更: MasonryGridに戻す
+import ItemCollection from "@/components/ItemCollection"; // ★追加: 共通コンポーネント
 
-// ★開発中はキャッシュを無効化して即時反映させる設定（本番では外してもOK）
-// これを入れると、npm run build時に静的化されなくなりますが、今は動作確認優先です。
+// ★開発中はキャッシュを無効化
 export const dynamic = 'force-dynamic';
 
+// --- 関連アイテム取得関数 ---
+async function getRelatedItems(categoryId, currentContentId) {
+  if (!categoryId) return [];
+
+  try {
+    const data = await client.get({
+      endpoint: "archive",
+      queries: {
+        filters: `relatedJewelries[contains]${categoryId}[and]id[not_equals]${currentContentId}`,
+        limit: 6, 
+        orders: "-publishedAt",
+      },
+      customRequestInit: { next: { revalidate: 3600 } }
+    });
+
+    return data.contents.map((content) => {
+      const isProduct = content.type.includes('product');
+      const relatedCategory = content.relatedJewelries?.[0];
+      const categoryName = relatedCategory?.name || (isProduct ? "Item" : "Journal");
+      const categoryIcon = relatedCategory?.image?.url || null;
+
+      return {
+        id: content.slug,
+        type: isProduct ? 'product' : 'journal',
+        name: content.title,
+        price: isProduct && content.price ? `¥${Number(content.price).toLocaleString()}` : null,
+        desc: content.description,
+        image: isProduct ? content.thumbnailUrl : content.thumbnail,
+        link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
+        category: categoryName,
+        categoryIcon: categoryIcon,
+      };
+    });
+  } catch (e) {
+    console.error("Related items fetch error:", e);
+    return [];
+  }
+}
+
+// --- (processBodyWithProducts は変更なし) ---
 async function processBodyWithProducts(bodyContent) {
   if (!bodyContent) return "";
-
-  // ★最強正規表現: 
-  // href="/product/..." も "/products/..." も許容
-  // href='...' (シングルクォート) も許容
-  // 前後に属性があってもOK
   const regex = /<a[^>]+href=["']\/?(?:items|products?)\/([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi;
-  
   const matches = [...bodyContent.matchAll(regex)];
-
-  // ★このログは「VS Codeのターミナル」に出ます
-  console.log(`[Journal] Body processing matches: ${matches.length}`);
 
   if (matches.length === 0) return bodyContent;
 
   const slugs = [...new Set(matches.map(m => m[1]))];
-  console.log(`[Journal] Target slugs:`, slugs);
-
   let productsData = { contents: [] };
+  
   if (slugs.length > 0) {
     try {
-      // 修正: [in] ではなく [equals] を [or] で繋ぐクエリを作成
       const filtersQuery = slugs.map(slug => `slug[equals]${slug}`).join('[or]');
-      
-      console.log(`[Journal] Fetching filters: ${filtersQuery}`); // デバッグログ
-
       productsData = await client.get({
         endpoint: "archive",
-        queries: { 
-          filters: filtersQuery, // ここを変更
-          limit: 100
-        },
+        queries: { filters: filtersQuery, limit: 100 },
         customRequestInit: { next: { revalidate: 0 } }
       });
-      
-      // デバッグログ：何件取れたか確認
-      console.log(`[Journal] Fetched count: ${productsData.contents.length}`);
-
     } catch (e) {
       console.error("[Journal] Product fetch failed:", e);
     }
@@ -59,15 +79,11 @@ async function processBodyWithProducts(bodyContent) {
   for (const match of matches) {
     const matchedString = match[0];
     const slug = match[1];
-    
     const product = productsData.contents.find(p => p.slug === slug);
 
     if (product) {
-        console.log(`[Journal] Found product data for: ${slug}`);
         const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
         const description = product.description || "";
-        
-        // ▼▼▼ 修正箇所: div を span に変更し、入れ子構造を安全にする ▼▼▼
         const cardHtml = `
           <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
             <span class="embed-thumb">
@@ -83,11 +99,8 @@ async function processBodyWithProducts(bodyContent) {
           </a>
         `;
         newBody = newBody.replace(matchedString, cardHtml);
-      } else {
-      console.warn(`[Journal] Product data NOT found for slug: ${slug}`);
     }
   }
-
   return newBody;
 }
 
@@ -114,7 +127,6 @@ export default async function JournalPage({ params }) {
       filters: `slug[equals]${id}`,
       depth: 2 
     },
-    // ★開発中はキャッシュなし（0）にして、修正がすぐ反映されるようにします
     customRequestInit: { next: { revalidate: 0 } } 
   });
   const journal = data.contents[0];
@@ -123,14 +135,18 @@ export default async function JournalPage({ params }) {
 
   const processedBody = await processBodyWithProducts(journal.body);
 
-  const category = journal.relatedJewelries?.[0] || null;
-  const categoryLink = category ? `/category/${category.slug}` : "/";
-  const categoryName = category ? category.name : "Journal";
-  const categoryIcon = category?.image?.url || null;
+  const categoryData = journal.relatedJewelries?.[0] || null;
+  const categoryLink = categoryData ? `/category/${categoryData.slug}` : "/";
+  const categoryName = categoryData ? categoryData.name : "Journal";
+  const categoryIcon = categoryData?.image?.url || null;
 
   const publishedDate = new Date(journal.publishedAt).toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
   });
+
+  const relatedItems = categoryData 
+    ? await getRelatedItems(categoryData.id, journal.id) 
+    : [];
 
   return (
     <>
@@ -141,7 +157,7 @@ export default async function JournalPage({ params }) {
           <div className="breadcrumb-inner">
             <Link href="/">Home</Link>
             <span className="separator">/</span>
-            {category ? (
+            {categoryData ? (
               <Link href={categoryLink}>{categoryName}</Link>
             ) : (
               <span>Journal</span>
@@ -181,8 +197,36 @@ export default async function JournalPage({ params }) {
               </div>
             )}
             <RichTextRenderer content={processedBody} />
+
+            <div className="journal-author-section">
+              <div className="author-icon-wrapper">
+                <Image 
+                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200" 
+                  alt="Author" 
+                  width={80} 
+                  height={80} 
+                  className="author-icon" 
+                />
+              </div>
+              <div className="author-info">
+                <span className="author-label">Written by</span>
+                <h3 className="author-name">Kei Ando</h3>
+                <p className="author-bio">
+                  ジュエリースタイリスト / ライター。<br/>
+                  宝石の歴史的背景や、現代のファッションに取り入れるスタイリングを提案しています。
+                </p>
+              </div>
+            </div>
           </div>
         </article>
+
+        <ItemCollection 
+          items={relatedItems}
+          title="Related Contents"
+          subtitle="More Stories & Items"
+          emptyMessage="関連する商品がありません"
+        />
+
       </main>
 
       <SiteFooter />
