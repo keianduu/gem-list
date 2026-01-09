@@ -3,10 +3,15 @@ import Link from "next/link"; // ★追加
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactForm from "@/components/ContactForm";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export const metadata = {
   title: "About / Disclaimer - Jewelism MARKET",
 };
+const breadcrumbItems = [
+  { label: "Home", path: "/" },
+  { label: "About & Disclaimer", path: null }
+];
 
 export default function AboutPage() {
   return (
@@ -17,15 +22,6 @@ export default function AboutPage() {
         より広い journal-main (1200px) を使用して、パンくずを左端に揃えます。
       */}
       <main className="journal-main">
-        
-        {/* ▼▼▼ パンくずリスト追加 ▼▼▼ */}
-        <nav className="breadcrumb">
-          <div className="breadcrumb-inner">
-            <Link href="/">Home</Link>
-            <span className="separator">/</span>
-            <span className="current">About & Disclaimer</span>
-          </div>
-        </nav>
 
         {/* 本文エリア: 
           読みやすさを保つため、ここだけ幅を800pxに制限して中央寄せにします。
@@ -100,8 +96,9 @@ export default function AboutPage() {
 
           </div>
         </div>
+        
       </main>
-
+      <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
     </>
   );

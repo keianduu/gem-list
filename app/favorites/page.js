@@ -6,10 +6,14 @@ import SiteFooter from "@/components/SiteFooter";
 import MasonryGrid from "@/components/MasonryGrid";
 import Link from "next/link";
 import { useFavorites } from "@/hooks/useFavorites";
+import Breadcrumb from "@/components/Breadcrumb";
 
 export default function FavoritesPage() {
   const { favorites, isLoaded } = useFavorites();
-
+  const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    { label: "Favorites", path: null }
+  ];
   return (
     <>
       <SiteHeader />
@@ -19,15 +23,6 @@ export default function FavoritesPage() {
         style の paddingTop 指定を削除（CSS側で制御されるため）
       */}
       <main className="journal-main">
-        
-        {/* パンくずリスト */}
-        <nav className="breadcrumb">
-          <div className="breadcrumb-inner">
-            <Link href="/">Home</Link>
-            <span className="separator">/</span>
-            <span className="current">Favorites</span>
-          </div>
-        </nav>
 
         <div style={{ textAlign: "center", marginBottom: "60px" }}>
           <h1 className="hero-title" style={{ fontSize: "2.5rem", marginBottom: "10px" }}>
@@ -53,8 +48,9 @@ export default function FavoritesPage() {
             </Link>
           </div>
         )}
+        
       </main>
-
+      <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
     </>
   );

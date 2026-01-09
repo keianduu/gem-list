@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 //import MasonryGrid from "@/components/MasonryGrid"; // ★変更: MasonryGridに戻す
 import ItemCollection from "@/components/ItemCollection"; // ★追加: 共通コンポーネント
+import Breadcrumb from "@/components/Breadcrumb";
 
 // ★開発中はキャッシュを無効化
 export const dynamic = 'force-dynamic';
@@ -148,24 +149,26 @@ export default async function JournalPage({ params }) {
     ? await getRelatedItems(categoryData.id, journal.id) 
     : [];
 
+  // パンくずデータ生成
+  const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    { label: "All Gemstones", path: "/category" }
+  ];
+
+  if (categoryData) {
+    breadcrumbItems.push({ label: categoryName, path: categoryLink });
+  } else {
+    // カテゴリがない場合（例：汎用ジャーナル）は 'Journal' とする
+    breadcrumbItems.push({ label: "Journal", path: null }); // ここはリンクなしか、ジャーナル一覧があればそこへ
+  }
+
+  breadcrumbItems.push({ label: journal.title, path: null });
+
   return (
     <>
       <SiteHeader />
 
       <main className="journal-main">
-        <nav className="breadcrumb">
-          <div className="breadcrumb-inner">
-            <Link href="/">Home</Link>
-            <span className="separator">/</span>
-            {categoryData ? (
-              <Link href={categoryLink}>{categoryName}</Link>
-            ) : (
-              <span>Journal</span>
-            )}
-            <span className="separator">/</span>
-            <span className="current">{journal.title}</span>
-          </div>
-        </nav>
 
         <article className="journal-article-container">
           <div className="journal-header">
@@ -226,9 +229,9 @@ export default async function JournalPage({ params }) {
           subtitle="More Stories & Items"
           emptyMessage="関連する商品がありません"
         />
-
+      
       </main>
-
+      <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
     </>
   );

@@ -8,6 +8,7 @@ import ItemCollection from "@/components/ItemCollection";
 import { COUNTRY_FLAGS } from "@/libs/constants";
 import SiteHeader from "@/components/SiteHeader"; 
 import SiteFooter from "@/components/SiteFooter"; 
+import Breadcrumb from "@/components/Breadcrumb";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
@@ -92,18 +93,17 @@ export default async function CategoryPage({ params }) {
 
   const miningLocations = category.miningLocations || category.miningLocation || [];
 
+  // パンくずデータ定義
+  const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    { label: "All Gemstones", path: "/category" },
+    { label: category.name, path: null }
+  ];
   return (
     <>
       <SiteHeader />
 
       <main className="category-main">
-        <nav className="breadcrumb">
-          <div className="breadcrumb-inner">
-            <Link href="/">Home</Link>
-            <span className="separator">/</span>
-            <span className="current">{category.name}</span>
-          </div>
-        </nav>
 
         <section className="category-header">
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
@@ -292,8 +292,9 @@ export default async function CategoryPage({ params }) {
           subtitle="Curated Selection"
           emptyMessage="現在、関連するアイテムはありません。"
         />
+        
       </main>
-      
+      <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
     </>
   );

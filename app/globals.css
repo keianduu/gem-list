@@ -996,6 +996,7 @@ a { text-decoration: none; color: inherit; }
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  margin-bottom: 0;
 }
 
 .breadcrumb-inner {
@@ -1232,7 +1233,7 @@ a { text-decoration: none; color: inherit; }
 /* Footer (Site Wide) */
 .gem-footer {
   background-color: #111; color: #fff; padding: 80px 20px; text-align: center;
-  margin-top: 100px; position: relative; z-index: 10;
+  margin-top: 0px; position: relative; z-index: 10;
 }
 .footer-logo-container {
   display: flex; flex-direction: column; align-items: center;

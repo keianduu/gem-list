@@ -4,6 +4,7 @@ import Image from "next/image";
 import { client } from "@/libs/microcms";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import Breadcrumb from "@/components/Breadcrumb";
 
 // 全カテゴリ取得（上限を大きめに設定）
 async function getAllCategories() {
@@ -36,19 +37,17 @@ export default async function CategoryIndexPage() {
     a.name.localeCompare(b.name)
   );
 
+// パンくずデータ定義
+const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    { label: "All Gemstones", path: null } // 現在地
+];
+  
   return (
     <>
       <SiteHeader />
 
       <main className="journal-main">
-        {/* パンくずリスト */}
-        <nav className="breadcrumb">
-          <div className="breadcrumb-inner">
-            <Link href="/">Home</Link>
-            <span className="separator">/</span>
-            <span className="current">All Gemstones</span>
-          </div>
-        </nav>
 
         <section style={{ maxWidth: '1000px', margin: '40px auto 80px' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
@@ -100,8 +99,9 @@ export default async function CategoryIndexPage() {
             </p>
           )}
         </section>
+        
       </main>
-
+      <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
     </>
   );
