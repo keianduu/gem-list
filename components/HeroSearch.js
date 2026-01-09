@@ -11,9 +11,8 @@ export default function HeroSearch({ archives = [], categories = [] }) {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
 
-  // 検索ロジック
- // 検索ロジック
- useEffect(() => {
+// 検索ロジック
+useEffect(() => {
     if (!query.trim()) {
       setResults([]);
       setIsOpen(false);
@@ -22,16 +21,15 @@ export default function HeroSearch({ archives = [], categories = [] }) {
 
     const lowerQuery = query.toLowerCase();
 
-    // 1. カテゴリから検索 (英語名、日本語名、読み仮名)
+    // 1. カテゴリから検索 (前方一致のまま)
+    // "dia" -> "Diamond" (O), "Ind" -> "India" (O)
     const matchedCategories = categories.filter((cat) => {
       const en = cat.name?.toLowerCase() || "";
       const ja = cat.nameJa?.toLowerCase() || "";
       const yomi = cat.yomigana?.toLowerCase() || "";
       
-      // ▼▼▼ 修正: includes → startsWith に変更（前方一致） ▼▼▼
       return en.startsWith(lowerQuery) || ja.startsWith(lowerQuery) || yomi.startsWith(lowerQuery);
     }).map(cat => ({
-      // ... (マッピング処理はそのまま)
       type: 'category',
       id: cat.id,
       name: cat.name,
@@ -40,14 +38,14 @@ export default function HeroSearch({ archives = [], categories = [] }) {
       image: cat.image?.url
     }));
 
-    // 2. アイテム/記事から検索 (タイトル)
+    // 2. アイテム/記事から検索 (部分一致に変更)
+    // "ring" -> "Diamond Ring" (O), "blue" -> "Royal Blue Sapphire" (O)
     const matchedArchives = archives.filter((item) => {
       const title = item.name?.toLowerCase() || "";
       
-      // ▼▼▼ 修正: includes → startsWith に変更（前方一致） ▼▼▼
-      return title.startsWith(lowerQuery);
+      // ▼▼▼ 修正: ここだけ includes (部分一致) に戻します ▼▼▼
+      return title.includes(lowerQuery);
     }).map(item => ({
-      // ... (マッピング処理はそのまま)
       type: item.type === 'product' ? 'item' : 'journal',
       id: item.id,
       name: item.name,
@@ -56,7 +54,7 @@ export default function HeroSearch({ archives = [], categories = [] }) {
       image: typeof item.image === 'string' ? item.image : item.image?.url
     }));
 
-    // ... (結果結合などはそのまま)
+    // 結果を結合 (カテゴリを優先表示)
     setResults([...matchedCategories, ...matchedArchives].slice(0, 8));
     setIsOpen(true);
 
