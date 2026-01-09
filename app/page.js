@@ -14,7 +14,8 @@ async function getArchives() {
     const data = await client.get({
       endpoint: "archive",
       queries: { limit: 100, orders: "-publishedAt" },
-      customRequestInit: { next: { revalidate: 0 } } // キャッシュ無効
+      // キャッシュ設定を復元 (60秒)
+      customRequestInit: { next: { revalidate: 60 } } 
     });
     return data.contents;
   } catch (err) {
@@ -29,7 +30,8 @@ async function getCategories() {
     const data = await client.get({
       endpoint: "jewelry-categories",
       queries: { filters: 'isVisible[equals]true', limit: 100 },
-      customRequestInit: { next: { revalidate: 0 } } // 念のため無効
+      // キャッシュ設定を復元 (1時間)
+      customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;
   } catch (err) {
@@ -41,10 +43,10 @@ async function getCategories() {
 async function getAccessories() {
   try {
     const data = await client.get({
-      endpoint: "accessories", // ★ここがAPIのエンドポイント名と一致している必要があります
+      endpoint: "accessories", 
       queries: { limit: 100 },
-      // ▼▼▼ 修正: ここもキャッシュを無効化 ▼▼▼
-      customRequestInit: { next: { revalidate: 0 } } 
+      // キャッシュ設定を復元 (1時間)
+      customRequestInit: { next: { revalidate: 3600 } } 
     });
     return data.contents;
   } catch (err) {
@@ -59,17 +61,6 @@ export default async function Home() {
     getCategories(),
     getAccessories()
   ]);
-
-  // ▼▼▼ デバッグログ: アクセサリマスタの取得状況確認 ▼▼▼
-  console.log("--------------------------------------------------");
-  if (accessories.length === 0) {
-    console.log("⚠️ Accessories Master List is EMPTY! (0 items)");
-    console.log("   -> microCMSのAPI設定でエンドポイント名が 'accessories' か確認してください。");
-  } else {
-    console.log(`✅ Accessories Master List: ${accessories.length} items fetched.`);
-    accessories.forEach(a => console.log(`   - Master Item: ${a.name}`));
-  }
-  // ▲▲▲--------------------------------------------------
 
   const items = archives.map((content) => {
     const isProduct = content.type.includes('product');
@@ -96,16 +87,6 @@ export default async function Home() {
       colorName = content.color.color[0] || null;
     }
 
-    // ▼▼▼ デバッグログ: 商品ごとの紐付け確認 ▼▼▼
-    if (isProduct) {
-        if (accessoryName) {
-            console.log(`   [Product] ${content.title} -> Accessory: ${accessoryName}`);
-        } else {
-            console.log(`   [Product] ${content.title} -> No Accessory Linked`);
-        }
-    }
-    // ▲▲▲-------------------------------------
-
     return {
       id: content.slug,
       type: isProduct ? 'product' : 'journal',
@@ -121,7 +102,6 @@ export default async function Home() {
       color: colorName, 
     };
   });
-  console.log("--------------------------------------------------");
 
   return (
     <>

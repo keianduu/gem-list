@@ -10,9 +10,12 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 ## 主な機能
 
 - **動的なカテゴリ探索**: Swiperを使用したスムーズな宝石カテゴリのナビゲーション。
-- **インテリジェント・サーチ**: 宝石名や特徴による直感的な検索体験（未実装）
+- **インテリジェント・サーチ**: 
+  - **リアルタイムサジェスト**: 入力に合わせてカテゴリや商品を即座に提案（カテゴリは前方一致、商品は部分一致）。
+  - **多軸フィルタリング**: カテゴリ、アイテム種別、価格帯、**カラー**による絞り込み。
 - **デジタル・エンサイクロペディア**: microCMSと連動した、各宝石の詳細データ表示（国旗アイコンによる原産地表示など）。
-- **レスポンシブ・デザイン**: Masonryレイアウトを採用し、PC・タブレット・スマホの全デバイスでPinterest風の美しいカード表示を実現。
+- **レスポンシブ・デザイン**: PC・タブレット・スマホ全デバイス対応のMasonryグリッドレイアウト。
+- **お問い合わせ機能**: Server Actions + Resend を使用したメール配信システム。
 
 ## 今後の展望
 
@@ -30,36 +33,74 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 | :--- | :--- | :--- |
 | **Frontend** | Next.js 15 (App Router) | Reactフレームワーク、SSR/ISR |
 | **Styling** | CSS Modules / Global CSS | グラスモーフィズム、レスポンシブデザイン |
-| **Headless CMS** | microCMS | コンテンツ管理（カテゴリ、宝石データ、画像） |
-| **Libraries** | Swiper | カテゴリスライダー |
-| | react-masonry-css | Pinterest風グリッドレイアウト |
+| **Headless CMS** | microCMS | コンテンツ・商品データ管理 |
+| **Libraries** | Swiper, react-masonry-css | UIコンポーネント |
+| **Email** | Resend | お問い合わせメール送信 |
 | **Deployment** | Vercel | ホスティング、CI/CD |
 
 ## ディレクトリ構成
-
+```text
 .
 ├── app/
-│   ├── about/              # 運営者情報・免責事項・お問い合わせ
-│   ├── category/[slug]/    # 宝石カテゴリ別詳細ページ
-│   ├── journals/[id]/      # 記事詳細ページ (Journal/Article)
+│   ├── about/              # 運営者情報・免責事項・お問い合わせフォーム
+│   │   └── page.js
+│   ├── category/           # 宝石カテゴリ関連
+│   │   ├── [slug]/         # カテゴリ別詳細ページ (Encyclopedia & Item List)
+│   │   │   └── page.js
+│   │   └── page.js         # 全カテゴリ一覧ページ (Index)
+│   ├── favorites/          # お気に入り一覧ページ
+│   │   └── page.js
+│   ├── journals/           # 記事詳細ページ
+│   │   └── [id]/
+│   │       └── page.js
 │   ├── privacy-policy/     # プライバシーポリシー
-│   ├── products/           # [管理用] 全商品リスト (noindex)
-│   │   └── [id]/           # [管理用] 商品詳細・リンク確認 (noindex)
-│   ├── globals.css         # グローバルスタイル・デザインシステム
-│   ├── layout.js           # 共通レイアウト（背景オーブ含む）
-│   └── page.js             # トップページ（ヒーローエリア・Swiper）
-├── components/
-│   ├── CategorySlider.js   # 共通スライダーコンポーネント
-│   ├── ContactForm.js      # お問い合わせフォーム (Server Actions + Resend)
-│   ├── MasonryGrid.js      # 商品/記事カードのグリッド表示
-│   ├── RichTextRenderer.js # リッチテキスト内の商品埋め込み処理
+│   │   └── page.js
+│   ├── products/           # [管理用] 商品データ確認用 (noindex)
+│   │   ├── [id]/
+│   │   │   └── page.js
+│   │   └── page.js
+│   ├── actions/            # Server Actions (サーバーサイド処理)
+│   │   └── contact.js      # メール送信ロジック (Resend連携)
+│   ├── favicon.ico
+│   ├── globals.css         # グローバルスタイル (Tailwind / CSS Modules / Custom CSS)
+│   ├── layout.js           # 共通レイアウト (RootLayout)
+│   └── page.js             # TOPページ (検索・フィルタリング・一覧表示の集約)
+│
+├── components/             # UIコンポーネント
+│   ├── CategorySlider.js   # カテゴリの横スクロールスライダー
+│   ├── ContactForm.js      # お問い合わせフォーム (Client Component)
+│   ├── FilterPopup.js      # [New] 詳細絞り込みモーダル (Color/Accessory対応)
+│   ├── HeroSearch.js       # [New] リアルタイム検索・サジェスト機能
+│   ├── ItemCollection.js   # アイテム一覧セクションのラッパー
+│   ├── MasonryGrid.js      # Masonryレイアウトの商品/記事カードグリッド
+│   ├── RichTextRenderer.js # 記事本文のレンダリング & 商品埋め込み処理
+│   ├── SiteFooter.js       # 共通フッター
 │   ├── SiteHeader.js       # 共通ヘッダー
-│   └── SiteFooter.js       # 共通フッター
-├── libs/
-│   ├── microcms.js         # microCMS APIクライアント設定
-│   └── constants.js        # 定数ファイル（国旗マッピング等）
-├── public/                 # 静的資産（ロゴ、アイコン）
+│   └── TopContentManager.js# [New] TOPページのフィルタリング状態管理・リスト表示
+│
+├── hooks/                  # カスタムフック
+│   └── useFavorites.js     # お気に入り機能の状態管理 (LocalStorage連携)
+│
+├── libs/                   # ユーティリティ・定数・API設定
+│   ├── constants.js        # 定数ファイル (国旗マッピングデータ等)
+│   ├── data.js             # (旧) ダミーデータ ※現在はmicroCMSに移行済み
+│   └── microcms.js         # microCMS APIクライアント設定
+│
+├── public/                 # 静的アセット
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+│
+├── .gitignore
+├── eslint.config.mjs
+├── jsconfig.json
+├── next.config.mjs         # Next.js設定 (画像ドメイン許可等)
+├── package-lock.json
+├── package.json
 └── README.md
+```
 
 ## URL設計 / ルーティング (Routing)
 
@@ -85,66 +126,16 @@ URL構造はフラットですが、パンくずリストでは「どの宝石�
 
 ## microCMS データ設計 (Schema)
 
-本プロジェクトでは、宝石カテゴリを中心に、原石データやアクセサリデータを参照・連携する設計となっています。
+## 💎 microCMS データ設計 (Schema)
 
-### 1. アクセサリAPI (`accessories`)
-アクセサリの種類を管理するマスターデータです。
+本プロジェクトは、**宝石カテゴリ (`jewelry-categories`)** を中心とし、**商品・記事 (`archive`)** がそれを参照するリレーショナルな構造を持っています。
 
-| フィールドID | 表示名 | 種類 | 必須 | 備考 |
-| :--- | :--- | :--- | :--- | :--- |
-| `name` | アクセサリ名 (英語) | テキスト | 〇 | 例: Ring |
-| `yomigana` | 読み (yomigana) | テキスト | - | 例: リング |
-| `slug` | スラッグ | テキスト | 〇 | 例: ring |
-| `image` | アイコン画像 | 画像 | 〇 | |
-
-### 2. 原石API (`rough-stones`)
-原石（Rough Stone）の詳細情報を管理するマスターデータです。
+### 1. アーカイブAPI (`archive`)
+商品 (Product) と 記事 (Journal) を統合管理するメインコンテンツAPIです。
 
 | フィールドID | 表示名 | 種類 | 必須 | 備考 |
 | :--- | :--- | :--- | :--- | :--- |
-| `name` | 原石名 (英語) | テキスト | 〇 | 例: Topaz |
-| `nameJa` | 原石名 (日本語) | テキスト | - | 例: 黄玉（おうぎょく） |
-| `yomigana` | 読み (yomigana) | テキスト | - | 例: トパーズ |
-| `subtitle` | サブタイトル | テキスト | - | 特徴の要約 |
-| `description` | 説明文 | リッチエディタ | - | 詳細な解説文 (HTML) |
-| `image` | 原石画像 | 画像 | 〇 | |
-
-### 3. 宝石カテゴリAPI (`jewelry-categories`)
-メインの宝石データを管理します。原石やアクセサリ情報を参照します。
-
-| フィールドID | 表示名 | 種類 | 備考 |
-| :--- | :--- | :--- | :--- |
-| `isVisible` | 表示フラグ | 真偽値 | 一覧に表示するかどうか |
-| `name` | 宝石名 (英語) | テキスト | 例: Topaz |
-| `nameJa` | 宝石名 (日本語) | テキスト | 例: 黄玉（おうぎょく） |
-| `yomigana` | 読み | テキスト | |
-| `slug` | スラッグ | テキスト | URLに使用 (例: topaz) |
-| `image` | 宝石画像 | 画像 | トップページ等で使用 |
-| `description` | 説明文 | リッチエディタ | カテゴリ詳細説明 |
-| `roughStones` | 関連する原石 | コンテンツ参照 | 参照先API: `rough-stones` (1つ) |
-| `accessories` | おすすめアクセサリ | 繰り返し | 下記のカスタムフィールドを使用 |
-
-#### カスタムフィールド: `accessory_relation` (繰り返しフィールド内)
-宝石カテゴリごとに、推奨アクセサリとその理由を設定します。
-
-| フィールドID | 表示名 | 種類 | 備考 |
-| :--- | :--- | :--- | :--- |
-| `item` | アクセサリ選択 | コンテンツ参照 | 参照先API: `accessories` |
-| `description` | この宝石での特徴 | テキストエリア | その宝石ならではの注意点や魅力 |
-
-#### カスタムフィールド: `miningLocation` (繰り返しフィールド内)
-主要産地を登録します。表示時に `libs/constants.js` の辞書を参照して国旗に変換されます。
-
-| フィールドID | 表示名 | 種類 | 備考 |
-| :--- | :--- | :--- | :--- |
-| `name` | 国名 | セレクト | `libs/constants.js` に定義された英語名と一致させること |
-
-### 4. アーカイブAPI (`archive`)
-記事（Journal）および商品（Product/Item）を統合管理するメインコンテンツです。
-
-| フィールドID | 表示名 | 種類 | 必須 | 備考 |
-| :--- | :--- | :--- | :--- | :--- |
-| `title` | タイトル | テキスト | 〇 | 記事タイトルまたは商品名 |
+| `title` | タイトル | テキスト | 〇 | 商品名または記事タイトル |
 | `slug` | スラッグ | テキスト | 〇 | URL末尾 (例: `ruby-ring-001`) |
 | `type` | 投稿タイプ | 複数選択 | 〇 | `product` (商品) / `journal` (記事) |
 | `thumbnail` | サムネイル画像 | 画像 | - | microCMSに直接アップロードする場合 |
@@ -153,7 +144,76 @@ URL構造はフラットですが、パンくずリストでは「どの宝石�
 | `body` | 本文 | リッチエディタ | - | 記事本文。商品紹介の場合は空でも可 |
 | `price` | 価格 | 数値 | - | 商品の場合のみ入力 (カンマなし数値) |
 | `affiliateUrl` | アフィリエイトURL | テキスト | - | 商品の購入先リンク |
-| `relatedJewelries` | 関連宝石カテゴリ | コンテンツ参照 | - | 参照先API: `jewelry-categories` |
+| `relatedJewelries` | 関連宝石カテゴリ | コンテンツ参照 | - | 参照先API: `jewelry-categories` (複数可) |
+| `relatedAccessories` | 関連アクセサリ | コンテンツ参照 | - | 参照先API: `accessories` (複数可) |
+| `color` | カラー設定 | カスタムフィールド | - | 下記 `color_table` を使用 |
+
+#### カスタムフィールド: `color_table`
+商品の色情報を管理します。フィルタリング機能（Color）で使用されます。
+
+| フィールドID | 表示名 | 種類 | 設定値例 |
+| :--- | :--- | :--- | :--- |
+| `color` | カラー | セレクト(複数可) | `red`, `blue`, `green`, `white / plain`, `black`, `pink`, `yellow` 等 |
+
+---
+
+### 2. 宝石カテゴリAPI (`jewelry-categories`)
+宝石自体の情報を管理します（図鑑用データ）。
+
+| フィールドID | 表示名 | 種類 | 備考 |
+| :--- | :--- | :--- | :--- |
+| `isVisible` | 表示フラグ | 真偽値 | 一覧に表示するかどうか |
+| `name` | 宝石名 (英語) | テキスト | 例: Ruby |
+| `nameJa` | 宝石名 (日本語) | テキスト | 例: 紅玉 |
+| `yomigana` | 読み | テキスト | |
+| `slug` | スラッグ | テキスト | URLに使用 (例: `ruby`) |
+| `image` | 宝石画像 | 画像 | アイコンとして使用 |
+| `description` | 説明文 | リッチエディタ | カテゴリ詳細説明 |
+| `roughStones` | 関連する原石 | コンテンツ参照 | 参照先API: `rough-stones` (1つ) |
+| `miningLocations` | 産地情報 | 繰り返し | 下記 `mining_locations` を使用 |
+| `accessories` | おすすめアクセサリ | 繰り返し | 下記 `accessory_relation` を使用 |
+
+#### カスタムフィールド: `mining_locations` (繰り返しフィールド内)
+主要産地を登録します。表示時に `libs/constants.js` の辞書を参照して国旗に変換されます。
+
+| フィールドID | 表示名 | 種類 | 備考 |
+| :--- | :--- | :--- | :--- |
+| `name` | 国名 | セレクト | `Myanmar`, `Thailand`, `Sri Lanka`, `Brazil` 等 |
+
+#### カスタムフィールド: `accessory_relation` (繰り返しフィールド内)
+宝石カテゴリごとに、推奨アクセサリとその理由を設定します。
+
+| フィールドID | 表示名 | 種類 | 備考 |
+| :--- | :--- | :--- | :--- |
+| `item` | アクセサリ選択 | コンテンツ参照 | 参照先API: `accessories` |
+| `description` | この宝石での特徴 | テキストエリア | おすすめ理由や注意点 |
+
+---
+
+### 3. アクセサリAPI (`accessories`)
+ジュエリーの種類（指輪、ネックレス等）のマスタデータです。
+
+| フィールドID | 表示名 | 種類 | 必須 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| `name` | アクセサリ名 (英語) | テキスト | 〇 | 例: `Ring`, `Necklace`, `Brooch` |
+| `yomigana` | 読み (yomigana) | テキスト | - | |
+| `slug` | スラッグ | テキスト | 〇 | 例: `ring` |
+| `image` | アイコン画像 | 画像 | 〇 | フィルタリングUIや図鑑ページで使用 |
+
+---
+
+### 4. 原石API (`rough-stones`)
+原石（Rough Stone）の詳細情報を管理するマスターデータです。
+
+| フィールドID | 表示名 | 種類 | 必須 | 備考 |
+| :--- | :--- | :--- | :--- | :--- |
+| `name` | 原石名 (英語) | テキスト | 〇 | 例: Corundum |
+| `nameJa` | 原石名 (日本語) | テキスト | - | 例: 鋼玉 |
+| `yomigana` | 読み (yomigana) | テキスト | - | |
+| `subtitle` | サブタイトル | テキスト | - | 特徴の要約 |
+| `description` | 説明文 | リッチエディタ | - | 詳細な解説文 |
+| `image` | 原石画像 | 画像 | 〇 | |
+
 
 ## 画像処理・最適化 (Image Optimization)
 
