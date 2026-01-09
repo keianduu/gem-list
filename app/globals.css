@@ -2288,3 +2288,145 @@ a { text-decoration: none; color: inherit; }
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
   color: #000;
 }
+/* ... (既存のコード) ... */
+
+/* Search Suggestions */
+.search-suggestions {
+  position: absolute;
+  top: 60px; /* 入力欄の高さに合わせて調整 */
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.8);
+  overflow: hidden;
+  z-index: 100;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: background 0.2s;
+  text-decoration: none;
+  color: inherit;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background: rgba(0, 88, 163, 0.05); /* アクセントカラーの薄い色 */
+}
+
+.suggestion-thumb {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.suggestion-info {
+  flex-grow: 1;
+  text-align: left;
+  overflow: hidden;
+}
+
+.suggestion-name {
+  font-family: var(--font-en);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #333;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-badge {
+  font-size: 0.6rem;
+  background: #333;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.suggestion-sub {
+  font-family: var(--font-jp);
+  font-size: 0.75rem;
+  color: #888;
+  margin: 2px 0 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-arrow {
+  color: #ccc;
+  margin-left: 10px;
+}
+
+/* app/globals.css の該当箇所を上書きまたは置換 */
+
+/* 検索窓のアクティブ時 (サジェスト展開時) */
+.hero-search-container.active {
+  /* 下の角を直角にする */
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  
+  /* 上の角も少し小さくしてサジェストと合わせる (お好みで50pxのままでもOKですが、24pxくらいがカードっぽいです) */
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.95);
+  /* 影を消して一体化させる */
+  box-shadow: none; 
+  /* 下線を消して繋がっているように見せる */
+  border-bottom: 1px solid transparent; 
+}
+
+/* Suggestions Dropdown */
+.search-suggestions {
+  position: absolute;
+  /* ▼ 修正: 60px ではなく 100% にして直下に配置 */
+  top: 100%; 
+  left: 0;
+  width: 100%;
+  
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  /* 上の角を直角、下の角を丸く */
+  border-radius: 0 0 24px 24px;
+  
+  /* 全体の影 */
+  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  
+  /* 境界線 (上以外) */
+  border: 1px solid rgba(255,255,255,0.8);
+  border-top: none; /* 上の線を消す */
+  
+  overflow: hidden;
+  z-index: 100;
+  max-height: 400px;
+  overflow-y: auto;
+  
+  /* わずかな隙間も埋めるためのネガティブマージン */
+  margin-top: -1px;
+}
