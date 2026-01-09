@@ -70,7 +70,7 @@ export default async function CategoryIndexPage() {
                   key={cat.id} 
                   className="category-index-card"
                 >
-                  <div style={{ position: 'relative', width: '100px', height: '100px', marginBottom: '12px' }}>
+                  <div style={{ position: 'relative', width: '64px', height: '64px', marginBottom: '12px' }}>
                     {cat.image?.url ? (
                       <Image 
                         src={cat.image.url} 
@@ -87,6 +87,9 @@ export default async function CategoryIndexPage() {
                   <span className="category-index-name">{cat.name}</span>
                   {cat.yomigana && (
                     <span className="category-index-name-ja">{cat.yomigana}</span>
+                  )}
+                  {cat.nameJa && (
+                    <span className="category-index-name-ja">{cat.nameJa}</span>
                   )}
                 </Link>
               ))}

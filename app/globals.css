@@ -2205,7 +2205,7 @@ a { text-decoration: none; color: inherit; }
 .category-index-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); /* スマホでも見やすい幅 */
-  gap: 40px 24px;
+  gap: 40px 40px;
   width: 100%;
   margin-top: 40px;
 }
