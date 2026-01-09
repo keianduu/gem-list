@@ -5,12 +5,13 @@ import { useState, useMemo, useEffect, useRef } from 'react';
 import MasonryGrid from './MasonryGrid';
 import FilterPopup from './FilterPopup';
 
-export default function TopContentManager({ initialItems, categories, accessories }) { // ★accessories受け取り
+export default function TopContentManager({ initialItems, categories, accessories }) {
   // フィルター状態
   const [filters, setFilters] = useState({
     category: "",
-    accessory: "", // ★追加
+    accessory: "",
     priceRange: "",
+    color: "", // ★追加
     contentType: "all",
   });
 
@@ -31,7 +32,8 @@ export default function TopContentManager({ initialItems, categories, accessorie
   // 選択肢の計算
   const availableOptions = useMemo(() => {
     const activeCategoryNames = new Set();
-    const activeAccessoryNames = new Set(); // ★追加
+    const activeAccessoryNames = new Set();
+    const activeColorNames = new Set(); // ★追加
     const activePriceKeys = new Set();
 
     initialItems.forEach(item => {
@@ -39,7 +41,8 @@ export default function TopContentManager({ initialItems, categories, accessorie
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return;
 
       if (item.category) activeCategoryNames.add(item.category);
-      if (item.accessory) activeAccessoryNames.add(item.accessory); // ★追加
+      if (item.accessory) activeAccessoryNames.add(item.accessory);
+      if (item.color) activeColorNames.add(item.color); // ★追加
 
       if (item.type === 'product' && typeof item.rawPrice === 'number') {
         const p = item.rawPrice;
@@ -57,9 +60,22 @@ export default function TopContentManager({ initialItems, categories, accessorie
       { value: 'over-50000', label: 'Over ¥50,000' },
     ];
 
+    let validAccessories = [];
+    if (accessories && accessories.length > 0) {
+      // マスタデータがある場合はそれを使う（IDなどの情報が正確なため）
+      validAccessories = accessories.filter(acc => activeAccessoryNames.has(acc.name));
+    } else {
+      // マスタがない場合は、商品データにある名前から即席でリストを作る
+      validAccessories = Array.from(activeAccessoryNames).sort().map(name => ({
+        id: name, // IDの代わりに名前を使う
+        name: name
+      }));
+    }
+    
     return {
       categories: categories.filter(cat => activeCategoryNames.has(cat.name)),
-      accessories: accessories ? accessories.filter(acc => activeAccessoryNames.has(acc.name)) : [], // ★追加: 存在するアクセサリのみ
+      accessories: validAccessories,
+      colors: Array.from(activeColorNames).sort(), // ★追加: 文字列配列として返す
       priceRanges: priceDefinitions.filter(p => activePriceKeys.has(p.value))
     };
   }, [initialItems, categories, accessories, filters.contentType]);
@@ -69,7 +85,8 @@ export default function TopContentManager({ initialItems, categories, accessorie
     return initialItems.filter(item => {
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return false;
       if (filters.category && item.category !== filters.category) return false;
-      if (filters.accessory && item.accessory !== filters.accessory) return false; // ★追加
+      if (filters.accessory && item.accessory !== filters.accessory) return false;
+      if (filters.color && item.color !== filters.color) return false; // ★追加
       
       if (filters.priceRange) {
         if (item.type !== 'product') return false;
@@ -88,13 +105,14 @@ export default function TopContentManager({ initialItems, categories, accessorie
   };
 
   const handleResetFilters = () => {
-    setFilters({ category: "", accessory: "", priceRange: "", contentType: "all" });
+    setFilters({ category: "", accessory: "", priceRange: "", color: "", contentType: "all" }); // ★colorリセット追加
   };
 
   // Refineボタン用のアクティブ数カウント
   const activeFilterCount = 
     (filters.category ? 1 : 0) + 
-    (filters.accessory ? 1 : 0) + // ★追加
+    (filters.accessory ? 1 : 0) + 
+    (filters.color ? 1 : 0) + // ★追加
     (filters.priceRange ? 1 : 0);
   
   const isRefineActive = activeFilterCount > 0;
