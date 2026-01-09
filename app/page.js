@@ -60,6 +60,16 @@ export default async function Home() {
     getAccessories()
   ]);
 
+// ▼▼▼ 追加: ダイヤモンドのカテゴリ情報を抽出 ▼▼▼
+  // スラッグが 'diamond' のものを優先して探します
+  const alexandriteCategory = categories.find(c => c.slug === 'alexandrite' || c.name === 'alexandrite');
+  const alexandriteIconUrl = alexandriteCategory?.image?.url;
+  const moonstoneCategory = categories.find(c => c.slug === 'moonstone' || c.name === 'moonstone');
+  const moonstoneIconUrl = moonstoneCategory?.image?.url;
+  const diamondCategory = categories.find(c => c.slug === 'diamond' || c.name === 'Diamond');
+  const diamondIconUrl = diamondCategory?.image?.url;
+  // ▲▲▲ 追加ここまで ▲▲▲
+
   // MasonryGrid用にデータを整形
   const items = archives.map((content) => {
     const isProduct = content.type.includes('product');
@@ -107,7 +117,54 @@ export default async function Home() {
               <input type="text" className="hero-search-input" placeholder="宝石名、色などで検索..." />
             </div>
             <Link href="/category" className="hero-search-sublink">
+              
+              {diamondIconUrl ? (
+                /* APIから取得した画像がある場合 */
+                <Image 
+                  src={diamondIconUrl} 
+                  alt="Diamond" 
+                  width={20} 
+                  height={20} 
+                  style={{ objectFit: 'contain', marginRight: '2px' }}
+                />
+              ) : (
+                /* フォールバック用（データがない場合）のSVG */
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
+                </svg>
+              )}
+              {alexandriteIconUrl ? (
+                /* APIから取得した画像がある場合 */
+                <Image 
+                  src={alexandriteIconUrl} 
+                  alt="Alexandrite" 
+                  width={20} 
+                  height={20} 
+                  style={{ objectFit: 'contain', marginRight: '2px' }}
+                />
+              ) : (
+                /* フォールバック用（データがない場合）のSVG */
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
+                </svg>
+              )}
+              {moonstoneIconUrl ? (
+                /* APIから取得した画像がある場合 */
+                <Image 
+                  src={moonstoneIconUrl} 
+                  alt="Moonstone" 
+                  width={20} 
+                  height={20} 
+                  style={{ objectFit: 'contain', marginRight: '2px' }}
+                />
+              ) : (
+                /* フォールバック用（データがない場合）のSVG */
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
+                </svg>
+              )}
               <span>View All Gemstones</span>
+              
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
               </svg>

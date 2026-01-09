@@ -2255,7 +2255,7 @@ a { text-decoration: none; color: inherit; }
 
 /* TOPページ検索下のリンク */
 .hero-search-sublink {
-  margin-top: 16px;
+  margin-top: 32px;
   font-family: var(--font-en);
   font-size: 0.9rem;
   
