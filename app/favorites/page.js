@@ -12,7 +12,7 @@ export default function FavoritesPage() {
   const { favorites, isLoaded } = useFavorites();
   const breadcrumbItems = [
     { label: "Home", path: "/" },
-    { label: "Favorites", path: null }
+    { label: "Favorites", path: "/favorites" }
   ];
   return (
     <>

@@ -40,8 +40,8 @@ export default async function CategoryIndexPage() {
 // パンくずデータ定義
 const breadcrumbItems = [
     { label: "Home", path: "/" },
-    { label: "All Gemstones", path: null } // 現在地
-];
+    { label: "All Gemstones", path: "/category" } 
+  ];
   
   return (
     <>

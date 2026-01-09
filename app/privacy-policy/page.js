@@ -7,12 +7,14 @@ import Breadcrumb from "@/components/Breadcrumb";
 export const metadata = {
   title: "Privacy Policy - Jewelism MARKET",
 };
-const breadcrumbItems = [
-  { label: "Home", path: "/" },
-  { label: "Privacy Policy", path: null }
-];
 
 export default function PrivacyPolicyPage() {
+
+  const breadcrumbItems = [
+    { label: "Home", path: "/" },
+    { label: "Privacy Policy", path: "/privacy-policy" }
+  ];
+
   return (
     <>
       <SiteHeader />

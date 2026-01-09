@@ -162,7 +162,7 @@ export default async function JournalPage({ params }) {
     breadcrumbItems.push({ label: "Journal", path: null }); // ここはリンクなしか、ジャーナル一覧があればそこへ
   }
 
-  breadcrumbItems.push({ label: journal.title, path: null });
+  breadcrumbItems.push({ label: journal.title, path: `/journals/${journal.slug}` });
 
   return (
     <>

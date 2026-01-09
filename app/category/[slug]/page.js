@@ -97,7 +97,7 @@ export default async function CategoryPage({ params }) {
   const breadcrumbItems = [
     { label: "Home", path: "/" },
     { label: "All Gemstones", path: "/category" },
-    { label: category.name, path: null }
+    { label: category.name, path: `/category/${category.slug}` }
   ];
   return (
     <>

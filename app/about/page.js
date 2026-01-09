@@ -10,7 +10,7 @@ export const metadata = {
 };
 const breadcrumbItems = [
   { label: "Home", path: "/" },
-  { label: "About & Disclaimer", path: null }
+  { label: "About & Disclaimer", path: "/about" }
 ];
 
 export default function AboutPage() {
