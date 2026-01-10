@@ -44,9 +44,8 @@ async function getCategories() {
 async function getAccessories() {
   try {
     const data = await client.get({
-      endpoint: "accessories", 
+      endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
       queries: { limit: 100 },
-      // キャッシュ設定を復元 (1時間)
       customRequestInit: { next: { revalidate: 3600 } } 
     });
     return data.contents;

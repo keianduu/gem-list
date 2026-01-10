@@ -37,17 +37,18 @@ async function getCategories() {
 
 // アクセサリマスター取得
 async function getAccessories() {
-  try {
-    const data = await client.get({
-      endpoint: "accessories", 
-      queries: { limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } } 
-    });
-    return data.contents;
-  } catch (err) {
-    return [];
+    try {
+      const data = await client.get({
+        endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
+        queries: { limit: 100 },
+        customRequestInit: { next: { revalidate: 3600 } } 
+      });
+      return data.contents;
+    } catch (err) {
+      console.error("Accessories fetch error:", err); // エラーログも見やすく修正
+      return [];
+    }
   }
-}
 
 export const metadata = {
   title: "Search All Items - Jewelism MARKET",
