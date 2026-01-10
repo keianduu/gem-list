@@ -7,7 +7,10 @@ export default function FilterPopup({
   availableOptions,
   filters,
   onFilterChange,
-  onReset
+  onReset,
+  isTopOnly,          // ★追加: 現在のトグル状態
+  onToggleTopOnly,    // ★追加: トグル変更ハンドラ
+  showOptionToggle = true // ★追加: トグルを表示するかどうか (デフォルトtrue)
 }) {
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
@@ -15,12 +18,12 @@ export default function FilterPopup({
 
   const categories = availableOptions?.categories || [];
   const accessories = availableOptions?.accessories || [];
-  const colors = availableOptions?.colors || []; // ★追加
+  const colors = availableOptions?.colors || [];
   const priceRanges = availableOptions?.priceRanges || [];
   
   const isPriceDisabled = priceRanges.length === 0;
   const isAccessoryDisabled = accessories.length === 0;
-  const isColorDisabled = colors.length === 0; // ★追加: 色選択肢がない場合は無効化
+  const isColorDisabled = colors.length === 0;
 
   return (
     <div 
@@ -88,11 +91,10 @@ export default function FilterPopup({
             </div>
           </div>
 
-          {/* ▼▼▼ 追加: Color Filter ▼▼▼ */}
+          {/* Color Filter */}
           <div className="filter-section" style={{ opacity: isColorDisabled ? 0.5 : 1, transition: 'opacity 0.3s' }}>
             <label>Color</label>
             <div className="custom-select-wrapper" style={{ width: '100%', background: '#f9f9f9', borderRadius: '12px' }}>
-              {/* パレットアイコン */}
               <svg className="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.077-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" />
               </svg>
@@ -113,7 +115,6 @@ export default function FilterPopup({
               </svg>
             </div>
           </div>
-          {/* ▲▲▲ 追加ここまで ▲▲▲ */}
 
           {/* Price */}
           <div className="filter-section" style={{ opacity: isPriceDisabled ? 0.5 : 1, transition: 'opacity 0.3s' }}>
@@ -140,17 +141,33 @@ export default function FilterPopup({
             </div>
           </div>
 
-          {/* Toggle */}
-          <div className="filter-section">
-            <label>Option</label>
-            <div className="toggle-wrapper disabled" style={{ background: '#f9f9f9', borderRadius: '12px', justifyContent: 'space-between' }}>
-              <span className="toggle-label" style={{ fontSize: '0.9rem' }}>Search in TOP items only</span>
-              <div style={{ position: 'relative' }}>
-                <input type="checkbox" checked disabled className="toggle-checkbox" style={{ display: 'none' }} />
-                <div className="toggle-switch"></div>
+          {/* Toggle (Top items only) - Show only if showOptionToggle is true */}
+          {showOptionToggle && (
+            <div className="filter-section">
+              <label>Option</label>
+              <div 
+                className="toggle-wrapper" 
+                onClick={onToggleTopOnly} // ★クリックで切り替え
+                style={{ 
+                  background: '#f9f9f9', borderRadius: '12px', 
+                  justifyContent: 'space-between', cursor: 'pointer' 
+                }}
+              >
+                <span className="toggle-label" style={{ fontSize: '0.9rem' }}>Search in TOP items only</span>
+                <div style={{ position: 'relative' }}>
+                  {/* ★修正: disabledを削除し、checkedをisTopOnlyに紐付け */}
+                  <input 
+                    type="checkbox" 
+                    checked={isTopOnly} 
+                    readOnly 
+                    className="toggle-checkbox" 
+                    style={{ display: 'none' }} 
+                  />
+                  <div className="toggle-switch"></div>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="modal-actions" style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -166,7 +183,8 @@ export default function FilterPopup({
           </button>
 
           <button className="apply-btn" onClick={onClose}>
-            Show Results
+            {/* ★修正: トグルがOFFなら文言を変えると親切かも（任意） */}
+            {(!showOptionToggle || !isTopOnly) ? "Search All Items" : "Show Results"}
           </button>
         </div>
 

@@ -827,7 +827,7 @@ a { text-decoration: none; color: inherit; }
   position: fixed;
   bottom: 30px;
   right: 30px;
-  z-index: 100;
+  z-index: 1500;
   
   display: flex;
   align-items: center;
@@ -875,7 +875,7 @@ a { text-decoration: none; color: inherit; }
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  z-index: 2000;
+  z-index: 3000;
   
   display: flex;
   align-items: center;

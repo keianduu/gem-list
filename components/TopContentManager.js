@@ -2,24 +2,65 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { createPortal } from 'react-dom'; // ★追加
 import MasonryGrid from './MasonryGrid';
 import FilterPopup from './FilterPopup';
 
-export default function TopContentManager({ initialItems, categories, accessories }) {
+export default function TopContentManager({ 
+  initialItems, 
+  categories, 
+  accessories,
+  title = "Journal & Products", 
+  subtitle = "読みもの & 新着アイテム",
+  isSearchPage = false 
+}) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   // フィルター状態
   const [filters, setFilters] = useState({
     category: "",
     accessory: "",
     priceRange: "",
-    color: "", // ★追加
+    color: "", 
     contentType: "all",
   });
 
+  const [isTopOnly, setIsTopOnly] = useState(!isSearchPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFloatingBtn, setShowFloatingBtn] = useState(false);
   const containerRef = useRef(null);
+  
+  // ★追加: クライアントサイドでのみポータルを有効にするためのフラグ
+  const [mounted, setMounted] = useState(false);
 
-  // スクロール検知
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // URLパラメータ復元 (変更なし)
+  useEffect(() => {
+    if (isSearchPage) {
+      const p_category = searchParams.get('category') || "";
+      const p_accessory = searchParams.get('accessory') || "";
+      const p_color = searchParams.get('color') || "";
+      const p_price = searchParams.get('priceRange') || "";
+      const p_type = searchParams.get('contentType') || "all";
+
+      setFilters({
+        category: p_category,
+        accessory: p_accessory,
+        color: p_color,
+        priceRange: p_price,
+        contentType: p_type
+      });
+      
+      setIsTopOnly(false);
+    }
+  }, [isSearchPage, searchParams]);
+
+  // スクロール検知 (変更なし)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setShowFloatingBtn(entry.isIntersecting),
@@ -29,21 +70,18 @@ export default function TopContentManager({ initialItems, categories, accessorie
     return () => observer.disconnect();
   }, []);
 
-  // 選択肢の計算
+  // 選択肢の計算 (変更なし)
   const availableOptions = useMemo(() => {
     const activeCategoryNames = new Set();
     const activeAccessoryNames = new Set();
-    const activeColorNames = new Set(); // ★追加
+    const activeColorNames = new Set();
     const activePriceKeys = new Set();
 
     initialItems.forEach(item => {
-      // コンテンツタイプでフィルタリングされた候補から選択肢を作る
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return;
-
       if (item.category) activeCategoryNames.add(item.category);
       if (item.accessory) activeAccessoryNames.add(item.accessory);
-      if (item.color) activeColorNames.add(item.color); // ★追加
-
+      if (item.color) activeColorNames.add(item.color);
       if (item.type === 'product' && typeof item.rawPrice === 'number') {
         const p = item.rawPrice;
         if (p < 10000) activePriceKeys.add('under-10000');
@@ -62,31 +100,28 @@ export default function TopContentManager({ initialItems, categories, accessorie
 
     let validAccessories = [];
     if (accessories && accessories.length > 0) {
-      // マスタデータがある場合はそれを使う（IDなどの情報が正確なため）
       validAccessories = accessories.filter(acc => activeAccessoryNames.has(acc.name));
     } else {
-      // マスタがない場合は、商品データにある名前から即席でリストを作る
       validAccessories = Array.from(activeAccessoryNames).sort().map(name => ({
-        id: name, // IDの代わりに名前を使う
-        name: name
+        id: name, name: name
       }));
     }
     
     return {
       categories: categories.filter(cat => activeCategoryNames.has(cat.name)),
       accessories: validAccessories,
-      colors: Array.from(activeColorNames).sort(), // ★追加: 文字列配列として返す
+      colors: Array.from(activeColorNames).sort(),
       priceRanges: priceDefinitions.filter(p => activePriceKeys.has(p.value))
     };
   }, [initialItems, categories, accessories, filters.contentType]);
 
-  // フィルタリングロジック
+  // フィルタリングロジック (変更なし)
   const filteredItems = useMemo(() => {
     return initialItems.filter(item => {
       if (filters.contentType !== 'all' && item.type !== filters.contentType) return false;
       if (filters.category && item.category !== filters.category) return false;
       if (filters.accessory && item.accessory !== filters.accessory) return false;
-      if (filters.color && item.color !== filters.color) return false; // ★追加
+      if (filters.color && item.color !== filters.color) return false;
       
       if (filters.priceRange) {
         if (item.type !== 'product') return false;
@@ -105,14 +140,27 @@ export default function TopContentManager({ initialItems, categories, accessorie
   };
 
   const handleResetFilters = () => {
-    setFilters({ category: "", accessory: "", priceRange: "", color: "", contentType: "all" }); // ★colorリセット追加
+    setFilters({ category: "", accessory: "", priceRange: "", color: "", contentType: "all" });
+    if (!isSearchPage) setIsTopOnly(true); 
   };
 
-  // Refineボタン用のアクティブ数カウント
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    if (!isSearchPage && !isTopOnly) {
+      const params = new URLSearchParams();
+      if (filters.category) params.set('category', filters.category);
+      if (filters.accessory) params.set('accessory', filters.accessory);
+      if (filters.color) params.set('color', filters.color);
+      if (filters.priceRange) params.set('priceRange', filters.priceRange);
+      if (filters.contentType !== 'all') params.set('contentType', filters.contentType);
+      router.push(`/search?${params.toString()}`);
+    }
+  };
+
   const activeFilterCount = 
     (filters.category ? 1 : 0) + 
     (filters.accessory ? 1 : 0) + 
-    (filters.color ? 1 : 0) + // ★追加
+    (filters.color ? 1 : 0) + 
     (filters.priceRange ? 1 : 0);
   
   const isRefineActive = activeFilterCount > 0;
@@ -121,8 +169,8 @@ export default function TopContentManager({ initialItems, categories, accessorie
     <div className="content-manager" ref={containerRef} style={{ minHeight: '100vh' }}>
       
       <div className="content-header-wrapper">
-        <h2 className="section-title">Journal & Products</h2>
-        <p className="section-subtitle">読みもの & 新着アイテム</p>
+        <h2 className="section-title">{title}</h2>
+        <p className="section-subtitle">{subtitle}</p>
 
         <div className="content-type-tabs">
           <button 
@@ -146,34 +194,43 @@ export default function TopContentManager({ initialItems, categories, accessorie
         </div>
       </div>
 
-      <button 
-        className={`floating-filter-btn ${showFloatingBtn ? 'visible' : ''}`}
-        onClick={() => setIsModalOpen(true)}
-      >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
-        </svg>
-        <span className="btn-text">Refine</span>
-        {activeFilterCount > 0 && (
-          <span style={{ 
-            background: '#fff', color: '#111', 
-            borderRadius: '50%', width: '20px', height: '20px', 
-            fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 'bold', marginLeft: '8px'
-          }}>
-            {activeFilterCount}
-          </span>
-        )}
-      </button>
+      {/* ★修正: ポータルを使用してbody直下に描画 */}
+      {mounted && createPortal(
+        <>
+          <button 
+            className={`floating-filter-btn ${showFloatingBtn ? 'visible' : ''}`}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+            </svg>
+            <span className="btn-text">Refine</span>
+            {activeFilterCount > 0 && (
+              <span style={{ 
+                background: '#fff', color: '#111', 
+                borderRadius: '50%', width: '20px', height: '20px', 
+                fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontWeight: 'bold', marginLeft: '8px'
+              }}>
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
 
-      <FilterPopup 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        availableOptions={availableOptions}
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        onReset={handleResetFilters} 
-      />
+          <FilterPopup 
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+            availableOptions={availableOptions}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onReset={handleResetFilters} 
+            isTopOnly={isTopOnly}
+            onToggleTopOnly={() => setIsTopOnly(!isTopOnly)}
+            showOptionToggle={!isSearchPage}
+          />
+        </>,
+        document.body
+      )}
 
       {isRefineActive && (
         <div className="fade-in" style={{ textAlign: 'center', marginBottom: '30px', color: '#888', fontSize: '0.8rem', letterSpacing: '0.1em' }}>
