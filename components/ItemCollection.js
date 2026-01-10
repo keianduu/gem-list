@@ -10,8 +10,8 @@ export default function ItemCollection({
   emptyMessage = "現在、関連するアイテムはありません。" 
 }) {
   return (
-    // ★修正: padding: '0' を削除し、className="item-collection-container" を追加
-    <section className="item-collection-container" style={{ maxWidth: '1200px', margin: '100px auto 0' }}>
+    // ★修正: maxWidth, margin指定を削除し、レイアウトは親コンテナ(.category-mainなど)に任せる
+    <section className="item-collection-container">
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
         {subtitle && (
           <span style={{ 
