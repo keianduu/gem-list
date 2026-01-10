@@ -1,4 +1,5 @@
 /* app/page.js */
+import { Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import CategorySlider from "@/components/CategorySlider";
@@ -121,11 +122,13 @@ export default async function Home() {
       </section>
 
       <main className="main-container">
-        <TopContentManager 
-          initialItems={items} 
-          categories={categories} 
-          accessories={accessories}
-        />
+        <Suspense fallback={<div className="skeleton-container fade-in"><div className="skeleton-text" style={{width: '100%'}}>Loading...</div></div>}>
+          <TopContentManager 
+            initialItems={items} 
+            categories={categories} 
+            accessories={accessories}
+          />
+        </Suspense>
       </main>
 
       <SiteFooter />

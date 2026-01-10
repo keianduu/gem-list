@@ -1,4 +1,5 @@
 /* app/search/page.js */
+import { Suspense } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -109,15 +110,16 @@ export default async function SearchPage() {
 
       <main className="journal-main">
         
-        {/* コンテンツ管理マネージャー (タイトルを変更して使用) */}
-        <TopContentManager 
-          initialItems={items} 
-          categories={categories} 
-          accessories={accessories}
-          title="All Collections"
-          subtitle={`全${items.length}件のコレクション`}
-          isSearchPage={true}
-        />
+        <Suspense fallback={<div style={{textAlign:'center', padding:'40px'}}>Loading...</div>}>
+          <TopContentManager 
+            initialItems={items} 
+            categories={categories} 
+            accessories={accessories}
+            title="All Collections"
+            subtitle={`全${items.length}件のコレクション`}
+            isSearchPage={true} 
+          />
+        </Suspense>
 
       </main>
 
