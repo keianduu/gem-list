@@ -8,9 +8,9 @@ export default function FilterPopup({
   filters,
   onFilterChange,
   onReset,
-  isTopOnly,          // ★追加: 現在のトグル状態
-  onToggleTopOnly,    // ★追加: トグル変更ハンドラ
-  showOptionToggle = true // ★追加: トグルを表示するかどうか (デフォルトtrue)
+  isTopOnly,          
+  onToggleTopOnly,    
+  showOptionToggle = true 
 }) {
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
@@ -70,8 +70,11 @@ export default function FilterPopup({
           <div className="filter-section" style={{ opacity: isAccessoryDisabled ? 0.5 : 1, transition: 'opacity 0.3s' }}>
             <label>Accessory Type</label>
             <div className="custom-select-wrapper" style={{ width: '100%', background: '#f9f9f9', borderRadius: '12px' }}>
-              <svg className="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a5 5 0 0 0-5 5v2a7 7 0 0 0 14 0V7a5 5 0 0 0-5-5zm0 2a3 3 0 0 1 3 3v2h-6V7a3 3 0 0 1 3-3z" />
+              {/* ★修正: アイコンをRingに変更 (strokeWidthを1.5にして繊細さを表現) */}
+              <svg className="select-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="12" cy="12" r="7" />
+                <path d="M12 5V3m0 18v-2m9-7h-2M5 12H3" strokeLinecap="round" />
+                <path d="M12 5l2-2m-2 2l-2-2" />
               </svg>
               <select 
                 className="custom-select" 
