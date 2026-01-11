@@ -2,13 +2,13 @@
 
 export const SITE_NAME = "Jewelism MARKET";
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jewelism-market.com";
-export const SITE_DESCRIPTION = "宝石の美しさと学術的データを融合したモダンなジュエリー図鑑＆マーケットプレイス。ダイヤモンドから希少石まで、その石が持つ物語と輝きをお届けします。";
+export const SITE_DESCRIPTION = "宝石や原石、鉱石に秘められた歴史や物語を、図鑑をめくるようなコラムでご紹介します。Jewelism Marketが大切にしているのは、スペックよりも石との「出会い」。奥深い宝石の世界を、もっと身近に、もっと気楽に楽しんでみませんか。";
 export const SITE_OG_IMAGE = "/og-image.png"; // publicフォルダに配置予定のデフォルト画像
 
 // 静的ページのメタデータ定義
 export const PAGE_METADATA = {
   top: {
-    title: "Jewelism MARKET - 歴史に磨かれた一石との出会い", // テンプレートで " | Jewelism MARKET" が付く
+    title: "Jewelism MARKET - 宝石の世界を、もっと身近に。", // テンプレートで " | Jewelism MARKET" が付く
     description: SITE_DESCRIPTION,
   },
   search: {
