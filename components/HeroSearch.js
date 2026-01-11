@@ -100,7 +100,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
           <input 
             type="text" 
             className="hero-search-input" 
-            placeholder="宝石名、原石、色、アイテム名..." 
+            placeholder="宝石名、原石、アイテム名..." 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => { if(query) setIsOpen(true); }}
@@ -182,7 +182,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
             </svg>
           )}
-          <span>Gemstones</span>
+          <span>宝石一覧</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
@@ -203,7 +203,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l9 4.5v9l-9 4.5-9-4.5v-9z" />
             </svg>
           )}
-          <span>Rough Stones</span>
+          <span>原石一覧</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
           </svg>
