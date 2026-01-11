@@ -1,56 +1,31 @@
 /* app/favorites/page.js */
-"use client";
-
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import MasonryGrid from "@/components/MasonryGrid";
-import Link from "next/link";
-import { useFavorites } from "@/hooks/useFavorites";
 import Breadcrumb from "@/components/Breadcrumb";
+import FavoritesContent from "@/components/FavoritesContent"; // ★新規コンポーネントをインポート
+
+export const metadata = {
+  title: "Favorites - Jewelism MARKET",
+};
 
 export default function FavoritesPage() {
-  const { favorites, isLoaded } = useFavorites();
   const breadcrumbItems = [
     { label: "Home", path: "/" },
     { label: "Favorites", path: "/favorites" }
   ];
+
   return (
     <>
       <SiteHeader />
 
-      {/* ★修正: 
-        className を "main-container" から "journal-main" に変更
-        style の paddingTop 指定を削除（CSS側で制御されるため）
-      */}
       <main className="journal-main">
-
-        <div style={{ textAlign: "center", marginBottom: "60px" }}>
-          <h1 className="hero-title" style={{ fontSize: "2.5rem", marginBottom: "10px" }}>
-            Your Favorites
-          </h1>
-          <p className="hero-subtitle" style={{ color: "#666" }}>
-            あなたが選んだ、特別なコレクション。
-          </p>
-        </div>
-
-        {/* ロード中 または データがない場合の表示分岐 */}
-        {!isLoaded ? (
-          <div className="skeleton-container fade-in" style={{ justifyContent: 'center' }}>
-             <div className="skeleton-text" style={{ width: '200px', height: '20px' }}></div>
-          </div>
-        ) : favorites.length > 0 ? (
-          <MasonryGrid items={favorites} />
-        ) : (
-          <div style={{ textAlign: "center", padding: "60px 20px", color: "#999" }}>
-            <p style={{ marginBottom: "20px" }}>まだお気に入りのアイテムはありません。</p>
-            <Link href="/" className="embed-btn" style={{ display: 'inline-block' }}>
-              アイテムを探す
-            </Link>
-          </div>
-        )}
-        
+        {/* クライアント側の処理はここに分離 */}
+        <FavoritesContent />
       </main>
+
       <Breadcrumb items={breadcrumbItems} />
+      
+      {/* サーバーコンポーネントとしてレンダリングされるのでエラーが解消します */}
       <SiteFooter />
     </>
   );
