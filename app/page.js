@@ -8,6 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import TopContentManager from "@/components/TopContentManager";
 import HeroSearch from "@/components/HeroSearch"; 
 import { client } from "@/libs/microcms";
+import GemStoneLinks from "@/components/GemStoneLinks";
 
 // アーカイブ取得
 async function getArchives() {
@@ -126,7 +127,11 @@ export default async function Home() {
           <HeroSearch 
             archives={items} 
             categories={categories} 
-            roughStones={roughStones} 
+            roughStones={roughStones}
+            // ★追加: コンポーネントをPropsとして渡す
+            gemLinks={
+              <GemStoneLinks style={{ marginTop: '32px', marginBottom: '0' }} />
+            }
           />
         </div>
 

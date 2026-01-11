@@ -7,6 +7,7 @@ import { COUNTRY_FLAGS } from "@/libs/constants";
 import SiteHeader from "@/components/SiteHeader"; 
 import SiteFooter from "@/components/SiteFooter"; 
 import Breadcrumb from "@/components/Breadcrumb";
+import GemStoneLinks from "@/components/GemStoneLinks";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
@@ -304,6 +305,8 @@ export default async function CategoryPage({ params }) {
             </div>
           </div>
         </section>
+        
+        <GemStoneLinks />
 
         <ItemCollection 
           items={categoryItems}

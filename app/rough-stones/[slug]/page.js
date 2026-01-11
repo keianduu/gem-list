@@ -6,6 +6,7 @@ import ItemCollection from "@/components/ItemCollection";
 import SiteHeader from "@/components/SiteHeader"; 
 import SiteFooter from "@/components/SiteFooter"; 
 import Breadcrumb from "@/components/Breadcrumb";
+import GemStoneLinks from "@/components/GemStoneLinks";
 
 // ★追加: この原石に関連する宝石カテゴリを取得
 async function getRelatedJewelryCategories(roughStoneId) {
@@ -201,6 +202,8 @@ export default async function RoughStonePage({ params }) {
             </div>
           </section>
         )}
+
+        <GemStoneLinks />
 
         {/* 関連アイテム (Varieties Collection) */}
         <ItemCollection 

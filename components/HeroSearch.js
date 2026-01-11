@@ -5,11 +5,11 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function HeroSearch({ archives = [], categories = [], roughStones = [] }) {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const wrapperRef = useRef(null);
+export default function HeroSearch({ archives = [], categories = [], roughStones = [], gemLinks }) {
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
+    const wrapperRef = useRef(null);
 
   // ★追加: アイコン用画像の取得 (Diamond & Beryl)
   // 大文字小文字を区別せず検索して取得
@@ -165,51 +165,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
       </div>
 
       {/* CTA Links Area */}
-      <div style={{ marginTop: '32px', display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-        
-        {/* 1. View All Gemstones */}
-        <Link href="/gems" className="hero-search-sublink" style={{ marginTop: 0 }} onClick={() => setIsOpen(false)}>
-          {/* Diamond画像があれば表示 */}
-          {diamondCategory?.image?.url ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img 
-              src={diamondCategory.image.url} 
-              alt="" 
-              style={{ width:'20px', height:'20px', objectFit:'contain', marginRight:'4px' }} 
-            />
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1px' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
-            </svg>
-          )}
-          <span>宝石一覧</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </Link>
-
-        {/* 2. Rough Stones */}
-        <Link href="/rough-stones" className="hero-search-sublink" style={{ marginTop: 0 }} onClick={() => setIsOpen(false)}>
-          {/* Beryl画像があれば表示 */}
-          {berylRough?.image?.url ? (
-            /* eslint-disable-next-line @next/next/no-img-element */
-            <img 
-              src={berylRough.image.url} 
-              alt="" 
-              style={{ width:'20px', height:'20px', objectFit:'contain', marginRight:'4px' }} 
-            />
-          ) : (
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1px' }}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l9 4.5v9l-9 4.5-9-4.5v-9z" />
-            </svg>
-          )}
-          <span>原石一覧</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-          </svg>
-        </Link>
-
-      </div>
+      {gemLinks}
 
     </div>
   );
