@@ -105,7 +105,8 @@ export default async function CategoryPage({ params }) {
 
       <main className="category-main">
 
-        <section className="category-header">
+      <section className="category-header">
+          {/* 1. アイコン画像 */}
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
              {category.image && (
                <Image 
@@ -119,9 +120,24 @@ export default async function CategoryPage({ params }) {
              )}
           </div>
           
+          {/* 2. 英語タイトル */}
           <h1 className="category-title-en">{category.name}</h1>
-          <p className="category-title-ja">{category.yomigana}</p>
           
+          {/* 3. 読みがな & 日本語名 (ここを追加しました) */}
+          <div style={{ marginBottom: '24px' }}>
+            {category.yomigana && (
+              <p className="category-title-ja" style={{ marginBottom: category.nameJa ? '4px' : '0' }}>
+                {category.yomigana}
+              </p>
+            )}
+            {category.nameJa && (
+              <p className="category-title-ja" style={{ marginBottom: '0' }}>
+                {category.nameJa}
+              </p>
+            )}
+          </div>
+          
+          {/* 4. 説明文 (ここが消えていないか確認してください) */}
           {category.description && (
             <div 
                 className="category-desc"
