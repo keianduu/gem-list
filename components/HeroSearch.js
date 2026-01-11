@@ -12,6 +12,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
   const wrapperRef = useRef(null);
 
   // ★追加: アイコン用画像の取得 (Diamond & Beryl)
+  // 大文字小文字を区別せず検索して取得
   const diamondCategory = categories.find(c => c.name.toLowerCase() === 'diamond');
   const berylRough = roughStones.find(r => r.name.toLowerCase() === 'beryl');
 
@@ -72,7 +73,8 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
     setResults([...matchedCategories, ...matchedRoughStones, ...matchedArchives].slice(0, 10));
     setIsOpen(true);
 
-  }, [query, categories, archives, roughStones]); 
+    // ★修正ポイント1: 配列を展開せず、変数として指定します
+  }, [query, categories, archives, roughStones]);
 
   // 外側クリックで閉じる
   useEffect(() => {
@@ -91,13 +93,14 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
       <div style={{ position: 'relative' }}>
         
         <div className={`hero-search-container ${isOpen && query ? 'active' : ''}`}>
+          {/* ★修正ポイント2: strokeLinecap, strokeLinejoin に修正 */}
           <svg className="hero-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
           <input 
             type="text" 
             className="hero-search-input" 
-            placeholder="宝石名、原石、アイテム名..." 
+            placeholder="宝石名、原石、色、アイテム名..." 
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => { if(query) setIsOpen(true); }}
@@ -144,7 +147,9 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
                   {item.sub && <p className="suggestion-sub">{item.sub}</p>}
                 </div>
                 <div className="suggestion-arrow">
-                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                  <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               </Link>
             ))}
@@ -164,7 +169,7 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
         
         {/* 1. View All Gemstones */}
         <Link href="/gems" className="hero-search-sublink" style={{ marginTop: 0 }} onClick={() => setIsOpen(false)}>
-          {/* ★修正: Diamond画像があればそれを表示、なければSVG */}
+          {/* Diamond画像があれば表示 */}
           {diamondCategory?.image?.url ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img 
@@ -177,13 +182,15 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l9-9 9 9-9 9-9-9z" />
             </svg>
           )}
-          <span>宝石一覧</span>
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <span>Gemstones</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
         </Link>
 
         {/* 2. Rough Stones */}
         <Link href="/rough-stones" className="hero-search-sublink" style={{ marginTop: 0 }} onClick={() => setIsOpen(false)}>
-          {/* ★修正: Beryl画像があればそれを表示、なければSVG */}
+          {/* Beryl画像があれば表示 */}
           {berylRough?.image?.url ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img 
@@ -196,8 +203,10 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 2l9 4.5v9l-9 4.5-9-4.5v-9z" />
             </svg>
           )}
-          <span>原石一覧</span>
-          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+          <span>Rough Stones</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+          </svg>
         </Link>
 
       </div>
