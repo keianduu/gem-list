@@ -663,19 +663,140 @@ a { text-decoration: none; color: inherit; }
 .keyword-tags.left-align span { margin-left: 15px; font-size: 0.8rem; color: #a3937d; }
 .keyword-tags.left-align span:first-child { margin-left: 0; }
 
-/* Footer */
+/* ...（前略）... */
+
+/* =========================================
+   Footer (Updated)
+========================================= */
 .gem-footer {
-  background-color: #111; color: #fff; padding: 80px 20px; text-align: center; margin-top: 0px; position: relative; z-index: 10;
+  background-color: #111; color: #fff; padding: 80px 0 40px; 
+  text-align: center; position: relative; z-index: 10;
+  width: 100%;
+}
+
+.footer-content-wrapper {
+  max-width: 1200px; margin: 0 auto; padding: 0 var(--page-padding-pc);
+  display: flex; flex-direction: column;
+}
+
+/* Brand Section */
+.footer-brand-section {
+  display: flex; flex-direction: column; align-items: center; margin-bottom: 40px;
 }
 .footer-logo-container {
   display: flex; flex-direction: column; align-items: center;
-  line-height: 1; text-decoration: none; color: #a38045; margin-bottom: 40px;
+  line-height: 1; text-decoration: none; color: #a38045; margin-bottom: 24px;
 }
 .footer-logo-container .logo-main { font-size: 2.4rem; }
 .footer-logo-container .logo-sub { font-size: 0.9rem; letter-spacing: 0.4em; margin-top: 5px; }
-.footer-links { display: flex; justify-content: center; gap: 40px; margin-bottom: 50px; flex-wrap: wrap; }
-.footer-links a { font-size: 0.9rem; color: #aaa; transition: color 0.3s; }
-.footer-links a:hover { color: #fff; }
+
+.footer-main-nav {
+  display: grid; /* Gridレイアウトに変更 */
+  grid-template-columns: repeat(3, 1fr); /* 3列均等配置 */
+  gap: 40px 0; /* 上下40px, 左右0 (セル内で中央寄せするため) */
+  width: 100%;
+  max-width: 900px;
+  margin: 20px auto 0;
+}
+/* Individual Nav Item */
+.footer-nav-item {
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  justify-content: center;
+  text-decoration: none; 
+  transition: opacity 0.3s, transform 0.3s;
+  width: 100%; /* セル幅いっぱいを使う */
+}
+.footer-nav-item:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+.footer-nav-item .nav-en {
+  display: block; /* ★追加: 確実に改行させる */
+  font-family: var(--font-en);
+  font-size: 0.7rem;
+  color: #a3937d; 
+  letter-spacing: 0.05em;
+  line-height: 1;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  text-align: center; /* ★追加: 中央揃え */
+}
+
+/* Japanese Label (Main) */
+.footer-nav-item .nav-jp {
+  display: block; /* ★追加: 確実に改行させる */
+  font-family: var(--font-jp);
+  font-size: 0.95rem;
+  color: #ccc;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.2; /* ★追加: 行間を整える */
+  text-align: center; /* ★追加: 中央揃え */
+}
+.footer-nav-item:hover .nav-jp {
+  color: #fff;
+}
+.footer-main-nav a {
+  font-size: 0.95rem; /* 日本語に合わせてサイズ微調整 */
+  color: #ccc; transition: color 0.3s; font-weight: 500; letter-spacing: 0.05em;
+}
+.footer-main-nav a:hover { color: #fff; }
+
+.footer-divider {
+  width: 100%; height: 1px; background: rgba(255, 255, 255, 0.1); margin: 40px 0;
+}
+
+/* Lists Container (2 Columns on PC) */
+.footer-lists-container {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; text-align: left;
+}
+
+.footer-list-block { width: 100%; }
+
+/* Details/Summary Reset & Style */
+.footer-details summary {
+  list-style: none; cursor: default; outline: none;
+}
+.footer-details summary::-webkit-details-marker { display: none; }
+
+.footer-list-title {
+  font-family: var(--font-en); font-size: 1.1rem; color: #a3937d; margin-bottom: 20px;
+  letter-spacing: 0.05em; font-weight: 600; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.accordion-icon { display: none; transition: transform 0.3s; }
+
+/* Grid for Links */
+.footer-tags-grid {
+  display: flex; flex-wrap: wrap; gap: 10px 16px;
+}
+.footer-tag-link {
+  font-family: var(--font-ja); font-size: 0.85rem; color: #888; text-decoration: none;
+  transition: color 0.2s; line-height: 1.4;
+}
+.footer-tag-link:hover { color: #fff; text-decoration: underline; }
+
+/* Bottom Section */
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+}
+.footer-legal-links { display: flex; gap: 24px; }
+.footer-legal-links a { 
+  font-size: 0.8rem; color: #666; transition: color 0.3s;
+  font-family: var(--font-jp); /* 明示的に日本語フォント指定 */ 
+}
+.footer-legal-links a:hover { color: #aaa; }
+.copyright { font-size: 0.75rem; color: #444; font-family: var(--font-en); margin: 0; }
+
+/* Mobile Optimization for Footer */
+@media (max-width: 768px) {
+
+}
+
+
 
 /* Content Header */
 .content-header-wrapper {
@@ -1028,6 +1149,109 @@ a { text-decoration: none; color: inherit; }
   
   .item-detail-card { grid-template-columns: 1fr; }
   .item-image { height: 300px; }
+
+  .gem-footer { 
+    padding: 60px 0 30px; 
+    text-align: center; /* ★修正: 全体を中央寄せに変更 */
+  }
+  
+  .footer-brand-section { 
+    align-items: center; /* ★修正: ロゴも中央寄せ */
+  }
+  .footer-logo-container { 
+    align-items: center; /* ★修正: ロゴ内の要素も中央寄せ */
+  }
+  
+  .footer-lists-container { grid-template-columns: 1fr; gap: 0; }
+  
+  /* Mobile Accordion Style */
+  .footer-list-block { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .footer-list-block:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+  
+  /* PCではopen属性をつけて常時展開しているが、スマホではCSSで制御するアプローチも可能ですが、
+     今回はシンプルにHTMLのopen属性をJSなしでレスポンシブに扱うため、
+     標準の挙動（PCでopenなら開く）を活かしつつ、
+     スマホで「閉じた状態」にしたい場合はJSが必要になります。
+     
+     ★今回の実装: PC/スマホ共に「開きっぱなし」をデフォルトとしつつ、
+     スマホユーザーが「長すぎる」と感じたら閉じられるようにしています。
+     もし「スマホでは最初から閉じておきたい」場合は、SiteFooter.js側で
+     viewport判定が必要になりますが、Server Componentなので
+     CSSで「PCではsummaryのクリック無効・常時表示」「スマホではアコーディオン」とします。
+  */
+
+  .footer-details[open] .accordion-icon { transform: rotate(180deg); }
+  .accordion-icon { display: block; color: #666; }
+  
+  .footer-list-title {
+    cursor: pointer; margin: 0; padding: 20px 0; font-size: 1rem; color: #fff;
+  }
+  .footer-tags-grid {
+    padding-bottom: 24px; 
+    gap: 12px 20px;
+    justify-content: flex-start; /* center から flex-start に変更 */
+    text-align: left; /* 親要素の text-align: center を打ち消す */
+  }
+  
+  .footer-bottom {
+    flex-direction: column; align-items: flex-start; gap: 30px; margin-top: 20px;
+  }
+  .footer-legal-links { flex-direction: column; gap: 12px; }
+
+  .footer-main-nav {
+    display: flex; /* GridからFlexに変更 */
+    flex-direction: column; /* 縦並び */
+    gap: 32px; /* リンク間の余白 */
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  /* Individual Nav Item (SP) */
+  .footer-nav-item {
+    width: 100%; /* 幅いっぱい使う */
+  }
+  .footer-lists-container { grid-template-columns: 1fr; gap: 0; }
+  
+  /* Mobile Accordion Style */
+  .footer-list-block { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .footer-list-block:first-child { border-top: 1px solid rgba(255,255,255,0.1); }
+
+  .footer-details[open] .accordion-icon { transform: rotate(180deg); }
+  .accordion-icon { display: block; color: #666; }
+  
+  .footer-list-title {
+    cursor: pointer; margin: 0; padding: 20px 0; font-size: 1rem; color: #fff;
+    /* アコーディオンタイトルは左寄せが見やすい場合が多いですが、
+       全体中央寄せならここも中央が良いかもしれません。
+       今回は「アコーディオンの開閉アイコン」があるので、
+       "Space Between" (左右配置) のままが機能的です。
+    */
+  }
+
+  
+  .footer-bottom {
+    flex-direction: column; align-items: center; /* ★修正: 中央寄せ */
+    gap: 30px; margin-top: 20px;
+  }
+  .footer-legal-links { 
+    flex-direction: column; 
+    gap: 16px; /* 少し広げる */
+    align-items: center; /* ★修正: 中央寄せ */
+  }
+  /* ★追加: SPではフッター内のDividerを非表示にする（二重線防止） */
+  .footer-divider {
+    display: none;
+  }
+
+  /* Mobile Accordion Style */
+  .footer-list-block { 
+    border-bottom: 1px solid rgba(255,255,255,0.1); 
+  }
+  /* 一番上のブロックには上線をつけて、区切りを明確にする */
+  .footer-list-block:first-child { 
+    border-top: 1px solid rgba(255,255,255,0.1); 
+    margin-top: 40px; /* 上のナビゲーションとの余白を確保 */
+  }
 }
 
 @media (max-width: 600px) {
@@ -1132,4 +1356,14 @@ a { text-decoration: none; color: inherit; }
   .nav-link .en { font-size: 2.2rem; }
   .nav-link .ja { font-size: 0.75rem; }
   .nav-list { margin-bottom: 40px; }
+}
+
+/* PC Specific: Disable Accordion Behavior */
+@media (min-width: 769px) {
+  .footer-details {
+    /* PCでは常に開いておく & インタラクションを無効化 */
+    pointer-events: none; 
+  }
+  .footer-details summary { pointer-events: none; }
+  .footer-tags-grid { pointer-events: auto; /* リンクはクリック可能に戻す */ }
 }
