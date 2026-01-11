@@ -20,13 +20,23 @@ export default function AboutPage() {
 
       <main className="journal-main">
 
-        <div style={{ maxWidth: "800px", margin: "0 auto", paddingTop: "40px" }}>
+        {/* --- 修正: タイトルエリアのデザインを共通化 --- */}
+        <div style={{ maxWidth: "800px", margin: "40px auto 60px" }}>
           
-          <h1 className="policy-title">About & Disclaimer</h1>
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+             <span style={{ 
+              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em', 
+              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' 
+            }}>
+              Information
+            </span>
+            <h1 className="section-title">About & Disclaimer</h1>
+            <p className="section-subtitle">運営情報 & 免責事項</p>
+          </div>
           
           <div className="policy-content">
 
-            {/* ▼▼▼ 追加: Concept Section (ジェマの思い) ▼▼▼ */}
+            {/* --- Concept Section --- */}
             <section>
               <div className="policy-contact-info">
                 <h2>Concept</h2>
@@ -52,7 +62,6 @@ export default function AboutPage() {
                 </div>
               </div>
             </section>
-            {/* ▲▲▲ 追加ここまで ▲▲▲ */}
             
             {/* --- 運営者情報 --- */}
             <section>

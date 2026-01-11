@@ -21,9 +21,18 @@ export default function PrivacyPolicyPage() {
 
       <main className="journal-main">
 
-        {/* 本文エリア: 中央寄せ (800px) */}
-        <div style={{ maxWidth: "800px", margin: "0 auto", paddingTop: "40px" }}>
-          <h1 className="policy-title">Privacy Policy</h1>
+        {/* --- 修正: タイトルエリアのデザインを共通化 --- */}
+        <section style={{ maxWidth: '800px', margin: '40px auto 60px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+             <span style={{ 
+              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em', 
+              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' 
+            }}>
+              Legal
+            </span>
+            <h1 className="section-title">Privacy Policy</h1>
+            <p className="section-subtitle">個人情報保護方針</p>
+          </div>
           
           <div className="policy-content">
             
@@ -111,10 +120,6 @@ export default function PrivacyPolicyPage() {
               <section>
                 <h2>10. お問い合わせ窓口</h2>
                 <p>本ポリシーに関するお問い合わせは、以下までご連絡ください。</p>
-                {/* 内部の連絡先情報もデザインを整えるため、単純なdivに変更するか、
-                    policy-contact-infoクラスを使わずスタイルを当てます 
-                    （入れ子にするとデザインが崩れる可能性があるため） 
-                */}
                 <div style={{ background: "rgba(255,255,255,0.5)", padding: "20px", borderRadius: "12px", marginTop: "10px" }}>
                   <p>運営者：kei ando</p>
                   <p>お問い合わせ：<Link href="/about#contact" style={{ color: "#0058a3", textDecoration: "underline" }}>お問い合わせフォーム</Link></p>
@@ -127,7 +132,7 @@ export default function PrivacyPolicyPage() {
               </div>
             </div>
           </div>
-        </div>
+        </section>
         
       </main>
       <Breadcrumb items={breadcrumbItems} />
