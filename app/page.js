@@ -15,7 +15,6 @@ async function getArchives() {
     const data = await client.get({
       endpoint: "archive",
       queries: { limit: 100, orders: "-publishedAt" },
-      // キャッシュ設定を復元 (60秒)
       customRequestInit: { next: { revalidate: 60 } } 
     });
     return data.contents;
@@ -31,7 +30,6 @@ async function getCategories() {
     const data = await client.get({
       endpoint: "jewelry-categories",
       queries: { filters: 'isVisible[equals]true', limit: 100 },
-      // キャッシュ設定を復元 (1時間)
       customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;
@@ -44,7 +42,7 @@ async function getCategories() {
 async function getAccessories() {
   try {
     const data = await client.get({
-      endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
+      endpoint: "accessory", 
       queries: { limit: 100 },
       customRequestInit: { next: { revalidate: 3600 } } 
     });
@@ -55,11 +53,27 @@ async function getAccessories() {
   }
 }
 
+// 原石データ取得
+async function getRoughStones() {
+  try {
+    const data = await client.get({
+      endpoint: "rough-stones",
+      queries: { limit: 100 },
+      customRequestInit: { next: { revalidate: 3600 } } 
+    });
+    return data.contents;
+  } catch (err) {
+    console.error("Rough Stones fetch error:", err);
+    return [];
+  }
+}
+
 export default async function Home() {
-  const [archives, categories, accessories] = await Promise.all([
+  const [archives, categories, accessories, roughStones] = await Promise.all([
     getArchives(),
     getCategories(),
-    getAccessories()
+    getAccessories(),
+    getRoughStones()
   ]);
 
   const items = archives.map((content) => {
@@ -68,20 +82,17 @@ export default async function Home() {
     const categoryName = relatedCategory?.name || (isProduct ? "Item" : "Journal");
     const categoryIcon = relatedCategory?.image?.url || null;
 
-    // アクセサリ紐付け
     const relatedAccessory = Array.isArray(content.relatedAccessories) && content.relatedAccessories.length > 0
       ? content.relatedAccessories[0] 
       : null;
     
     const accessoryName = relatedAccessory?.name || null;
 
-    // URLフォールバック
     let itemLink = `/journals/${content.slug}`;
     if (isProduct) {
       itemLink = content.affiliateUrl || `/products/${content.slug}`;
     }
 
-    // カラー情報
     let colorName = null;
     if (isProduct && content.color && Array.isArray(content.color.color)) {
       colorName = content.color.color[0] || null;
@@ -112,7 +123,11 @@ export default async function Home() {
           <h1 className="hero-title">Discover the Unseen <br /> Brilliance</h1>
           <p className="hero-subtitle">歴史に磨かれた一石との出会い。洗練された宝石の世界へ。</p>
           
-          <HeroSearch archives={items} categories={categories} />
+          <HeroSearch 
+            archives={items} 
+            categories={categories} 
+            roughStones={roughStones} 
+          />
         </div>
 
         <div className="hero-bottom-categories">

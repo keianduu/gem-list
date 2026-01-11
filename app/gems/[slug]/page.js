@@ -1,9 +1,7 @@
-/* app/category/[slug]/page.js */
+/* app/gems/[slug]/page.js */
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
-// import { items } from "@/libs/data"; 
-//import MasonryGrid from "@/components/MasonryGrid"; // ★変更: MasonryGridに戻す
 import ItemCollection from "@/components/ItemCollection";
 import { COUNTRY_FLAGS } from "@/libs/constants";
 import SiteHeader from "@/components/SiteHeader"; 
@@ -94,11 +92,13 @@ export default async function CategoryPage({ params }) {
   const miningLocations = category.miningLocations || category.miningLocation || [];
 
   // パンくずデータ定義
+  // ★修正: ここを /gems に書き換え
   const breadcrumbItems = [
     { label: "Home", path: "/" },
-    { label: "All Gemstones", path: "/category" },
-    { label: category.name, path: `/category/${category.slug}` }
+    { label: "All Gemstones", path: "/gems" },
+    { label: category.name, path: `/gems/${category.slug}` }
   ];
+  
   return (
     <>
       <SiteHeader />
@@ -137,7 +137,6 @@ export default async function CategoryPage({ params }) {
           </div>
 
           <div className="infographic-grid">
-            {/* ... (中略: Infographicの中身は変更なし) ... */}
             
             <div className="info-glass-card">
               <div className="info-header-row">

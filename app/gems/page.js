@@ -1,4 +1,4 @@
-/* app/category/page.js */
+/* app/gems/page.js */
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
@@ -6,7 +6,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 
-// 全カテゴリ取得（上限を大きめに設定）
+// 全カテゴリ取得
 async function getAllCategories() {
   try {
     const data = await client.get({
@@ -40,7 +40,8 @@ export default async function CategoryIndexPage() {
 // パンくずデータ定義
 const breadcrumbItems = [
     { label: "Home", path: "/" },
-    { label: "All Gemstones", path: "/category" } 
+    // ★修正: ラベルは同じでもパスを /gems に変更
+    { label: "All Gemstones", path: "/gems" } 
   ];
   
   return (
@@ -64,8 +65,9 @@ const breadcrumbItems = [
           {sortedCategories.length > 0 ? (
             <div className="category-index-grid">
               {sortedCategories.map((cat) => (
+                // ★修正: リンク先を /gems/... に変更
                 <Link 
-                  href={`/category/${cat.slug}`} 
+                  href={`/gems/${cat.slug}`} 
                   key={cat.id} 
                   className="category-index-card"
                 >

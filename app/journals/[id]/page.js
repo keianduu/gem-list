@@ -5,11 +5,9 @@ import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
 import SiteHeader from "@/components/SiteHeader"; 
 import SiteFooter from "@/components/SiteFooter";
-//import MasonryGrid from "@/components/MasonryGrid"; // ★変更: MasonryGridに戻す
-import ItemCollection from "@/components/ItemCollection"; // ★追加: 共通コンポーネント
+import ItemCollection from "@/components/ItemCollection"; 
 import Breadcrumb from "@/components/Breadcrumb";
 
-// ★開発中はキャッシュを無効化
 export const dynamic = 'force-dynamic';
 
 // --- 関連アイテム取得関数 ---
@@ -51,7 +49,7 @@ async function getRelatedItems(categoryId, currentContentId) {
   }
 }
 
-// --- (processBodyWithProducts は変更なし) ---
+// --- 本文処理 ---
 async function processBodyWithProducts(bodyContent) {
   if (!bodyContent) return "";
   const regex = /<a[^>]+href=["']\/?(?:items|products?)\/([^"']+)["'][^>]*>[\s\S]*?<\/a>/gi;
@@ -137,7 +135,10 @@ export default async function JournalPage({ params }) {
   const processedBody = await processBodyWithProducts(journal.body);
 
   const categoryData = journal.relatedJewelries?.[0] || null;
-  const categoryLink = categoryData ? `/category/${categoryData.slug}` : "/";
+  
+  // ★修正1: カテゴリリンクのベースを /gems に変更
+  const categoryLink = categoryData ? `/gems/${categoryData.slug}` : "/";
+  
   const categoryName = categoryData ? categoryData.name : "Journal";
   const categoryIcon = categoryData?.image?.url || null;
 
@@ -149,17 +150,16 @@ export default async function JournalPage({ params }) {
     ? await getRelatedItems(categoryData.id, journal.id) 
     : [];
 
-  // パンくずデータ生成
+  // ★修正2: パンくずリストのパスを /gems に変更
   const breadcrumbItems = [
     { label: "Home", path: "/" },
-    { label: "All Gemstones", path: "/category" }
+    { label: "All Gemstones", path: "/gems" }
   ];
 
   if (categoryData) {
     breadcrumbItems.push({ label: categoryName, path: categoryLink });
   } else {
-    // カテゴリがない場合（例：汎用ジャーナル）は 'Journal' とする
-    breadcrumbItems.push({ label: "Journal", path: null }); // ここはリンクなしか、ジャーナル一覧があればそこへ
+    breadcrumbItems.push({ label: "Journal", path: null });
   }
 
   breadcrumbItems.push({ label: journal.title, path: `/journals/${journal.slug}` });

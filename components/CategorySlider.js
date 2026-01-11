@@ -75,7 +75,8 @@ export default function CategorySlider({ categories }) {
       onTouchEnd={resumeScroll}
     >
       {loopCategories.map((cat, index) => (
-        <Link key={`${cat.id}-${index}`} href={`/category/${cat.slug}`} className="category-card">
+        // ★修正: href を /category/... から /gems/... に変更
+        <Link key={`${cat.id}-${index}`} href={`/gems/${cat.slug}`} className="category-card">
           {cat.image?.url && (
             <Image 
               src={cat.image.url} 

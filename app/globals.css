@@ -890,7 +890,7 @@ a { text-decoration: none; color: inherit; }
 
 /* Hero Sub Link */
 .hero-search-sublink {
-  margin-top: 32px; font-family: var(--font-en); font-size: 0.9rem; color: #333;
+  margin-top: 32px; font-family: var(--font-ja); font-size: 0.9rem; color: #333;
   text-decoration: none; opacity: 0.8; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 6px;
   background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); padding: 8px 20px;
   border-radius: 50px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 4px 15px rgba(0,0,0,0.05);
