@@ -7,19 +7,36 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter"; 
 import Breadcrumb from "@/components/Breadcrumb";
 
+// ★追加: この原石に関連する宝石カテゴリを取得
+async function getRelatedJewelryCategories(roughStoneId) {
+  if (!roughStoneId) return [];
+  try {
+    const data = await client.get({
+      endpoint: "jewelry-categories",
+      queries: {
+        filters: `roughStones[equals]${roughStoneId}`,
+        limit: 10,
+        orders: "name"
+      }
+    });
+    return data.contents;
+  } catch (err) {
+    console.error("Related categories fetch error:", err);
+    return [];
+  }
+}
+
 // この原石に関連するアイテム（Journal/Product）を取得
-// ロジック: 原石 -> 宝石カテゴリ(Jewelry Category) -> アイテム(Archive)
 async function getRoughStoneArchives(roughStoneId) {
   if (!roughStoneId) return [];
   
   try {
     // 1. この原石を参照している宝石カテゴリを取得
-    // 例: Corundum (roughStoneId) を参照している Ruby, Sapphire を探す
     const categoriesData = await client.get({
       endpoint: "jewelry-categories",
       queries: {
         filters: `roughStones[equals]${roughStoneId}`,
-        limit: 20 // 1つの原石に紐づく変種は通常そこまで多くない
+        limit: 20 
       }
     });
 
@@ -27,7 +44,6 @@ async function getRoughStoneArchives(roughStoneId) {
     if (categoryIds.length === 0) return [];
 
     // 2. 取得したカテゴリのいずれかに関連するアイテムを取得
-    // filters: relatedJewelries[contains]cat1[or]relatedJewelries[contains]cat2...
     const filtersQuery = categoryIds
       .map(id => `relatedJewelries[contains]${id}`)
       .join('[or]');
@@ -79,13 +95,15 @@ export default async function RoughStonePage({ params }) {
     );
   }
 
-  // 関連アイテム取得
-  const archives = await getRoughStoneArchives(roughStone.id);
+  // ★追加: 関連する宝石カテゴリとアイテムを並行して取得
+  const [relatedCategories, archives] = await Promise.all([
+    getRelatedJewelryCategories(roughStone.id),
+    getRoughStoneArchives(roughStone.id)
+  ]);
 
   // データ整形
   const relatedItems = archives.map((content) => {
     const isProduct = content.type.includes('product');
-    // 表示用カテゴリ名は、アイテムが直接紐づいているものを優先
     const relatedCategory = content.relatedJewelries?.[0];
     const displayCategoryName = relatedCategory?.name || roughStone.name;
     const displayCategoryIcon = relatedCategory?.image?.url || null;
@@ -140,6 +158,49 @@ export default async function RoughStonePage({ params }) {
             />
           )}
         </section>
+
+        {/* ★追加: 関連する宝石カテゴリへのリンク (Derived Gemstones) */}
+        {relatedCategories.length > 0 && (
+          <section className="gem-infographic-section" style={{ marginTop: '20px', marginBottom: '80px' }}>
+            <div className="infographic-header" style={{ marginBottom: '40px' }}>
+              <span className="concept-label">RELATIONSHIP</span>
+              <h2 className="infographic-title">Derived Gemstones</h2>
+              <p style={{ fontFamily: 'var(--font-jp)', fontSize: '0.85rem', color: '#888', marginTop: '10px' }}>
+                この原石から生まれる宝石たち
+              </p>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
+              {relatedCategories.map((cat) => (
+                <Link 
+                  key={cat.id} 
+                  href={`/gems/${cat.slug}`} 
+                  className="category-index-card"
+                  style={{ minWidth: '100px' }}
+                >
+                  <div style={{ position: 'relative', width: '80px', height: '80px', marginBottom: '16px' }}>
+                    {cat.image?.url ? (
+                      <Image 
+                        src={cat.image.url} 
+                        alt={cat.name} 
+                        fill
+                        sizes="100px"
+                        style={{ objectFit: 'contain' }}
+                        className="category-index-thumb"
+                      />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: '#eee', borderRadius: '50%' }}></div>
+                    )}
+                  </div>
+                  <span className="category-index-name">{cat.name}</span>
+                  {(cat.yomigana || cat.nameJa) && (
+                    <span className="category-index-name-ja">{cat.nameJa || cat.yomigana}</span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* 関連アイテム (Varieties Collection) */}
         <ItemCollection 

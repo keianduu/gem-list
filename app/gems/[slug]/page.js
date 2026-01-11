@@ -196,7 +196,11 @@ export default async function CategoryPage({ params }) {
                 <h3 className="info-label">ROUGH STONE</h3>
               </div>
               {category.roughStones ? (
-                <div className="info-content-row">
+                <Link 
+                  href={`/rough-stones/${category.roughStones.slug}`}
+                  className="info-content-row"
+                  style={{ width: '100%', textDecoration: 'none', color: 'inherit' }}
+                >
                   {category.roughStones.image && (
                     <div className="rough-stone-img-wrapper">
                       <Image
@@ -215,7 +219,7 @@ export default async function CategoryPage({ params }) {
                       <p className="info-desc-text">{category.roughStones.subtitle}</p>
                     )}
                   </div>
-                </div>
+                </Link>
               ) : (
                 <div className="info-content">
                   <p style={{ color: '#999', fontSize: '0.9rem' }}>No rough stone info.</p>

@@ -23,6 +23,10 @@ export default function MasonryGrid({ items }) {
         
         const isFav = isLoaded ? checkIsFavorite(item.id) : false;
 
+        // 画像データの判定
+        const isStringUrl = typeof item.image === 'string';
+        const imageUrl = isStringUrl ? item.image : item.image?.url;
+
         return (
           <div key={item.id} className="pin-card-wrapper">
             <Link 
@@ -32,17 +36,27 @@ export default function MasonryGrid({ items }) {
               rel={isExternal ? "noopener noreferrer" : undefined}
             >
               <div className="pin-image-wrapper">
-                {/* メイン画像 */}
-                {typeof item.image === 'string' ? (
+                {/* ★修正: 画像タイプによるタグの使い分け 
+                  - 文字列(外部URL) -> <img> (規約対策 + lazy load)
+                  - オブジェクト(microCMS) -> <Image> (最適化 + キャッシュ)
+                */}
+                {isStringUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img src={item.image} alt={item.name} className="pin-image" />
-                ) : item.image?.url ? (
+                  <img 
+                    src={imageUrl} 
+                    alt={item.name} 
+                    className="pin-image"
+                    loading="lazy"    // 遅延読み込み
+                    decoding="async"  // 非同期デコード
+                  />
+                ) : imageUrl ? (
                   <Image 
-                    src={item.image.url} 
+                    src={imageUrl} 
                     alt={item.name} 
                     width={item.image.width || 600} 
                     height={item.image.height || 800} 
                     className="pin-image" 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="no-image-placeholder">No Image</div>
@@ -77,9 +91,8 @@ export default function MasonryGrid({ items }) {
 
               {/* テキスト情報 */}
               <div className="pin-info">
-                {/* カテゴリ行 (ここにボタンを追加) */}
+                {/* カテゴリ行 */}
                 <div className="pin-category-row">
-                  {/* ★修正: インラインスタイルを削除し、クラス名を付与 */}
                   <div className="pin-category-wrapper">
                     {item.categoryIcon && (
                       <Image 
