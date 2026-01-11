@@ -116,6 +116,13 @@ a { text-decoration: none; color: inherit; }
 .icon-btn {
   width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
   border-radius: 50%; cursor: pointer; transition: background 0.2s; position: relative;
+  /* ▼▼▼ 追加: buttonタグのデフォルトスタイルを打ち消す設定 ▼▼▼ */
+  border: none;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: inherit;
+  /* ▲▲▲ 追加ここまで ▲▲▲ */
 }
 .icon-btn:hover { background: rgba(0,0,0,0.05); }
 .icon-svg { width: 24px; height: 24px; color: #111; }
@@ -1025,4 +1032,104 @@ a { text-decoration: none; color: inherit; }
 
 @media (max-width: 600px) {
   .color-section-title { font-size: 1.6rem; }
+}
+
+/* ...既存のスタイルの後ろに追加... */
+
+/* =========================================
+   Navigation Menu (Full Screen)
+========================================= */
+.nav-overlay {
+  position: fixed; inset: 0; z-index: 2000;
+  background: rgba(255, 255, 255, 0.96); /* ほぼ不透明な白 */
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.4s ease, visibility 0.4s;
+  display: flex; flex-direction: column;
+}
+.nav-overlay.open {
+  opacity: 1; visibility: visible; pointer-events: auto;
+}
+
+/* 閉じるボタン */
+.nav-close-btn {
+  position: absolute; top: 16px; right: 28px; /* Headerのpaddingと合わせる */
+  width: 48px; height: 48px; border-radius: 50%; border: none;
+  background: transparent; color: #111; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.2s; z-index: 20;
+}
+.nav-close-btn:hover { background: rgba(0,0,0,0.05); transform: rotate(90deg); }
+
+.nav-container {
+  width: 100%; height: 100%; padding: 80px 20px 40px;
+  display: flex; flex-direction: column; align-items: center; 
+  /* ▼ 変更: justify-content: center; を削除 */
+  /* justify-content: center; */ 
+  
+  overflow-y: auto; position: relative;
+  
+  /* ▼ 追加: スマホでのスクロールを滑らかにする設定 */
+  -webkit-overflow-scrolling: touch;
+}
+
+.nav-content-wrapper {
+  text-align: center; width: 100%; max-width: 600px;
+  
+  /* ▼ 追加: 上下マージンautoにすることで、
+     高さに余裕がある時は垂直中央、足りない時はスクロール追従となります */
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+/* Main Links */
+.nav-list { list-style: none; padding: 0; margin: 0 0 60px; }
+.nav-list li {
+  margin-bottom: 24px; opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: var(--delay);
+}
+.nav-overlay.open .nav-list li { opacity: 1; transform: translateY(0); }
+
+.nav-link {
+  display: flex; flex-direction: column; align-items: center; text-decoration: none;
+  transition: opacity 0.3s;
+}
+.nav-link:hover { opacity: 0.6; }
+.nav-link .en {
+  font-family: var(--font-en); font-size: 2.8rem; font-weight: 300; color: #111; line-height: 1.1;
+}
+.nav-link .ja {
+  font-family: var(--font-jp); font-size: 0.85rem; color: #888; margin-top: 4px; letter-spacing: 0.05em;
+}
+
+/* Sub Links */
+.nav-sub-links {
+  display: flex; flex-direction: column; gap: 16px; margin-bottom: 40px;
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: var(--delay);
+}
+.nav-overlay.open .nav-sub-links { opacity: 1; transform: translateY(0); }
+
+.sub-link {
+  font-family: var(--font-en); font-size: 1.0rem; color: #555; text-decoration: none;
+  border-bottom: 1px solid transparent; padding-bottom: 2px; align-self: center;
+  transition: border-color 0.3s, color 0.3s;
+}
+.sub-link:hover { color: #000; border-color: #000; }
+
+/* Footer in Nav */
+.nav-footer {
+  opacity: 0; transition: opacity 0.5s ease; transition-delay: var(--delay);
+}
+.nav-overlay.open .nav-footer { opacity: 1; }
+.nav-copyright { font-size: 0.75rem; color: #aaa; font-family: var(--font-en); }
+
+/* モバイル調整 */
+@media (max-width: 768px) {
+  .nav-close-btn { right: 14px; top: 12px; }
+  .nav-link .en { font-size: 2.2rem; }
+  .nav-link .ja { font-size: 0.75rem; }
+  .nav-list { margin-bottom: 40px; }
 }
