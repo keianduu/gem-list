@@ -1,5 +1,5 @@
 /* app/about/page.js */
-import Link from "next/link"; // ★追加
+import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactForm from "@/components/ContactForm";
@@ -18,20 +18,41 @@ export default function AboutPage() {
     <>
       <SiteHeader />
 
-      {/* 既存の policy-page-wrapper は幅が800pxに制限されていたため、
-        より広い journal-main (1200px) を使用して、パンくずを左端に揃えます。
-      */}
       <main className="journal-main">
 
-        {/* 本文エリア: 
-          読みやすさを保つため、ここだけ幅を800pxに制限して中央寄せにします。
-          paddingTopでパンくずとの距離を調整しています。
-        */}
         <div style={{ maxWidth: "800px", margin: "0 auto", paddingTop: "40px" }}>
           
           <h1 className="policy-title">About & Disclaimer</h1>
           
           <div className="policy-content">
+
+            {/* ▼▼▼ 追加: Concept Section (ジェマの思い) ▼▼▼ */}
+            <section>
+              <div className="policy-contact-info">
+                <h2>Concept</h2>
+                <div style={{ marginTop: '20px' }}>
+                  <p>
+                    <strong>&quot;Discover the Unseen Brilliance&quot;（見えざる輝きを発見する）</strong>
+                  </p>
+                  <p>
+                    宝石の輝きって、眺めているだけで不思議と癒やされますよね。 でも、「宝石」と聞くとすごく高額で、自分とは縁遠い世界のように見えがちです。
+                  </p>
+                  <p>
+                    実は、宝石の世界はもっと自由で、身近なものなんです。 資産価値のある有名な宝石だけじゃなく、鉱物として個性的な美しさを持つ石や、意外と手に入りやすいものもたくさんあります。
+                  </p>
+                  <p>
+                    どんな石も、地球が長い時間をかけて生み出した小さな奇跡。 その一粒一粒に、生まれた場所や辿ってきた物語が詰まっています。
+                  </p>
+                  <p>
+                    Jewelism MARKETでは、そんな宝石や鉱物たちの奥深い魅力を、図鑑をめくるような感覚でご紹介しています。 ここでの出会いを通して、宝石の世界をもっと身近に感じてもらえたら嬉しいです。
+                  </p>
+                  <p>
+                    さあ、一緒に宝石の世界を楽しみませんか？
+                  </p>
+                </div>
+              </div>
+            </section>
+            {/* ▲▲▲ 追加ここまで ▲▲▲ */}
             
             {/* --- 運営者情報 --- */}
             <section>
