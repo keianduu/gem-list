@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import TopContentManager from "@/components/TopContentManager"; // フィルタリング機能を再利用
 import { client, getAllContents } from "@/libs/microcms"; // ★拡張した全件取得関数をインポート
+import { PAGE_METADATA } from "@/libs/meta";
 
 // 全アーカイブ取得（件数制限なし）
 async function getFullArchives() {
@@ -51,8 +52,8 @@ async function getAccessories() {
   }
 
 export const metadata = {
-  title: "Search All Items - Jewelism MARKET",
-  description: "全ての宝石、ジュエリー、記事からお好みのアイテムをお探しいただけます。",
+    title: PAGE_METADATA.search.title,
+    description: PAGE_METADATA.search.description,
 };
 
 export default async function SearchPage() {

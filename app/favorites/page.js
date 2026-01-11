@@ -3,9 +3,11 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import FavoritesContent from "@/components/FavoritesContent"; // ★新規コンポーネントをインポート
+import { PAGE_METADATA } from "@/libs/meta";
 
 export const metadata = {
-  title: "Favorites - Jewelism MARKET",
+  title: PAGE_METADATA.favorites.title,
+  description: PAGE_METADATA.favorites.description,
 };
 
 export default function FavoritesPage() {

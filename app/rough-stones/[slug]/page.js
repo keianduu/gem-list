@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter"; 
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
+import { SITE_NAME } from "@/libs/meta";
 
 // ★追加: この原石に関連する宝石カテゴリを取得
 async function getRelatedJewelryCategories(roughStoneId) {
@@ -67,10 +68,35 @@ async function getRoughStoneArchives(roughStoneId) {
 }
 
 export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
-  const slug = decodeURIComponent(resolvedParams.slug);
-  return { title: `${slug} (Rough Stone) - Jewelism MARKET` };
-}
+    const resolvedParams = await params;
+    const urlSlug = decodeURIComponent(resolvedParams.slug);
+  
+    const data = await client.get({
+      endpoint: "rough-stones",
+      queries: { filters: `slug[equals]${urlSlug}` },
+      customRequestInit: { cache: "no-store" },
+    });
+  
+    const roughStone = data.contents[0];
+  
+    if (!roughStone) {
+      return { title: "Rough Stone not found" };
+    }
+  
+    const jaName = roughStone.nameJa ? `(${roughStone.nameJa})` : "";
+    const title = `${roughStone.name} ${jaName} - 原石図鑑`;
+    const description = `宝石の原点である${roughStone.name}${jaName}のデータ。結晶構造や生成環境など、鉱物としての魅力を深掘りします。`;
+  
+    return { 
+      title: title,
+      description: description,
+      openGraph: {
+        title: `${title} | ${SITE_NAME}`,
+        description: description,
+        images: roughStone.image?.url ? [roughStone.image.url] : [],
+      },
+    };
+ }
 
 export default async function RoughStonePage({ params }) {
   const resolvedParams = await params;

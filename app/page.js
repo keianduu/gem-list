@@ -9,6 +9,7 @@ import TopContentManager from "@/components/TopContentManager";
 import HeroSearch from "@/components/HeroSearch"; 
 import { client } from "@/libs/microcms";
 import GemStoneLinks from "@/components/GemStoneLinks";
+import { PAGE_METADATA } from "@/libs/meta";
 
 // アーカイブ取得
 async function getArchives() {
@@ -68,6 +69,15 @@ async function getRoughStones() {
     return [];
   }
 }
+
+export const metadata = {
+  // TOPページだけは "| Jewelism MARKET" を付けたくない場合は absolute を使う
+  // title: { absolute: "Jewelism MARKET - 歴史に磨かれた一石との出会い" },
+  
+  // テンプレートを使う場合（今回はこちらを採用）
+  title: PAGE_METADATA.top.title, 
+  description: PAGE_METADATA.top.description,
+};
 
 export default async function Home() {
   const [archives, categories, accessories, roughStones] = await Promise.all([

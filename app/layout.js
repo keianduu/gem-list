@@ -2,6 +2,7 @@
 import "./globals.css";
 // Noto_Sans_JP を Noto_Serif_JP に変更
 import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_OG_IMAGE } from "@/libs/meta"; // ★追加
 
 // 英語フォント（変更なし）
 const cormorant = Cormorant_Garamond({
@@ -20,8 +21,44 @@ const notoSerif = Noto_Serif_JP({
 });
 
 export const metadata = {
-  title: "GemList",
-  description: "洗練された宝石の世界へ",
+  metadataBase: new URL(SITE_URL), // OGP画像などの相対パス解決に必要
+  title: {
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`, // 子ページで title: "About" とすると "About | Jewelism MARKET" になる
+  },
+  description: SITE_DESCRIPTION,
+  openGraph: {
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
+    locale: 'ja_JP',
+    type: 'website',
+    images: [
+      {
+        url: SITE_OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: SITE_NAME,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: {
+      default: SITE_NAME,
+      template: `%s | ${SITE_NAME}`,
+    },
+    description: SITE_DESCRIPTION,
+    // images: [SITE_OG_IMAGE], // OGと同じなら省略可
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({ children }) {

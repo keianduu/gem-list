@@ -3,9 +3,11 @@ import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
+import { PAGE_METADATA } from "@/libs/meta";
 
 export const metadata = {
-  title: "Privacy Policy - Jewelism MARKET",
+  title: PAGE_METADATA.privacy.title,
+  description: PAGE_METADATA.privacy.description,
 };
 
 export default function PrivacyPolicyPage() {

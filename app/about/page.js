@@ -4,9 +4,11 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ContactForm from "@/components/ContactForm";
 import Breadcrumb from "@/components/Breadcrumb";
+import { PAGE_METADATA } from "@/libs/meta";
 
 export const metadata = {
-  title: "About / Disclaimer - Jewelism MARKET",
+  title: PAGE_METADATA.about.title,
+  description: PAGE_METADATA.about.description,
 };
 const breadcrumbItems = [
   { label: "Home", path: "/" },

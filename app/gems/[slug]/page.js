@@ -8,6 +8,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter"; 
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
+import { SITE_NAME } from "@/libs/meta";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
@@ -31,8 +32,35 @@ async function getCategoryArchives(categoryId) {
 
 export async function generateMetadata({ params }) {
   const resolvedParams = await params;
-  const slug = decodeURIComponent(resolvedParams.slug);
-  return { title: `${slug} - Jewelism MARKET` };
+  const urlSlug = decodeURIComponent(resolvedParams.slug);
+
+  // メタデータ生成用にデータ取得
+  // (page本体と重複しますが、Next.jsが自動で重複除去(dedupe)するためパフォーマンスへの影響は軽微です)
+  const data = await client.get({
+    endpoint: "jewelry-categories",
+    queries: { filters: `slug[equals]${urlSlug}` },
+    customRequestInit: { cache: "no-store" }, // 必要に応じて調整
+  });
+  
+  const category = data.contents[0];
+
+  if (!category) {
+    return { title: "Gemstone not found" };
+  }
+
+  const jaName = category.nameJa ? `(${category.nameJa})` : "";
+  const title = `${category.name} ${jaName} の意味・産地・特徴`;
+  const description = `${category.name}${jaName}の鉱物学的データ、主な産地、石言葉を解説。関連するジュエリーや原石の成り立ちについても紹介します。`;
+  
+  return { 
+    title: title,
+    description: description,
+    openGraph: {
+      title: `${title} | ${SITE_NAME}`,
+      description: description,
+      images: category.image?.url ? [category.image.url] : [],
+    },
+  };
 }
 
 export default async function CategoryPage({ params }) {
@@ -305,7 +333,7 @@ export default async function CategoryPage({ params }) {
             </div>
           </div>
         </section>
-        
+
         <GemStoneLinks />
 
         <ItemCollection 

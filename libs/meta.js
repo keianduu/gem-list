@@ -1,0 +1,30 @@
+/* libs/meta.js */
+
+export const SITE_NAME = "Jewelism MARKET";
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jewelism-market.com";
+export const SITE_DESCRIPTION = "宝石の美しさと学術的データを融合したモダンなジュエリー図鑑＆マーケットプレイス。ダイヤモンドから希少石まで、その石が持つ物語と輝きをお届けします。";
+export const SITE_OG_IMAGE = "/og-image.png"; // publicフォルダに配置予定のデフォルト画像
+
+// 静的ページのメタデータ定義
+export const PAGE_METADATA = {
+  top: {
+    title: "Jewelism MARKET - 歴史に磨かれた一石との出会い", // テンプレートで " | Jewelism MARKET" が付く
+    description: SITE_DESCRIPTION,
+  },
+  search: {
+    title: "Search Collections - 全ての宝石・記事を探す",
+    description: "ジュエリー、ルース、宝石に関する読みものまで。Jewelism MARKETの全コレクションから、宝石名やカテゴリで検索できます。",
+  },
+  favorites: {
+    title: "Your Favorites - お気に入りコレクション",
+    description: "あなたが選んだ特別な宝石コレクションリスト。保存したジュエリーや記事をいつでも確認・比較できます。",
+  },
+  about: {
+    title: "About & Disclaimer - 運営情報とコンセプト",
+    description: "\"Discover the Unseen Brilliance\" 見えざる輝きを発見する。Jewelism MARKETの運営理念、免責事項、お問い合わせはこちら。",
+  },
+  privacy: {
+    title: "Privacy Policy - プライバシーポリシー",
+    description: "Jewelism MARKETにおける個人情報の取り扱い方針、利用目的、および保護に関する指針を記載しています。",
+  },
+};

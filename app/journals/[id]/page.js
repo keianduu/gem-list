@@ -7,6 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import ItemCollection from "@/components/ItemCollection"; 
 import Breadcrumb from "@/components/Breadcrumb";
+import { SITE_NAME } from "@/libs/meta";
 
 export const dynamic = 'force-dynamic';
 
@@ -105,12 +106,27 @@ async function processBodyWithProducts(bodyContent) {
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
+  
   try {
-    const data = await client.get({ endpoint: "archive", queries: { filters: `slug[equals]${id}` } });
+    const data = await client.get({ 
+      endpoint: "archive", 
+      queries: { filters: `slug[equals]${id}` },
+      customRequestInit: { next: { revalidate: 60 } } 
+    });
     const journal = data.contents[0];
+
+    if (!journal) return { title: "Journal not found" };
+
     return { 
-      title: `${journal.title} - Jewelism MARKET`,
-      description: journal.description,
+      title: journal.title,
+      description: journal.description || "Jewelism MARKETの記事詳細です。",
+      openGraph: {
+        title: `${journal.title} | ${SITE_NAME}`,
+        description: journal.description,
+        type: 'article', // 記事なので type: article
+        images: journal.thumbnail?.url ? [journal.thumbnail.url] : [],
+        publishedTime: journal.publishedAt,
+      },
     };
   } catch(e) {
     return { title: "Journal not found" };
