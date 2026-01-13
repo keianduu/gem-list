@@ -855,6 +855,91 @@ a { text-decoration: none; color: inherit; }
 .rich-text-body {
   font-family: var(--font-jp); font-size: 1.05rem; line-height: 2.2; color: #333; font-weight: 300; width: 100%;
 }
+/* ▼▼▼ 追加: figureタグのデフォルト余白を削除 ▼▼▼ */
+.rich-text-body figure {
+  margin: 0;       /* ブラウザ標準の左右40pxなどの余白をゼロにする */
+  width: 100%;     /* 親要素(テキスト枠)の幅いっぱいに広げる */
+}
+
+/* imgタグのスタイル調整 */
+.rich-text-body img {
+  width: 100%;     /* 強制的に幅を100%にして、親要素(figure)に合わせる */
+  height: auto; 
+  border-radius: 16px; 
+  margin: 40px 0;  /* 上下の余白はここで確保 */
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  display: block;  /* 下部の隙間対策 */
+}
+/* ▼▼▼ 修正: 補足枠 (Note Box) - spanタグ対応版 ▼▼▼ */
+
+/* 1. journal-noteを含む pタグ 自体のリセット */
+/* 親のpタグの余白を消して、隙間なく積み重なるようにします */
+.rich-text-body p:has(> .journal-note) {
+  margin: 0;
+  padding: 0;
+}
+
+/* 2. journal-note (span) の基本スタイル */
+/* spanをブロック要素に変え、箱のデザインを適用します */
+.rich-text-body .journal-note {
+  display: block;                 /* ブロック要素にする */
+  background-color: #f4f2ed;      /* 背景色 */
+  color: #555;
+  font-size: 0.88rem;
+  line-height: 1.8;
+  
+  /* 上下たっぷりの余白 & 上下とも角丸 */
+  padding: 24px 32px;
+  margin: 60px 0 40px; 
+
+  /* 4隅すべてに角丸を設定 */
+  border-radius: 16px;
+}
+
+/* 3. 「上」が繋がっている場合（＝2行目以降）の打ち消し */
+/* 直前が .journal-note を持つ p である場合、上のスタイルを削る */
+.rich-text-body p:has(> .journal-note) + p:has(> .journal-note) .journal-note {
+  margin-top: 0;
+  padding-top: 12px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* 4. 「下」が繋がっている場合（＝最後以外の行）の打ち消し */
+/* 直後が .journal-note を持つ p である場合、下のスタイルを削る */
+.rich-text-body p:has(> .journal-note):has(+ p > .journal-note) .journal-note {
+  margin-bottom: 0;
+  padding-bottom: 12px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* 補足枠内の太字を見出し風に */
+.rich-text-body .journal-note strong,
+.rich-text-body .journal-note b {
+  color: #333;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* 5. スマホ調整 */
+@media (max-width: 768px) {
+  .rich-text-body .journal-note {
+    padding-left: 20px;
+    padding-right: 20px;
+    margin: 40px 0 30px; 
+  }
+  
+  /* 連結時の打ち消し（スマホ用） */
+  .rich-text-body p:has(> .journal-note) + p:has(> .journal-note) .journal-note {
+    margin-top: 0;
+  }
+  .rich-text-body p:has(> .journal-note):has(+ p > .journal-note) .journal-note {
+    margin-bottom: 0;
+  }
+}
+
 .rich-text-body h2 {
   font-family: var(--font-en); font-size: 1.6rem; font-weight: 400; margin: 60px 0 30px;
   text-align: center; color: #111; position: relative;
@@ -867,9 +952,7 @@ a { text-decoration: none; color: inherit; }
   border-left: 3px solid #8c7e6a; padding-left: 16px; color: #444;
 }
 .rich-text-body p { margin-bottom: 2.5em; }
-.rich-text-body img {
-  max-width: 100%; height: auto; border-radius: 8px; margin: 40px 0; box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-}
+
 .rich-text-body blockquote {
   font-style: italic; font-size: 1.0rem; color: #666; padding: 30px; margin: 40px 0;
   background: rgba(255,255,255,0.5); border-radius: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.4);
