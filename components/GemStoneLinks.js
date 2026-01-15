@@ -1,4 +1,3 @@
-/* components/GemStoneLinks.js */
 import Link from "next/link";
 import { client } from "@/libs/microcms";
 
@@ -12,7 +11,7 @@ async function getIconsData() {
       }),
       client.get({
         endpoint: "rough-stones",
-        queries: { filters: "name[equals]Beryl", fields: "image", limit: 1 }, 
+        queries: { filters: "name[equals]Beryl", fields: "image", limit: 1 },
         customRequestInit: { next: { revalidate: 3600 } }
       })
     ]);
@@ -27,31 +26,21 @@ async function getIconsData() {
   }
 }
 
-// ★修正: style プロパティを受け取れるように変更
+// ★修正: CSSクラスで制御 (globals.cssに追加)
 export default async function GemStoneLinks({ style }) {
   const { gemIcon, roughIcon } = await getIconsData();
 
-  // デフォルトのマージンは 60px 0 だが、propsで上書き可能にする
-  const containerStyle = {
-    display: 'flex', 
-    gap: '12px', 
-    justifyContent: 'center', 
-    flexWrap: 'wrap', 
-    margin: '60px 0',
-    ...style // 受け取ったスタイルで上書き
-  };
-
   return (
-    <div style={containerStyle}>
-      
+    <div className="gem-links-container" style={style}>
+
       {/* 宝石一覧へのリンク */}
-      <Link href="/gems" className="hero-search-sublink" style={{ marginTop: 0 }}>
+      <Link href="/gems" className="hero-search-sublink">
         {gemIcon ? (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img 
-            src={gemIcon} 
-            alt="" 
-            style={{ width:'20px', height:'20px', objectFit:'contain', marginRight:'4px' }} 
+          <img
+            src={gemIcon}
+            alt=""
+            style={{ width: '20px', height: '20px', objectFit: 'contain', marginRight: '4px' }}
           />
         ) : (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1px' }}>
@@ -65,13 +54,13 @@ export default async function GemStoneLinks({ style }) {
       </Link>
 
       {/* 原石一覧へのリンク */}
-      <Link href="/rough-stones" className="hero-search-sublink" style={{ marginTop: 0 }}>
+      <Link href="/rough-stones" className="hero-search-sublink">
         {roughIcon ? (
           /* eslint-disable-next-line @next/next/no-img-element */
-          <img 
-            src={roughIcon} 
-            alt="" 
-            style={{ width:'20px', height:'20px', objectFit:'contain', marginRight:'4px' }} 
+          <img
+            src={roughIcon}
+            alt=""
+            style={{ width: '20px', height: '20px', objectFit: 'contain', marginRight: '4px' }}
           />
         ) : (
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ marginBottom: '1px' }}>
