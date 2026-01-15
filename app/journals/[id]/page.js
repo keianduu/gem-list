@@ -8,6 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ItemCollection from "@/components/ItemCollection"; 
 import Breadcrumb from "@/components/Breadcrumb";
 import { SITE_NAME } from "@/libs/meta";
+import { AUTHORS, DEFAULT_AUTHOR_ID } from "@/libs/authors"; // ★追加
 
 export const dynamic = 'force-dynamic';
 
@@ -123,7 +124,7 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: `${journal.title} | ${SITE_NAME}`,
         description: journal.description,
-        type: 'article', // 記事なので type: article
+        type: 'article', 
         images: journal.thumbnail?.url ? [journal.thumbnail.url] : [],
         publishedTime: journal.publishedAt,
       },
@@ -151,10 +152,7 @@ export default async function JournalPage({ params }) {
   const processedBody = await processBodyWithProducts(journal.body);
 
   const categoryData = journal.relatedJewelries?.[0] || null;
-  
-  // ★修正1: カテゴリリンクのベースを /gems に変更
   const categoryLink = categoryData ? `/gems/${categoryData.slug}` : "/";
-  
   const categoryName = categoryData ? categoryData.name : "Journal";
   const categoryIcon = categoryData?.image?.url || null;
 
@@ -166,7 +164,6 @@ export default async function JournalPage({ params }) {
     ? await getRelatedItems(categoryData.id, journal.id) 
     : [];
 
-  // ★修正2: パンくずリストのパスを /gems に変更
   const breadcrumbItems = [
     { label: "Home", path: "/" },
     { label: "All Gemstones", path: "/gems" }
@@ -179,6 +176,12 @@ export default async function JournalPage({ params }) {
   }
 
   breadcrumbItems.push({ label: journal.title, path: `/journals/${journal.slug}` });
+
+  // ★追加: Authorデータの取得
+  // microCMSから 'author' フィールド (ID文字列) が返ってくると想定
+  // 未設定の場合はデフォルトIDを使用
+  const authorId = journal.author || DEFAULT_AUTHOR_ID;
+  const author = AUTHORS[authorId] || AUTHORS[DEFAULT_AUTHOR_ID];
 
   return (
     <>
@@ -217,22 +220,26 @@ export default async function JournalPage({ params }) {
             )}
             <RichTextRenderer content={processedBody} />
 
+            {/* ★修正: Authorセクションを動的にレンダリング */}
             <div className="journal-author-section">
               <div className="author-icon-wrapper">
-                <Image 
-                  src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&h=200" 
-                  alt="Author" 
-                  width={80} 
-                  height={80} 
-                  className="author-icon" 
-                />
+                {author.image ? (
+                  <Image 
+                    src={author.image} 
+                    alt={author.nameEn} 
+                    width={80} 
+                    height={80} 
+                    className="author-icon" 
+                  />
+                ) : (
+                  <div className="author-icon" style={{background:'#eee'}}></div>
+                )}
               </div>
               <div className="author-info">
                 <span className="author-label">Written by</span>
-                <h3 className="author-name">Kei Ando</h3>
-                <p className="author-bio">
-                  ジュエリースタイリスト / ライター。<br/>
-                  宝石の歴史的背景や、現代のファッションに取り入れるスタイリングを提案しています。
+                <h3 className="author-name">{author.nameEn}</h3>
+                <p className="author-bio" style={{whiteSpace: 'pre-line'}}>
+                  {author.bio}
                 </p>
               </div>
             </div>
