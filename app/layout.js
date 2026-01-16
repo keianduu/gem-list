@@ -3,6 +3,7 @@ import "./globals.css";
 // Noto_Sans_JP を Noto_Serif_JP に変更
 import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_OG_IMAGE } from "@/libs/meta"; // ★追加
+import { GoogleTagManager } from '@next/third-parties/google'; // ★追加
 
 // 英語フォント（変更なし）
 const cormorant = Cormorant_Garamond({
@@ -66,13 +67,14 @@ export default function RootLayout({ children }) {
     <html lang="ja" className={`${cormorant.variable} ${notoSerif.variable}`} suppressHydrationWarning>
       <body>
         <div className="fixed-bg">
-           <div className="orb orb-1"></div>
-           <div className="orb orb-2"></div>
-           <div className="orb orb-3"></div>
-           <div className="orb orb-4"></div>
-           <div className="orb orb-5"></div>
+          <div className="orb orb-1"></div>
+          <div className="orb orb-2"></div>
+          <div className="orb orb-3"></div>
+          <div className="orb orb-4"></div>
+          <div className="orb orb-5"></div>
         </div>
         {children}
+        <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-XXXXXXX"} />
       </body>
     </html>
   );
