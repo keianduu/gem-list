@@ -12,7 +12,7 @@ export async function sendContactEmail(formData) {
 
   try {
     const data = await resend.emails.send({
-      from: 'Jewelism Market Form <onboarding@resend.dev>', // 最初はテスト用ドメインでOK
+      from: 'Jewelism Market <contact@jewelism-market.com>', // ドメイン認証が完了したので独自ドメインを使用
       to: [process.env.CONTACT_EMAIL], // 管理者のアドレスへ送る
       subject: `【お問い合わせ】${name}様より`,
       reply_to: email, // 返信ボタンを押すとユーザーのアドレスになる
