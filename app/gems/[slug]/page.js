@@ -4,24 +4,24 @@ import Image from "next/image";
 import { client } from "@/libs/microcms";
 import ItemCollection from "@/components/ItemCollection";
 import { COUNTRY_FLAGS } from "@/libs/constants";
-import SiteHeader from "@/components/SiteHeader"; 
-import SiteFooter from "@/components/SiteFooter"; 
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { SITE_NAME } from "@/libs/meta";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
-  
+
   try {
     const data = await client.get({
       endpoint: "archive",
       queries: {
         filters: `relatedJewelries[contains]${categoryId}`,
-        limit: 100, 
+        limit: 100,
         orders: "-publishedAt",
       },
-      customRequestInit: { next: { revalidate: 60 } } 
+      customRequestInit: { next: { revalidate: 60 } }
     });
     return data.contents;
   } catch (err) {
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
     queries: { filters: `slug[equals]${urlSlug}` },
     customRequestInit: { cache: "no-store" }, // 必要に応じて調整
   });
-  
+
   const category = data.contents[0];
 
   if (!category) {
@@ -51,8 +51,8 @@ export async function generateMetadata({ params }) {
   const jaName = category.nameJa ? `(${category.nameJa})` : "";
   const title = `${category.name} ${jaName} の意味・産地・特徴`;
   const description = `${category.name}${jaName}の鉱物学的データ、主な産地、石言葉を解説。関連するジュエリーや原石の成り立ちについても紹介します。`;
-  
-  return { 
+
+  return {
     title: title,
     description: description,
     openGraph: {
@@ -69,10 +69,10 @@ export default async function CategoryPage({ params }) {
 
   const data = await client.get({
     endpoint: "jewelry-categories",
-    queries: { 
+    queries: {
       filters: `slug[equals]${urlSlug}`,
       customRequestInit: {
-        cache: "no-store", 
+        cache: "no-store",
       },
     },
   });
@@ -81,10 +81,10 @@ export default async function CategoryPage({ params }) {
 
   if (!category) {
     return (
-      <div style={{padding: "100px 20px", textAlign:"center", minHeight: "60vh"}}>
-        <h2 style={{fontSize: "2rem", marginBottom: "20px"}}>Category not found</h2>
+      <div style={{ padding: "100px 20px", textAlign: "center", minHeight: "60vh" }}>
+        <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Category not found</h2>
         <p>URLスラッグ: <strong>{urlSlug}</strong></p>
-        <Link href="/" style={{color: "#0058a3", textDecoration: "underline", marginTop: "20px", display: "inline-block"}}>
+        <Link href="/" style={{ color: "#0058a3", textDecoration: "underline", marginTop: "20px", display: "inline-block" }}>
           トップページに戻る
         </Link>
       </div>
@@ -127,31 +127,31 @@ export default async function CategoryPage({ params }) {
     { label: "All Gemstones", path: "/gems" },
     { label: category.name, path: `/gems/${category.slug}` }
   ];
-  
+
   return (
     <>
       <SiteHeader />
 
       <main className="category-main">
 
-      <section className="category-header">
+        <section className="category-header">
           {/* 1. アイコン画像 */}
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
-             {category.image && (
-               <Image 
-                 src={category.image.url} 
-                 alt={category.name} 
-                 fill
-                 sizes="100px"
-                 style={{ objectFit: 'contain' }}
-                 className="category-header-img"
-               />
-             )}
+            {category.image && (
+              <Image
+                src={category.image.url}
+                alt={category.name}
+                fill
+                sizes="100px"
+                style={{ objectFit: 'contain' }}
+                className="category-header-img"
+              />
+            )}
           </div>
-          
+
           {/* 2. 英語タイトル */}
           <h1 className="category-title-en">{category.name}</h1>
-          
+
           {/* 3. 読みがな & 日本語名 (ここを追加しました) */}
           <div style={{ marginBottom: '24px' }}>
             {category.yomigana && (
@@ -165,12 +165,12 @@ export default async function CategoryPage({ params }) {
               </p>
             )}
           </div>
-          
+
           {/* 4. 説明文 (ここが消えていないか確認してください) */}
           {category.description && (
-            <div 
-                className="category-desc"
-                dangerouslySetInnerHTML={{ __html: category.description }}
+            <div
+              className="category-desc"
+              dangerouslySetInnerHTML={{ __html: category.description }}
             />
           )}
         </section>
@@ -182,7 +182,7 @@ export default async function CategoryPage({ params }) {
           </div>
 
           <div className="infographic-grid">
-            
+
             <div className="info-glass-card">
               <div className="info-header-row">
                 <div className="info-icon">
@@ -208,7 +208,7 @@ export default async function CategoryPage({ params }) {
                     );
                   })
                 ) : (
-                  <p style={{ color: '#999', fontSize: '0.8rem', width:'100%', textAlign:'center' }}>
+                  <p style={{ color: '#999', fontSize: '0.8rem', width: '100%', textAlign: 'center' }}>
                     No location data.
                   </p>
                 )}
@@ -225,7 +225,7 @@ export default async function CategoryPage({ params }) {
                 <h3 className="info-label">ROUGH STONE</h3>
               </div>
               {category.roughStones ? (
-                <Link 
+                <Link
                   href={`/rough-stones/${category.roughStones.slug}`}
                   className="info-content-row"
                   style={{ width: '100%', textDecoration: 'none', color: 'inherit' }}
@@ -273,13 +273,13 @@ export default async function CategoryPage({ params }) {
                     <div key={index} className="accessory-item">
                       <div style={{ position: 'relative', width: '50px', height: '50px', flexShrink: 0 }}>
                         {acc.item?.image?.url ? (
-                          <Image 
-                            src={acc.item.image.url} 
-                            alt={acc.item.name} 
+                          <Image
+                            src={acc.item.image.url}
+                            alt={acc.item.name}
                             fill
                             sizes="50px"
                             style={{ objectFit: 'contain' }}
-                            className="acc-thumb" 
+                            className="acc-thumb"
                           />
                         ) : (
                           <div style={{ width: '100%', height: '100%', background: '#eee', borderRadius: '50%' }}></div>
@@ -300,7 +300,7 @@ export default async function CategoryPage({ params }) {
             </div>
           </div>
 
-          <div className="color-variation-block">
+          {/* <div className="color-variation-block">
             <h3 className="color-section-title">{category.name} Color Variation</h3>
             <div className="color-grid">
               {dummyColorVariations.map((color) => (
@@ -323,26 +323,26 @@ export default async function CategoryPage({ params }) {
                 </div>
               ))}
             </div>
-          </div>
+          </div> */}
 
-          <div className="infographic-footer">
+          {/* <div className="infographic-footer">
             <div className="keyword-tags left-align">
               <span>#4月</span>
               <span>#4C</span>
               <span>#アーガイル鉱山</span>
             </div>
-          </div>
+          </div> */}
         </section>
 
         <GemStoneLinks />
 
-        <ItemCollection 
+        <ItemCollection
           items={categoryItems}
           title={`${category.name} Collection`}
           subtitle="Curated Selection"
           emptyMessage="現在、関連するアイテムはありません。"
         />
-        
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />
