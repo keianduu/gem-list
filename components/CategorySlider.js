@@ -11,7 +11,7 @@ export default function CategorySlider({ categories }) {
   const scrollPos = useRef(0);
 
   // カテゴリをループ用に倍にする
-  const loopCategories = categories.length > 0 
+  const loopCategories = categories.length > 0
     ? [...categories, ...categories]
     : [];
 
@@ -24,7 +24,7 @@ export default function CategorySlider({ categories }) {
 
     let animationId;
     const isMobile = window.innerWidth <= 768;
-    const speed = isMobile ? 0.5 : 0.2;
+    const speed = isMobile ? 0.5 : 0.4;
 
     const scrollLoop = () => {
       if (container) {
@@ -66,8 +66,8 @@ export default function CategorySlider({ categories }) {
   }
 
   return (
-    <div 
-      className="category-scroll-wrap" 
+    <div
+      className="category-scroll-wrap"
       ref={scrollRef}
       onMouseEnter={pauseScroll}
       onMouseLeave={resumeScroll}
@@ -78,20 +78,20 @@ export default function CategorySlider({ categories }) {
         // ★修正: href を /category/... から /gems/... に変更
         <Link key={`${cat.id}-${index}`} href={`/gems/${cat.slug}`} className="category-card">
           {cat.image?.url && (
-            <Image 
-              src={cat.image.url} 
+            <Image
+              src={cat.image.url}
               alt={cat.name}
               width={140}
               height={140}
-              className="category-thumb" 
+              className="category-thumb"
             />
           )}
           <span className="category-name">{cat.name}</span>
           {cat.yomigana && (
-            <span style={{ 
-              fontSize: '0.65rem', color: '#888', marginTop: '2px', 
-              fontFamily: 'var(--font-jp)', whiteSpace: 'normal', 
-              wordBreak: 'break-word', lineHeight: '1.2', 
+            <span style={{
+              fontSize: '0.65rem', color: '#888', marginTop: '2px',
+              fontFamily: 'var(--font-jp)', whiteSpace: 'normal',
+              wordBreak: 'break-word', lineHeight: '1.2',
               display: 'block', width: '100%', textAlign: 'center'
             }}>
               {cat.yomigana}
