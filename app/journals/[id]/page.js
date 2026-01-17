@@ -3,9 +3,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
 import RichTextRenderer from "@/components/RichTextRenderer";
-import SiteHeader from "@/components/SiteHeader"; 
+import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
-import ItemCollection from "@/components/ItemCollection"; 
+import ItemCollection from "@/components/ItemCollection";
 import Breadcrumb from "@/components/Breadcrumb";
 import { SITE_NAME } from "@/libs/meta";
 import { AUTHORS, DEFAULT_AUTHOR_ID } from "@/libs/authors"; // ★追加
@@ -21,7 +21,7 @@ async function getRelatedItems(categoryId, currentContentId) {
       endpoint: "archive",
       queries: {
         filters: `relatedJewelries[contains]${categoryId}[and]id[not_equals]${currentContentId}`,
-        limit: 6, 
+        limit: 6,
         orders: "-publishedAt",
       },
       customRequestInit: { next: { revalidate: 3600 } }
@@ -61,7 +61,7 @@ async function processBodyWithProducts(bodyContent) {
 
   const slugs = [...new Set(matches.map(m => m[1]))];
   let productsData = { contents: [] };
-  
+
   if (slugs.length > 0) {
     try {
       const filtersQuery = slugs.map(slug => `slug[equals]${slug}`).join('[or]');
@@ -83,9 +83,9 @@ async function processBodyWithProducts(bodyContent) {
     const product = productsData.contents.find(p => p.slug === slug);
 
     if (product) {
-        const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
-        const description = product.description || "";
-        const cardHtml = `
+      const priceStr = product.price ? `¥${Number(product.price).toLocaleString()}` : "";
+      const description = product.description || "";
+      const cardHtml = `
           <a href="${product.affiliateUrl}" class="product-embed-card" target="_blank" rel="noopener noreferrer">
             <span class="embed-thumb">
               <img src="${product.thumbnailUrl}" alt="${product.title}" />
@@ -99,7 +99,7 @@ async function processBodyWithProducts(bodyContent) {
             </span>
           </a>
         `;
-        newBody = newBody.replace(matchedString, cardHtml);
+      newBody = newBody.replace(matchedString, cardHtml);
     }
   }
   return newBody;
@@ -107,29 +107,34 @@ async function processBodyWithProducts(bodyContent) {
 
 export async function generateMetadata({ params }) {
   const { id } = await params;
-  
+
   try {
-    const data = await client.get({ 
-      endpoint: "archive", 
+    const data = await client.get({
+      endpoint: "archive",
       queries: { filters: `slug[equals]${id}` },
-      customRequestInit: { next: { revalidate: 60 } } 
+      customRequestInit: { next: { revalidate: 60 } }
     });
     const journal = data.contents[0];
 
     if (!journal) return { title: "Journal not found" };
 
-    return { 
+    const ogImageUrl = journal.thumbnail?.url
+      ? `${journal.thumbnail.url}?w=1200&h=630&fit=crop&q=85`
+      : null; // 画像がない場合は空にしておけば layout.js のデフォルト画像が使われます
+
+    return {
       title: journal.title,
       description: journal.description || "Jewelism MARKETの記事詳細です。",
       openGraph: {
         title: `${journal.title} | ${SITE_NAME}`,
         description: journal.description,
-        type: 'article', 
-        images: journal.thumbnail?.url ? [journal.thumbnail.url] : [],
+        type: 'article',
+        // ↓ 加工したURLを設定
+        images: ogImageUrl ? [ogImageUrl] : [],
         publishedTime: journal.publishedAt,
       },
     };
-  } catch(e) {
+  } catch (e) {
     return { title: "Journal not found" };
   }
 }
@@ -139,15 +144,15 @@ export default async function JournalPage({ params }) {
 
   const data = await client.get({
     endpoint: "archive",
-    queries: { 
+    queries: {
       filters: `slug[equals]${id}`,
-      depth: 2 
+      depth: 2
     },
-    customRequestInit: { next: { revalidate: 0 } } 
+    customRequestInit: { next: { revalidate: 0 } }
   });
   const journal = data.contents[0];
 
-  if (!journal) return <div className="main-container" style={{padding:100}}>Journal Not Found</div>;
+  if (!journal) return <div className="main-container" style={{ padding: 100 }}>Journal Not Found</div>;
 
   const processedBody = await processBodyWithProducts(journal.body);
 
@@ -160,8 +165,8 @@ export default async function JournalPage({ params }) {
     year: "numeric", month: "long", day: "numeric",
   });
 
-  const relatedItems = categoryData 
-    ? await getRelatedItems(categoryData.id, journal.id) 
+  const relatedItems = categoryData
+    ? await getRelatedItems(categoryData.id, journal.id)
     : [];
 
   const breadcrumbItems = [
@@ -224,21 +229,21 @@ export default async function JournalPage({ params }) {
             <div className="journal-author-section">
               <div className="author-icon-wrapper">
                 {author.image ? (
-                  <Image 
-                    src={author.image} 
-                    alt={author.nameEn} 
-                    width={80} 
-                    height={80} 
-                    className="author-icon" 
+                  <Image
+                    src={author.image}
+                    alt={author.nameEn}
+                    width={80}
+                    height={80}
+                    className="author-icon"
                   />
                 ) : (
-                  <div className="author-icon" style={{background:'#eee'}}></div>
+                  <div className="author-icon" style={{ background: '#eee' }}></div>
                 )}
               </div>
               <div className="author-info">
                 <span className="author-label">Written by</span>
                 <h3 className="author-name">{author.nameEn}</h3>
-                <p className="author-bio" style={{whiteSpace: 'pre-line'}}>
+                <p className="author-bio" style={{ whiteSpace: 'pre-line' }}>
                   {author.bio}
                 </p>
               </div>
@@ -246,13 +251,13 @@ export default async function JournalPage({ params }) {
           </div>
         </article>
 
-        <ItemCollection 
+        <ItemCollection
           items={relatedItems}
           title="Related Contents"
           subtitle="More Stories & Items"
           emptyMessage="関連する商品がありません"
         />
-      
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />

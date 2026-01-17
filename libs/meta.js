@@ -3,7 +3,7 @@
 export const SITE_NAME = "Jewelism MARKET";
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://jewelism-market.com";
 export const SITE_DESCRIPTION = "宝石や原石、鉱石に秘められた歴史や物語を、図鑑をめくるようなコラムでご紹介します。Jewelism Marketが大切にしているのは、スペックよりも石との「出会い」。奥深い宝石の世界を、もっと身近に、もっと気楽に楽しんでみませんか。";
-export const SITE_OG_IMAGE = "/og-image.png"; // publicフォルダに配置予定のデフォルト画像
+export const SITE_OG_IMAGE = "https://images.microcms-assets.io/assets/6d7124b9fc1b47d5a5579cbebaf7fa4c/83bede7f39f5448e88f41b4c4403804e/ogp_jewelism_market.png";
 
 // 静的ページのメタデータ定義
 export const PAGE_METADATA = {
