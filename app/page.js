@@ -6,7 +6,7 @@ import CategorySlider from "@/components/CategorySlider";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import TopContentManager from "@/components/TopContentManager";
-import HeroSearch from "@/components/HeroSearch"; 
+import HeroSearch from "@/components/HeroSearch";
 import { client } from "@/libs/microcms";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { PAGE_METADATA } from "@/libs/meta";
@@ -16,8 +16,8 @@ async function getArchives() {
   try {
     const data = await client.get({
       endpoint: "archive",
-      queries: { limit: 100, orders: "-publishedAt" },
-      customRequestInit: { next: { revalidate: 60 } } 
+      queries: { limit: 100, orders: "-priority,-publishedAt" },
+      customRequestInit: { next: { revalidate: 60 } }
     });
     return data.contents;
   } catch (err) {
@@ -44,9 +44,9 @@ async function getCategories() {
 async function getAccessories() {
   try {
     const data = await client.get({
-      endpoint: "accessory", 
+      endpoint: "accessory",
       queries: { limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } } 
+      customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;
   } catch (err) {
@@ -61,7 +61,7 @@ async function getRoughStones() {
     const data = await client.get({
       endpoint: "rough-stones",
       queries: { limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } } 
+      customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;
   } catch (err) {
@@ -73,9 +73,9 @@ async function getRoughStones() {
 export const metadata = {
   // TOPページだけは "| Jewelism MARKET" を付けたくない場合は absolute を使う
   // title: { absolute: "Jewelism MARKET - 歴史に磨かれた一石との出会い" },
-  
+
   // テンプレートを使う場合（今回はこちらを採用）
-  title: PAGE_METADATA.top.title, 
+  title: PAGE_METADATA.top.title,
   description: PAGE_METADATA.top.description,
 };
 
@@ -94,9 +94,9 @@ export default async function Home() {
     const categoryIcon = relatedCategory?.image?.url || null;
 
     const relatedAccessory = Array.isArray(content.relatedAccessories) && content.relatedAccessories.length > 0
-      ? content.relatedAccessories[0] 
+      ? content.relatedAccessories[0]
       : null;
-    
+
     const accessoryName = relatedAccessory?.name || null;
 
     let itemLink = `/journals/${content.slug}`;
@@ -121,7 +121,7 @@ export default async function Home() {
       category: categoryName,
       categoryIcon: categoryIcon,
       accessory: accessoryName,
-      color: colorName, 
+      color: colorName,
     };
   });
 
@@ -133,10 +133,10 @@ export default async function Home() {
         <div className="hero-center-content">
           <h1 className="hero-title">Discover the Unseen <br /> Brilliance</h1>
           <p className="hero-subtitle">歴史に磨かれた一石との出会い。洗練された宝石の世界へ。</p>
-          
-          <HeroSearch 
-            archives={items} 
-            categories={categories} 
+
+          <HeroSearch
+            archives={items}
+            categories={categories}
             roughStones={roughStones}
             // ★追加: コンポーネントをPropsとして渡す
             gemLinks={
@@ -151,10 +151,10 @@ export default async function Home() {
       </section>
 
       <main className="main-container">
-        <Suspense fallback={<div className="skeleton-container fade-in"><div className="skeleton-text" style={{width: '100%'}}>Loading...</div></div>}>
-          <TopContentManager 
-            initialItems={items} 
-            categories={categories} 
+        <Suspense fallback={<div className="skeleton-container fade-in"><div className="skeleton-text" style={{ width: '100%' }}>Loading...</div></div>}>
+          <TopContentManager
+            initialItems={items}
+            categories={categories}
             accessories={accessories}
           />
         </Suspense>

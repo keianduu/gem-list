@@ -12,7 +12,7 @@ async function getFullArchives() {
   try {
     // ページネーションを内部で回して全件取得
     const contents = await getAllContents("archive", {
-      orders: "-publishedAt"
+      orders: "-priority,-publishedAt"
     });
     return contents;
   } catch (err) {
@@ -38,22 +38,22 @@ async function getCategories() {
 
 // アクセサリマスター取得
 async function getAccessories() {
-    try {
-      const data = await client.get({
-        endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
-        queries: { limit: 100 },
-        customRequestInit: { next: { revalidate: 3600 } } 
-      });
-      return data.contents;
-    } catch (err) {
-      console.error("Accessories fetch error:", err); // エラーログも見やすく修正
-      return [];
-    }
+  try {
+    const data = await client.get({
+      endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
+      queries: { limit: 100 },
+      customRequestInit: { next: { revalidate: 3600 } }
+    });
+    return data.contents;
+  } catch (err) {
+    console.error("Accessories fetch error:", err); // エラーログも見やすく修正
+    return [];
   }
+}
 
 export const metadata = {
-    title: PAGE_METADATA.search.title,
-    description: PAGE_METADATA.search.description,
+  title: PAGE_METADATA.search.title,
+  description: PAGE_METADATA.search.description,
 };
 
 export default async function SearchPage() {
@@ -71,7 +71,7 @@ export default async function SearchPage() {
     const categoryIcon = relatedCategory?.image?.url || null;
 
     const relatedAccessory = Array.isArray(content.relatedAccessories) && content.relatedAccessories.length > 0
-      ? content.relatedAccessories[0] 
+      ? content.relatedAccessories[0]
       : null;
     const accessoryName = relatedAccessory?.name || null;
 
@@ -97,7 +97,7 @@ export default async function SearchPage() {
       category: categoryName,
       categoryIcon: categoryIcon,
       accessory: accessoryName,
-      color: colorName, 
+      color: colorName,
     };
   });
 
@@ -111,15 +111,15 @@ export default async function SearchPage() {
       <SiteHeader />
 
       <main className="journal-main">
-        
-        <Suspense fallback={<div style={{textAlign:'center', padding:'40px'}}>Loading...</div>}>
-          <TopContentManager 
-            initialItems={items} 
-            categories={categories} 
+
+        <Suspense fallback={<div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>}>
+          <TopContentManager
+            initialItems={items}
+            categories={categories}
             accessories={accessories}
             title="All Collections"
             subtitle={`全${items.length}件のコレクション`}
-            isSearchPage={true} 
+            isSearchPage={true}
           />
         </Suspense>
 

@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
 import ItemCollection from "@/components/ItemCollection";
-import SiteHeader from "@/components/SiteHeader"; 
-import SiteFooter from "@/components/SiteFooter"; 
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { SITE_NAME } from "@/libs/meta";
@@ -31,14 +31,14 @@ async function getRelatedJewelryCategories(roughStoneId) {
 // この原石に関連するアイテム（Journal/Product）を取得
 async function getRoughStoneArchives(roughStoneId) {
   if (!roughStoneId) return [];
-  
+
   try {
     // 1. この原石を参照している宝石カテゴリを取得
     const categoriesData = await client.get({
       endpoint: "jewelry-categories",
       queries: {
         filters: `roughStones[equals]${roughStoneId}`,
-        limit: 20 
+        limit: 20
       }
     });
 
@@ -54,10 +54,10 @@ async function getRoughStoneArchives(roughStoneId) {
       endpoint: "archive",
       queries: {
         filters: filtersQuery,
-        limit: 100, 
-        orders: "-publishedAt",
+        limit: 100,
+        orders: "-priority,-publishedAt",
       },
-      customRequestInit: { next: { revalidate: 60 } } 
+      customRequestInit: { next: { revalidate: 60 } }
     });
 
     return archivesData.contents;
@@ -68,35 +68,35 @@ async function getRoughStoneArchives(roughStoneId) {
 }
 
 export async function generateMetadata({ params }) {
-    const resolvedParams = await params;
-    const urlSlug = decodeURIComponent(resolvedParams.slug);
-  
-    const data = await client.get({
-      endpoint: "rough-stones",
-      queries: { filters: `slug[equals]${urlSlug}` },
-      customRequestInit: { cache: "no-store" },
-    });
-  
-    const roughStone = data.contents[0];
-  
-    if (!roughStone) {
-      return { title: "Rough Stone not found" };
-    }
-  
-    const jaName = roughStone.nameJa ? `(${roughStone.nameJa})` : "";
-    const title = `${roughStone.name} ${jaName} - 原石図鑑`;
-    const description = `宝石の原点である${roughStone.name}${jaName}のデータ。結晶構造や生成環境など、鉱物としての魅力を深掘りします。`;
-  
-    return { 
-      title: title,
+  const resolvedParams = await params;
+  const urlSlug = decodeURIComponent(resolvedParams.slug);
+
+  const data = await client.get({
+    endpoint: "rough-stones",
+    queries: { filters: `slug[equals]${urlSlug}` },
+    customRequestInit: { cache: "no-store" },
+  });
+
+  const roughStone = data.contents[0];
+
+  if (!roughStone) {
+    return { title: "Rough Stone not found" };
+  }
+
+  const jaName = roughStone.nameJa ? `(${roughStone.nameJa})` : "";
+  const title = `${roughStone.name} ${jaName} - 原石図鑑`;
+  const description = `宝石の原点である${roughStone.name}${jaName}のデータ。結晶構造や生成環境など、鉱物としての魅力を深掘りします。`;
+
+  return {
+    title: title,
+    description: description,
+    openGraph: {
+      title: `${title} | ${SITE_NAME}`,
       description: description,
-      openGraph: {
-        title: `${title} | ${SITE_NAME}`,
-        description: description,
-        images: roughStone.image?.url ? [roughStone.image.url] : [],
-      },
-    };
- }
+      images: roughStone.image?.url ? [roughStone.image.url] : [],
+    },
+  };
+}
 
 export default async function RoughStonePage({ params }) {
   const resolvedParams = await params;
@@ -105,7 +105,7 @@ export default async function RoughStonePage({ params }) {
   // 原石データの取得
   const data = await client.get({
     endpoint: "rough-stones",
-    queries: { 
+    queries: {
       filters: `slug[equals]${urlSlug}`,
       customRequestInit: { cache: "no-store" },
     },
@@ -115,9 +115,9 @@ export default async function RoughStonePage({ params }) {
 
   if (!roughStone) {
     return (
-      <div style={{padding: "100px 20px", textAlign:"center", minHeight: "60vh"}}>
-        <h2 style={{fontSize: "2rem", marginBottom: "20px"}}>Rough Stone not found</h2>
-        <Link href="/" style={{color: "#0058a3", textDecoration: "underline"}}>Top Page</Link>
+      <div style={{ padding: "100px 20px", textAlign: "center", minHeight: "60vh" }}>
+        <h2 style={{ fontSize: "2rem", marginBottom: "20px" }}>Rough Stone not found</h2>
+        <Link href="/" style={{ color: "#0058a3", textDecoration: "underline" }}>Top Page</Link>
       </div>
     );
   }
@@ -163,25 +163,25 @@ export default async function RoughStonePage({ params }) {
         {/* ヘッダーエリア */}
         <section className="category-header">
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
-             {roughStone.image && (
-               <Image 
-                 src={roughStone.image.url} 
-                 alt={roughStone.name} 
-                 fill
-                 sizes="150px"
-                 style={{ objectFit: 'contain' }}
-                 className="category-header-img"
-               />
-             )}
+            {roughStone.image && (
+              <Image
+                src={roughStone.image.url}
+                alt={roughStone.name}
+                fill
+                sizes="150px"
+                style={{ objectFit: 'contain' }}
+                className="category-header-img"
+              />
+            )}
           </div>
-          
+
           <h1 className="category-title-en">{roughStone.name}</h1>
           <p className="category-title-ja">{roughStone.yomigana}</p>
-          
+
           {roughStone.description && (
-            <div 
-                className="category-desc"
-                dangerouslySetInnerHTML={{ __html: roughStone.description }}
+            <div
+              className="category-desc"
+              dangerouslySetInnerHTML={{ __html: roughStone.description }}
             />
           )}
         </section>
@@ -199,17 +199,17 @@ export default async function RoughStonePage({ params }) {
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', flexWrap: 'wrap' }}>
               {relatedCategories.map((cat) => (
-                <Link 
-                  key={cat.id} 
-                  href={`/gems/${cat.slug}`} 
+                <Link
+                  key={cat.id}
+                  href={`/gems/${cat.slug}`}
                   className="category-index-card"
                   style={{ minWidth: '100px' }}
                 >
                   <div style={{ position: 'relative', width: '80px', height: '80px', marginBottom: '16px' }}>
                     {cat.image?.url ? (
-                      <Image 
-                        src={cat.image.url} 
-                        alt={cat.name} 
+                      <Image
+                        src={cat.image.url}
+                        alt={cat.name}
                         fill
                         sizes="100px"
                         style={{ objectFit: 'contain' }}
@@ -232,13 +232,13 @@ export default async function RoughStonePage({ params }) {
         <GemStoneLinks />
 
         {/* 関連アイテム (Varieties Collection) */}
-        <ItemCollection 
+        <ItemCollection
           items={relatedItems}
           title={`${roughStone.name} Varieties`}
           subtitle="Related Journals & Products"
           emptyMessage="現在、関連するアイテムはありません。"
         />
-        
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />

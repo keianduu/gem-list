@@ -19,7 +19,7 @@ async function getCategoryArchives(categoryId) {
       queries: {
         filters: `relatedJewelries[contains]${categoryId}`,
         limit: 100,
-        orders: "-publishedAt",
+        orders: "-priority,-publishedAt",
       },
       customRequestInit: { next: { revalidate: 60 } }
     });
