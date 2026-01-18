@@ -48,6 +48,14 @@ export default function MasonryGrid({ items }) {
                     className="pin-image"
                     //loading="lazy"    // 遅延読み込み
                     decoding="async"  // 非同期デコード
+                    style={{
+                      width: '100%',
+                      height: 'auto',
+                      minHeight: '200px',        /* 読み込み前でも必ず200px確保 */
+                      backgroundColor: '#f0f0f0',/* 読み込み前はグレー */
+                      display: 'block',          /* 隙間対策 */
+                      objectFit: 'cover'
+                    }}
                   />
                 ) : imageUrl ? (
                   <Image
@@ -61,9 +69,6 @@ export default function MasonryGrid({ items }) {
                 ) : (
                   <div className="no-image-placeholder">No Image</div>
                 )}
-                <div style={{ padding: '5px', fontSize: '10px', color: 'red', wordBreak: 'break-all', background: 'rgba(255,255,255,0.8)' }}>
-                  DEBUG: {imageUrl || "URLなし"}
-                </div>
                 {/* 広告・PRラベル (画像上) */}
                 {isProduct && (
                   <span className="ad-label">広告・PR</span>
