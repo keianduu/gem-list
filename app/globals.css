@@ -588,6 +588,10 @@ a {
   display: block;
   object-fit: cover;
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  min-height: 200px;
+  /* 読み込み前でも高さを確保 */
+  background-color: #f0f0f0;
+  /* 読み込み中は薄いグレーを表示 */
 }
 
 .pin-card:hover .pin-image {
