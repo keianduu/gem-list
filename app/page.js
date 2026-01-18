@@ -159,7 +159,7 @@ export default async function Home() {
           />
         </Suspense>
       </main>
-
+      <img src="https://bizoux.jp/cdn/shop/files/detail-1_-_2025-05-16T155735.938.jpg?v=1747378779&width=1000" width="100%" />
       <SiteFooter />
     </>
   );
