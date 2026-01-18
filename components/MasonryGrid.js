@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useFavorites } from '@/hooks/useFavorites';
 
 export default function MasonryGrid({ items }) {
-  const breakpointColumnsObj = { default: 4, 1024: 3, 768: 2 };
+  const breakpointColumnsObj = { default: 4, 1024: 3, 768: 2, 480: 2 };
   const { toggleFavorite, checkIsFavorite, isLoaded } = useFavorites();
 
   return (

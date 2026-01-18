@@ -16,6 +16,8 @@
   --page-padding-sp: 16px;
   --container-max-width: 1400px;
   --content-max-width: 1200px;
+  --masonry-gutter: 32px;
+  /* PC */
 }
 
 * {
@@ -536,44 +538,75 @@ a {
   display: flex;
   width: auto;
   /* 左側のガター分をネガティブマージンで相殺して、親の左端に揃える */
-  margin-left: -32px;
+  margin-left: calc(var(--masonry-gutter) * -1);
   gap: 0;
 }
 
 /* カラム設定 (PC) */
 .my-masonry-grid_column {
-  padding-left: 32px;
+  padding-left: var(--masonry-gutter);
   /* カラム間の隙間 */
   background-clip: padding-box;
 }
 
 .my-masonry-grid_column>div {
-  margin-bottom: 32px;
+  margin-bottom: var(--masonry-gutter);
 }
 
 /* カード本体 (Glassmorphism) */
+/* カード本体 (Glassmorphism) */
+/* カード本体 (Glassmorphism) */
 .pin-card {
+  position: relative;
+  /* ★追加 */
   display: flex;
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+
+  background: transparent;
+  /* ★変更（ここでグラデを持たない） */
+  backdrop-filter: none;
+  /* ★追加（ここでは使わない） */
+  -webkit-backdrop-filter: none;
+  /* ★追加（ここでは使わない） */
+
   border-radius: 24px;
   overflow: hidden;
   height: 100%;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-    box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-    background 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+/* hoverの背景変更は ::before 側でやるので、ここは変形と影だけにする */
 .pin-card:hover {
   transform: translateY(-8px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
+
+.pin-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  z-index: 0;
+}
+
+.pin-card:hover::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
+}
+
+.pin-card>* {
+  position: relative;
+  z-index: 1;
+}
+
 
 .pin-image-wrapper {
   position: relative;
@@ -2024,6 +2057,10 @@ a {
 
 /* 5. スマホ調整 */
 @media (max-width: 768px) {
+  :root {
+    --masonry-gutter: 16px;
+  }
+
   .rich-text-body .journal-note {
     padding-left: 20px;
     padding-right: 20px;
@@ -2720,6 +2757,7 @@ a {
   /* 変数をスマホ用に書き換え */
   :root {
     --page-padding-pc: var(--page-padding-sp);
+    --masonry-gutter: 16px;
   }
 
   .hero-area {
@@ -2792,17 +2830,17 @@ a {
 
   /* Masonry調整 */
   .my-masonry-grid {
-    margin-left: -16px !important;
+    margin-left: calc(var(--masonry-gutter) * -1);
     gap: 0 !important;
     width: auto !important;
   }
 
   .my-masonry-grid_column {
-    padding-left: 16px !important;
+    padding-left: var(--masonry-gutter);
   }
 
   .my-masonry-grid_column>div {
-    margin-bottom: 16px !important;
+    margin-bottom: var(--masonry-gutter);
   }
 
   .pin-card {
@@ -3439,18 +3477,4 @@ a {
   .gem-links-container .hero-search-sublink {
     width: auto;
   }
-}
-
-.no-image-placeholder {
-  width: 100%;
-  height: 200px;
-  background-color: #eee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #999;
-  font-family: var(--font-en);
-  font-size: 0.9rem;
-  border-radius: 16px;
-  /* カードに合わせて角丸に */
 }
