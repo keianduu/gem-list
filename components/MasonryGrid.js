@@ -20,7 +20,7 @@ export default function MasonryGrid({ items }) {
         const href = item.link || (item.id ? `/products/${item.id}` : "#");
         const isExternal = href.startsWith("http");
         const isProduct = item.type === 'product';
-        
+
         const isFav = isLoaded ? checkIsFavorite(item.id) : false;
 
         // 画像データの判定
@@ -29,7 +29,7 @@ export default function MasonryGrid({ items }) {
 
         return (
           <div key={item.id} className="pin-card-wrapper">
-            <Link 
+            <Link
               href={href}
               className="pin-card"
               target={isExternal ? "_blank" : "_self"}
@@ -42,31 +42,31 @@ export default function MasonryGrid({ items }) {
                 */}
                 {isStringUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <img 
-                    src={imageUrl} 
-                    alt={item.name} 
+                  <img
+                    src={imageUrl}
+                    alt={item.name}
                     className="pin-image"
-                    loading="lazy"    // 遅延読み込み
+                    //loading="lazy"    // 遅延読み込み
                     decoding="async"  // 非同期デコード
                   />
                 ) : imageUrl ? (
-                  <Image 
-                    src={imageUrl} 
-                    alt={item.name} 
-                    width={item.image.width || 600} 
-                    height={item.image.height || 800} 
-                    className="pin-image" 
+                  <Image
+                    src={imageUrl}
+                    alt={item.name}
+                    width={item.image.width || 600}
+                    height={item.image.height || 800}
+                    className="pin-image"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 ) : (
                   <div className="no-image-placeholder">No Image</div>
                 )}
-                
+
                 {/* 広告・PRラベル (画像上) */}
                 {isProduct && (
                   <span className="ad-label">広告・PR</span>
                 )}
-                
+
                 {/* オーバーレイ */}
                 <div className="pin-overlay">
                   <div className={`action-btn ${isProduct ? 'btn-shop' : 'btn-read'}`}>
@@ -95,10 +95,10 @@ export default function MasonryGrid({ items }) {
                 <div className="pin-category-row">
                   <div className="pin-category-wrapper">
                     {item.categoryIcon && (
-                      <Image 
-                        src={item.categoryIcon} 
-                        alt="" 
-                        width={20} 
+                      <Image
+                        src={item.categoryIcon}
+                        alt=""
+                        width={20}
                         height={20}
                         className="pin-category-icon"
                       />
@@ -110,15 +110,15 @@ export default function MasonryGrid({ items }) {
                   <button
                     className={`fav-btn ${isFav ? 'active' : ''}`}
                     onClick={(e) => {
-                      e.preventDefault(); 
+                      e.preventDefault();
                       e.stopPropagation();
                       toggleFavorite(item);
                     }}
                     aria-label="Add to favorites"
                   >
-                    <svg 
-                      className="fav-icon" 
-                      fill={isFav ? "#E60023" : "none"} 
+                    <svg
+                      className="fav-icon"
+                      fill={isFav ? "#E60023" : "none"}
                       stroke={isFav ? "#E60023" : "#ccc"}
                       viewBox="0 0 24 24"
                     >
@@ -126,9 +126,9 @@ export default function MasonryGrid({ items }) {
                     </svg>
                   </button>
                 </div>
-                
+
                 <h3 className="pin-title">{item.name}</h3>
-                
+
                 {item.desc && <p className="pin-desc">{item.desc}</p>}
                 {isProduct && item.price && <p className="pin-price">{item.price}</p>}
               </div>
