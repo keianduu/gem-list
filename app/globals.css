@@ -3485,11 +3485,28 @@ a {
     width: auto;
   }
 
+  /* iOS Safari 対策: 画像が描画されない/消える系のバグ回避 */
   @supports (-webkit-touch-callout: none) {
+
+    /* 1) backdrop-filter を iOS だけ無効化（最優先で効くことが多い） */
     .pin-card::before {
-      backdrop-filter: none !important;
       -webkit-backdrop-filter: none !important;
+      backdrop-filter: none !important;
+    }
+
+    /* 2) 代わりに普通の半透明背景を置く（見た目の破綻を防ぐ） */
+    .pin-card {
+      background: rgba(255, 255, 255, 0.72) !important;
+    }
+
+    /* 3) 画像を強制的に別レイヤーで描画させる */
+    .pin-image {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
     }
   }
+
 
 }
