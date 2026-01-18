@@ -61,7 +61,9 @@ export default function MasonryGrid({ items }) {
                 ) : (
                   <div className="no-image-placeholder">No Image</div>
                 )}
-
+                <div style={{ padding: '5px', fontSize: '10px', color: 'red', wordBreak: 'break-all', background: 'rgba(255,255,255,0.8)' }}>
+                  DEBUG: {imageUrl || "URLなし"}
+                </div>
                 {/* 広告・PRラベル (画像上) */}
                 {isProduct && (
                   <span className="ad-label">広告・PR</span>
