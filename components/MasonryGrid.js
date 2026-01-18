@@ -55,7 +55,7 @@ export default function MasonryGrid({ items }) {
                       alt={item.name}
                       className="pin-image"
                       //loading="lazy"    // 遅延読み込み
-                      decoding="async"  // 非同期デコード
+                      //decoding="async"  // 非同期デコード
                       referrerPolicy="no-referrer"
                       style={{
                         width: '100%',
