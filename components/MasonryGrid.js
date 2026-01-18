@@ -42,31 +42,22 @@ export default function MasonryGrid({ items }) {
                 */}
                 {isStringUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
-                  <div
+                  <img
+                    src={imageUrl}
+                    alt={item.name}
+                    className="pin-image"
+                    //loading="lazy"    // 遅延読み込み
+                    //decoding="async"  // 非同期デコード
+                    //referrerPolicy="no-referrer"
                     style={{
                       width: '100%',
-                      minHeight: '200px',        /* 箱の高さを確保 */
-                      backgroundColor: '#f0f0f0',/* 箱の背景色（グレー） */
-                      position: 'relative'       /* 中の画像の基準点にする */
+                      height: 'auto',
+                      minHeight: '200px',        /* 読み込み前でも必ず200px確保 */
+                      backgroundColor: '#f0f0f0',/* 読み込み前はグレー */
+                      display: 'block',          /* 隙間対策 */
+                      objectFit: 'cover'
                     }}
-                  >
-                    <img
-                      src={imageUrl}
-                      alt={item.name}
-                      className="pin-image"
-                      //loading="lazy"    // 遅延読み込み
-                      //decoding="async"  // 非同期デコード
-                      //referrerPolicy="no-referrer"
-                      style={{
-                        width: '100%',
-                        height: 'auto',
-                        minHeight: '200px',        /* 読み込み前でも必ず200px確保 */
-                        backgroundColor: '#f0f0f0',/* 読み込み前はグレー */
-                        display: 'block',          /* 隙間対策 */
-                        objectFit: 'cover'
-                      }}
-                    />
-                  </div>
+                  />
                 ) : imageUrl ? (
                   <Image
                     src={imageUrl}
