@@ -558,6 +558,10 @@ a {
 /* カード本体 (Glassmorphism) */
 .pin-card {
   position: relative;
+  isolation: isolate;
+  /* ★追加：この要素内でスタックを閉じる（iOS対策の定番） */
+  z-index: 0;
+  /* ★追加：疑似要素を -1 にしても安定する */
   /* ★追加 */
   display: flex;
   flex-direction: column;
@@ -595,7 +599,10 @@ a {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
 
-  z-index: 0;
+  z-index: -1;
+  /* ★変更：0 → -1 で“絶対に背面”へ */
+  pointer-events: none;
+  /* ★念のため */
 }
 
 .pin-card:hover::before {
