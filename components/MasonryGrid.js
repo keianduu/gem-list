@@ -45,18 +45,8 @@ export default function MasonryGrid({ items }) {
                   <img
                     src={imageUrl}
                     alt={item.name}
-                    className="pin-image"
-                    //loading="lazy"    // 遅延読み込み
-                    //decoding="async"  // 非同期デコード
-                    //referrerPolicy="no-referrer"
-                    style={{
-                      width: '100%',
-                      height: 'auto',
-                      minHeight: '200px',        /* 読み込み前でも必ず200px確保 */
-                      backgroundColor: '#f0f0f0',/* 読み込み前はグレー */
-                      display: 'block',          /* 隙間対策 */
-                      objectFit: 'cover'
-                    }}
+                    className="external-image"
+                    style={{ width: '100%' }}
                   />
                 ) : imageUrl ? (
                   <Image

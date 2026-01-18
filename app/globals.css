@@ -634,6 +634,13 @@ a {
   /* 読み込み中は薄いグレーを表示 */
 }
 
+/* ★外部参照画像用: iOS Safari対策で最小限のスタイルのみ適用 */
+.external-image {
+  display: block;
+  height: auto;
+  /* 他のスタイルは意図的に適用しない */
+}
+
 .pin-card:hover .pin-image {
   transform: scale(1.05);
 }
