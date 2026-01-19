@@ -53,9 +53,17 @@ export default async function sitemap() {
     // 2. microCMSから全データを並行取得
     // getAllContentsはページネーションを自動で回して全件取得してくれる関数です
     const [categories, roughStones, archives] = await Promise.all([
-        getAllContents("jewelry-categories", { fields: "slug,updatedAt" }),
-        getAllContents("rough-stones", { fields: "slug,updatedAt" }),
-        getAllContents("archive", { fields: "slug,updatedAt" }),
+        getAllContents("jewelry-categories", {
+            fields: "slug,updatedAt",
+            filters: "isVisible[equals]true" // 非表示カテゴリを除外
+        }),
+        getAllContents("rough-stones", {
+            fields: "slug,updatedAt",
+            filters: "isVisible[equals]true" // 非表示カテゴリを除外
+        }),
+        getAllContents("archive", {
+            fields: "slug,updatedAt,type" // 判定用にtypeを追加
+        }),
     ]);
 
     // 3. 宝石カテゴリページ ( /gems/[slug] )
@@ -75,13 +83,15 @@ export default async function sitemap() {
     }));
 
     // 5. 記事/商品ページ ( /journals/[slug] )
-    // ※商品は /products/[slug] ですが noindex なので、SEO対象の記事詳細(/journals/)として出力します
-    const archiveUrls = archives.map((content) => ({
-        url: `${baseUrl}/journals/${content.slug}`,
-        lastModified: new Date(content.updatedAt),
-        changeFrequency: 'weekly',
-        priority: 0.6,
-    }));
+    // 商品（products）は除外し、記事（journals）のみ出力する
+    const archiveUrls = archives
+        .filter((content) => !content.type.includes('product'))
+        .map((content) => ({
+            url: `${baseUrl}/journals/${content.slug}`,
+            lastModified: new Date(content.updatedAt),
+            changeFrequency: 'weekly',
+            priority: 0.6,
+        }));
 
     // 全て結合して返す
     return [

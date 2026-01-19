@@ -33,7 +33,10 @@ export default function MasonryGrid({ items }) {
               href={href}
               className="pin-card"
               target={isExternal ? "_blank" : "_self"}
-              rel={isExternal ? "noopener noreferrer" : undefined}
+              rel={
+                (isExternal ? "noopener noreferrer" : "") +
+                (isProduct ? " sponsored nofollow" : "") || undefined
+              }
             >
               <div className="pin-image-wrapper">
                 {/* ★修正: 画像タイプによるタグの使い分け 
