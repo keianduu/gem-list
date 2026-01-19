@@ -3541,7 +3541,7 @@ a {
     /* ★追加: isolation を解除（iOS Safari でスタックコンテキストが壊れる原因） */
     isolation: auto !important;
     /* ★追加: overflow を解除（.pin-image-wrapper 側で角丸クリップする） */
-    overflow: visible !important;
+    /* overflow: visible !important;  <-- REMOVED: Keep hidden/auto to prevent horizontal scroll */
   }
 
   /* 3) 子要素の z-index を auto に戻す（スタック競合を避ける） */
@@ -3597,6 +3597,8 @@ a {
 
   /* Fix: Container specifically handling Masonry overflow */
   .item-collection-container {
+    position: relative;
+    /* ★追加: スタックコンテキストを作成しクリップを確実に */
     overflow: hidden;
     width: 100%;
   }
