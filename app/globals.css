@@ -3553,6 +3553,10 @@ a {
   .pin-image-wrapper {
     overflow: hidden !important;
     border-radius: 24px 24px 0 0 !important;
+    width: 100% !important;
+    /* Prevent sub-pixel rendering issues */
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: radial-gradient(white, black);
   }
 
   /* 5) 画像を強制的に別レイヤーで描画させる */
@@ -3589,5 +3593,11 @@ a {
   .journal-main,
   .category-main {
     overflow-x: clip;
+  }
+
+  /* Fix: Container specifically handling Masonry overflow */
+  .item-collection-container {
+    overflow: hidden;
+    width: 100%;
   }
 }
