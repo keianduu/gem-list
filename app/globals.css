@@ -3523,43 +3523,71 @@ a {
     width: auto;
   }
 
-  /* iOS Safari 対策: 画像が描画されない/消える系のバグ回避 */
-  @supports (-webkit-touch-callout: none) {
+  /* End desktop media query */
+}
 
-    /* 1) backdrop-filter を iOS だけ無効化（最優先で効くことが多い） */
-    .pin-card::before {
-      -webkit-backdrop-filter: none !important;
-      backdrop-filter: none !important;
-    }
+/* iOS Safari 対策: 画像が描画されない/消える系のバグ回避 (Global) */
+@supports (-webkit-touch-callout: none) {
 
-    /* 2) 代わりに普通の半透明背景を置く（見た目の破綻を防ぐ） */
-    .pin-card {
-      background: rgba(255, 255, 255, 0.72) !important;
-      /* ★追加: isolation を解除（iOS Safari でスタックコンテキストが壊れる原因） */
-      isolation: auto !important;
-      /* ★追加: overflow を解除（.pin-image-wrapper 側で角丸クリップする） */
-      overflow: visible !important;
-    }
-
-    /* 3) 子要素の z-index を auto に戻す（スタック競合を避ける） */
-    .pin-card>* {
-      z-index: auto !important;
-    }
-
-    /* 4) 画像ラッパーで角丸クリップを担当 */
-    .pin-image-wrapper {
-      overflow: hidden !important;
-      border-radius: 24px 24px 0 0 !important;
-    }
-
-    /* 5) 画像を強制的に別レイヤーで描画させる */
-    .pin-image {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
+  /* 1) backdrop-filter を iOS だけ無効化（最優先で効くことが多い） */
+  .pin-card::before {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
   }
 
+  /* 2) 代わりに普通の半透明背景を置く（見た目の破綻を防ぐ） */
+  .pin-card {
+    background: rgba(255, 255, 255, 0.72) !important;
+    /* ★追加: isolation を解除（iOS Safari でスタックコンテキストが壊れる原因） */
+    isolation: auto !important;
+    /* ★追加: overflow を解除（.pin-image-wrapper 側で角丸クリップする） */
+    overflow: visible !important;
+  }
 
+  /* 3) 子要素の z-index を auto に戻す（スタック競合を避ける） */
+  .pin-card>* {
+    z-index: auto !important;
+  }
+
+  /* 4) 画像ラッパーで角丸クリップを担当 */
+  .pin-image-wrapper {
+    overflow: hidden !important;
+    border-radius: 24px 24px 0 0 !important;
+  }
+
+  /* 5) 画像を強制的に別レイヤーで描画させる */
+  .pin-image {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+}
+
+/* =========================================
+   Mobile Adjustments & Fixes
+========================================= */
+@media (max-width: 768px) {
+  :root {
+    /* モバイルではガターを小さくして横幅溢れを防ぐ */
+    --masonry-gutter: 16px;
+  }
+
+  .my-masonry-grid {
+    /* ネガティブマージン再計算 (変数が変わるので自動適用されるが念のため確認) */
+    margin-left: calc(var(--masonry-gutter) * -1);
+  }
+
+  /* 横揺れ防止の最終防壁 */
+  body {
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* 念のためメインコンテナもはみ出し防止 */
+  .main-container,
+  .journal-main,
+  .category-main {
+    overflow-x: clip;
+  }
 }
