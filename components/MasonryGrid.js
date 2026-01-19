@@ -16,7 +16,7 @@ export default function MasonryGrid({ items }) {
       className="my-masonry-grid"
       columnClassName="my-masonry-grid_column"
     >
-      {items.map((item) => {
+      {items.map((item, index) => {
         const href = item.link || (item.id ? `/products/${item.id}` : "#");
         const isExternal = href.startsWith("http");
         const isProduct = item.type === 'product';
@@ -28,7 +28,7 @@ export default function MasonryGrid({ items }) {
         const imageUrl = isStringUrl ? item.image : item.image?.url;
 
         return (
-          <div key={item.id} className="pin-card-wrapper">
+          <div key={`${item.id}-${index}`} className="pin-card-wrapper">
             <Link
               href={href}
               className="pin-card"

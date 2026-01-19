@@ -531,6 +531,16 @@ a {
   max-width: var(--content-max-width);
   margin: 100px auto 0;
   /* 親要素(category-main等)にpaddingがあるので、ここではpadding不要 */
+  overflow: hidden;
+}
+
+.content-manager {
+  width: 100%;
+  position: relative;
+  overflow-x: clip;
+  /* hiddenよりモダンで副作用の少ない指定 */
+  overflow-y: visible;
+  /* 縦スクロールは阻害しない */
 }
 
 /* Masonry Grid Base (PC) */
@@ -2803,6 +2813,28 @@ a {
   :root {
     --page-padding-pc: var(--page-padding-sp);
     --masonry-gutter: 16px;
+  }
+
+  /* 横揺れ防止の最終防壁 */
+  html,
+  body {
+    overflow-x: hidden;
+    /* 横スクロールを禁止 */
+    width: 100%;
+    position: relative;
+    /* iOS Safariでのオーバースクロール(バウンス)は許可しつつ、横揺れを防ぐ */
+    overscroll-behavior-y: auto;
+  }
+
+  /* 念のためメインコンテナもはみ出し防止 */
+  .main-container,
+  .journal-main,
+  .category-main,
+  .content-manager {
+    /* ここにも追加 */
+    overflow-x: clip;
+    max-width: 100vw;
+    /* 画面幅を超えないように強制 */
   }
 
   .hero-area {

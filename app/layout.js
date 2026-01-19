@@ -20,7 +20,12 @@ const notoSerif = Noto_Serif_JP({
   preload: false,
   display: "swap",
 });
-
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1, // 意図しないズームインによるレイアウト崩れを防ぐ（アクセシビリティ要件に応じて調整可）
+  userScalable: false, // ★これをtrueにするとピンチズーム可、falseなら不可。アプリっぽくするならfalseですが、今回は横揺れ防止が主目的なので一旦この設定を推奨します
+};
 export const metadata = {
   metadataBase: new URL(SITE_URL), // OGP画像などの相対パス解決に必要
   title: {
