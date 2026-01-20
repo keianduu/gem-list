@@ -20,11 +20,11 @@ export const AUTHORS = {
   },
   "editorial2": {
     id: "ayu_ogawa",
-    nameEn: "Jewelism Editorial2",
+    nameEn: "月野 結絵（Tsukino Yue）",
     role: "Editor",
-    bio: "Jewelism Market 編集部。\n世界中の宝石市場のトレンドや、原石の買い付け情報を発信します。",
+    bio: "ジュエリーの魅力を言葉で磨くライター。天然石の美しさやコーディネートの楽しさを、瑞々しい感性でお伝えします。現在、宝石学やトレンドを勉強中。Jewelism Marketを通じて、皆様と素敵なジュエリーとの「結び目」になれるような記事をお届けします。",
     // 仮: ロゴなど
-    image: "/images/editorial_thumb.jpg" // publicフォルダ等のパス、または絶対URL
+    image: "https://images.microcms-assets.io/assets/6d7124b9fc1b47d5a5579cbebaf7fa4c/84832ef95bef40c98188e6e02f158443/ashley_neko_rabbit.png" // publicフォルダ等のパス、または絶対URL
   }
 };
 
