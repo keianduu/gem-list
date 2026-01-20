@@ -18,8 +18,8 @@ export const AUTHORS = {
     // 仮: ロゴなど
     image: "https://images.microcms-assets.io/assets/6d7124b9fc1b47d5a5579cbebaf7fa4c/f9f582de0a9a484ea82b28ec54662d0f/keiandu_A_cat_is_lying_on_the_ground_surrounded_by_crystals_a_209c6bb8-8160-4c73-a65c-4532ff850fd8_1.jpg" // publicフォルダ等のパス、または絶対URL
   },
-  "editorial2": {
-    id: "ayu_ogawa",
+  "tsukino_yue": {
+    id: "tsukino_yue",
     nameEn: "月野 結絵（Tsukino Yue）",
     role: "Editor",
     bio: "ジュエリーの魅力を言葉で磨くライター。天然石の美しさやコーディネートの楽しさを、瑞々しい感性でお伝えします。現在、宝石学やトレンドを勉強中。Jewelism Marketを通じて、皆様と素敵なジュエリーとの「結び目」になれるような記事をお届けします。",
