@@ -2940,10 +2940,11 @@ a {
 
   .pin-title {
     font-size: 1.0rem;
+    -webkit-line-clamp: 3;
   }
 
   .pin-desc {
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3;
   }
 
   /* Filter UI */
