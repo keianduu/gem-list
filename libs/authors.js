@@ -12,9 +12,9 @@ export const AUTHORS = {
   },
   "editorial": {
     id: "editorial",
-    nameEn: "Jewelism Editorial",
+    nameEn: "Jewelism Market 編集部",
     role: "Editor",
-    bio: "Jewelism Market 編集部。宝石の「歴史」と「個性」にフォーカス。石そのものが持つ美しさと、背景にある奥深い世界をお届けします。",
+    bio: "宝石の「歴史」と「個性」にフォーカス。石そのものが持つ美しさと、背景にある奥深い世界をお届けします。",
     // 仮: ロゴなど
     image: "https://images.microcms-assets.io/assets/6d7124b9fc1b47d5a5579cbebaf7fa4c/f9f582de0a9a484ea82b28ec54662d0f/keiandu_A_cat_is_lying_on_the_ground_surrounded_by_crystals_a_209c6bb8-8160-4c73-a65c-4532ff850fd8_1.jpg" // publicフォルダ等のパス、または絶対URL
   },
