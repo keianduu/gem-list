@@ -610,9 +610,10 @@ a {
   inset: 0;
   border-radius: inherit;
 
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.7));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.95);
+  /* GPU負荷対策: 単色半透明へ変更 */
+  /* backdrop-filter: blur(20px); 削除 */
+  /* -webkit-backdrop-filter: blur(20px); 削除 */
 
   z-index: -1;
   /* ★変更：0 → -1 で“絶対に背面”へ */
@@ -621,7 +622,8 @@ a {
 }
 
 .pin-card:hover::before {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.9));
+  background: rgba(255, 255, 255, 1);
+  /* ホバー時は完全不透明に近づける */
 }
 
 .pin-card>* {
@@ -838,6 +840,7 @@ a {
   margin: 0 0 12px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

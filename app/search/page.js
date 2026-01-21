@@ -12,7 +12,8 @@ async function getFullArchives() {
   try {
     // ページネーションを内部で回して全件取得
     const contents = await getAllContents("archive", {
-      orders: "-priority,-publishedAt"
+      orders: "-priority,-publishedAt",
+      fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,relatedJewelries,relatedAccessories,price,description,affiliateUrl,color,priority"
     });
     return contents;
   } catch (err) {
@@ -27,7 +28,7 @@ async function getCategories() {
     // カテゴリも増えてきたら全件取得が必要ですが、当面は100件制限でOK（またはgetAllContentsを使用）
     const data = await client.get({
       endpoint: "jewelry-categories",
-      queries: { filters: 'isVisible[equals]true', limit: 100 },
+      queries: { filters: 'isVisible[equals]true', limit: 100, fields: "id,name" },
       customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;
@@ -41,7 +42,7 @@ async function getAccessories() {
   try {
     const data = await client.get({
       endpoint: "accessory", // ★修正: accessories -> accessory (単数形に)
-      queries: { limit: 100 },
+      queries: { limit: 100, fields: "id,name" },
       customRequestInit: { next: { revalidate: 3600 } }
     });
     return data.contents;

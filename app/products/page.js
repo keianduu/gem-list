@@ -1,24 +1,25 @@
-/* app/products/page.js */
-import MasonryGrid from "@/components/MasonryGrid";
+import ProductsInfiniteList from "@/components/ProductsInfiniteList";
 import Link from "next/link";
 import { client } from "@/libs/microcms";
-import SiteHeader from "@/components/SiteHeader"; // ★追加
+import SiteHeader from "@/components/SiteHeader";
 
 // ▼▼▼ 追加: これでビルド時の静的生成エラーを回避し、常に最新データを取得します ▼▼▼
-export const dynamic = 'force-dynamic'; 
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Products List - Management Only',
   robots: { index: false, follow: false },
 };
+
 export default async function ProductsListPage() {
   // Productのみ取得 (typeにproductが含まれるもの)
-  const data = await client.get({ 
-    endpoint: "archive", 
-    queries: { 
+  const data = await client.get({
+    endpoint: "archive",
+    queries: {
       filters: 'type[contains]product',
-      limit: 100,
-      orders: "-publishedAt"
+      limit: 24, // ★変更: 100 -> 24
+      orders: "-publishedAt",
+      fields: "id,slug,title,price,thumbnailUrl,description,type,publishedAt"
     },
     customRequestInit: { next: { revalidate: 0 } } // 管理用なのでキャッシュなし
   });
@@ -44,7 +45,7 @@ export default async function ProductsListPage() {
             ※管理用商品一覧（noindex）。クリックで詳細（ID/リンク確認）へ移動。
           </p>
         </div>
-        <MasonryGrid items={products} />
+        <ProductsInfiniteList initialItems={products} />
       </main>
 
       <footer className="gem-footer">

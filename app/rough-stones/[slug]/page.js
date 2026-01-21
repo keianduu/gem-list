@@ -18,7 +18,8 @@ async function getRelatedJewelryCategories(roughStoneId) {
       queries: {
         filters: `roughStones[equals]${roughStoneId}`,
         limit: 10,
-        orders: "name"
+        orders: "name",
+        fields: "id,slug,name,yomigana,nameJa,image"
       }
     });
     return data.contents;
@@ -56,6 +57,7 @@ async function getRoughStoneArchives(roughStoneId) {
         filters: filtersQuery,
         limit: 100,
         orders: "-priority,-publishedAt",
+        fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,price,description,affiliateUrl,relatedJewelries"
       },
       customRequestInit: { next: { revalidate: 60 } }
     });
@@ -107,6 +109,7 @@ export default async function RoughStonePage({ params }) {
     endpoint: "rough-stones",
     queries: {
       filters: `slug[equals]${urlSlug}`,
+      fields: "id,name,nameJa,yomigana,slug,image,description",
       customRequestInit: { cache: "no-store" },
     },
   });

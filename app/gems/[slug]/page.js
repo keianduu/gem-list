@@ -20,6 +20,7 @@ async function getCategoryArchives(categoryId) {
         filters: `relatedJewelries[contains]${categoryId}`,
         limit: 100,
         orders: "-priority,-publishedAt",
+        fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,price,description,affiliateUrl"
       },
       customRequestInit: { next: { revalidate: 60 } }
     });
@@ -71,6 +72,7 @@ export default async function CategoryPage({ params }) {
     endpoint: "jewelry-categories",
     queries: {
       filters: `slug[equals]${urlSlug}`,
+      fields: "id,name,nameJa,yomigana,slug,image,description,miningLocations,roughStones,accessories",
       customRequestInit: {
         cache: "no-store",
       },

@@ -1,19 +1,24 @@
-/* components/TopContentManager.js */
 "use client";
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createPortal } from 'react-dom'; // ★追加
+import { createPortal } from 'react-dom';
 import MasonryGrid from './MasonryGrid';
 import FilterPopup from './FilterPopup';
+import { getItems } from '@/app/actions/itemActions';
 
-export default function TopContentManager({ 
-  initialItems, 
-  categories, 
+const FULL_COLOR_LIST = [
+  "Red", "Blue", "Green", "Yellow", "Purple", "Pink", "Black", "White", "Orange", "Clear", "Multi-color",
+  "Brown", "Gray", "Violet", "Indigo"
+];
+
+export default function TopContentManager({
+  initialItems,
+  categories,
   accessories,
-  title = "Journal & Products", 
+  title = "Journal & Products",
   subtitle = "読みもの & 新着アイテム",
-  isSearchPage = false 
+  isSearchPage = false
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,23 +28,29 @@ export default function TopContentManager({
     category: "",
     accessory: "",
     priceRange: "",
-    color: "", 
+    color: "",
     contentType: "all",
   });
 
-  const [isTopOnly, setIsTopOnly] = useState(!isSearchPage);
+  const [items, setItems] = useState(initialItems);
+  const [hasMore, setHasMore] = useState(true); // 初期ロード分(24)があるので、あると仮定（ロード操作で判定）
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFloatingBtn, setShowFloatingBtn] = useState(false);
+
   const containerRef = useRef(null);
-  
-  // ★追加: クライアントサイドでのみポータルを有効にするためのフラグ
+  const loaderRef = useRef(null);
   const [mounted, setMounted] = useState(false);
 
+  // 初期化: initialItemsが24件未満ならこれ以上ない
   useEffect(() => {
+    if (initialItems.length < 24) {
+      setHasMore(false);
+    }
     setMounted(true);
-  }, []);
+  }, [initialItems]);
 
-  // URLパラメータ復元 (変更なし)
+  // URLパラメータ復元
   useEffect(() => {
     if (isSearchPage) {
       const p_category = searchParams.get('category') || "";
@@ -55,12 +66,78 @@ export default function TopContentManager({
         priceRange: p_price,
         contentType: p_type
       });
-      
-      setIsTopOnly(false);
+      // パラメータがある場合は初期ロードもトリガーする必要があるかも？
+      // ただしpage.js等はSSRでパラメータを読んでinitialItemsを作っていない場合、ここでfetchが必要。
+      // 今回は isSearchPage=false (TopPage) がメインなので、一旦パラメータ変更検知でのfetchに任せる
     }
   }, [isSearchPage, searchParams]);
 
-  // スクロール検知 (変更なし)
+  // フィルター変更時のデータ取得
+  // 初回マウント時(initialItemsがある時)に走らないように注意
+  const isFirstRun = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
+    // フィルターが変わったらリセットして再取得
+    const fetchFiltered = async () => {
+      setIsLoading(true);
+      // スクロール位置を少し戻すなどしたほうが親切だが、一旦データ更新のみ
+
+      const { contents, totalCount } = await getItems({ offset: 0, limit: 24, filters });
+      setItems(contents);
+      setHasMore(contents.length < totalCount);
+      setIsLoading(false);
+    };
+
+    // デバウンス的な処理を入れるか、即時実行か。とりあえず即時。
+    fetchFiltered();
+  }, [filters]);
+
+
+  // 無限スクロール用 Load More
+  const loadMore = useCallback(async () => {
+    if (isLoading || !hasMore) return;
+
+    setIsLoading(true);
+    const { contents, totalCount } = await getItems({
+      offset: items.length,
+      limit: 24,
+      filters
+    });
+
+    setItems(prev => [...prev, ...contents]);
+
+    // 続きがあるか判定
+    if (items.length + contents.length >= totalCount) {
+      setHasMore(false);
+    }
+    setIsLoading(false);
+  }, [filters, hasMore, isLoading, items.length]);
+
+
+  // IntersectionObserver for Load More
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const target = entries[0];
+        if (target.isIntersecting && hasMore && !isLoading) {
+          loadMore();
+        }
+      },
+      { root: null, rootMargin: "400px", threshold: 0 } // 早めに読み込む
+    );
+
+    if (loaderRef.current) observer.observe(loaderRef.current);
+
+    return () => observer.disconnect();
+  }, [loadMore, hasMore, isLoading]);
+
+
+  // フローティングボタン表示用のObserver (コンテナが見えているか)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => setShowFloatingBtn(entry.isIntersecting),
@@ -70,70 +147,21 @@ export default function TopContentManager({
     return () => observer.disconnect();
   }, []);
 
-  // 選択肢の計算 (変更なし)
+  // 選択肢オプション
   const availableOptions = useMemo(() => {
-    const activeCategoryNames = new Set();
-    const activeAccessoryNames = new Set();
-    const activeColorNames = new Set();
-    const activePriceKeys = new Set();
-
-    initialItems.forEach(item => {
-      if (filters.contentType !== 'all' && item.type !== filters.contentType) return;
-      if (item.category) activeCategoryNames.add(item.category);
-      if (item.accessory) activeAccessoryNames.add(item.accessory);
-      if (item.color) activeColorNames.add(item.color);
-      if (item.type === 'product' && typeof item.rawPrice === 'number') {
-        const p = item.rawPrice;
-        if (p < 10000) activePriceKeys.add('under-10000');
-        else if (p < 30000) activePriceKeys.add('10000-30000');
-        else if (p < 50000) activePriceKeys.add('30000-50000');
-        else activePriceKeys.add('over-50000');
-      }
-    });
-
-    const priceDefinitions = [
-      { value: 'under-10000', label: 'Under ¥10,000' },
-      { value: '10000-30000', label: '¥10,000 - ¥30,000' },
-      { value: '30000-50000', label: '¥30,000 - ¥50,000' },
-      { value: 'over-50000', label: 'Over ¥50,000' },
-    ];
-
-    let validAccessories = [];
-    if (accessories && accessories.length > 0) {
-      validAccessories = accessories.filter(acc => activeAccessoryNames.has(acc.name));
-    } else {
-      validAccessories = Array.from(activeAccessoryNames).sort().map(name => ({
-        id: name, name: name
-      }));
-    }
-    
     return {
-      categories: categories.filter(cat => activeCategoryNames.has(cat.name)),
-      accessories: validAccessories,
-      colors: Array.from(activeColorNames).sort(),
-      priceRanges: priceDefinitions.filter(p => activePriceKeys.has(p.value))
+      categories: categories || [],
+      accessories: accessories || [],
+      colors: FULL_COLOR_LIST,
+      priceRanges: [
+        { value: 'under-10000', label: 'Under ¥10,000' },
+        { value: '10000-30000', label: '¥10,000 - ¥30,000' },
+        { value: '30000-50000', label: '¥30,000 - ¥50,000' },
+        { value: 'over-50000', label: 'Over ¥50,000' },
+      ]
     };
-  }, [initialItems, categories, accessories, filters.contentType]);
+  }, [categories, accessories]);
 
-  // フィルタリングロジック (変更なし)
-  const filteredItems = useMemo(() => {
-    return initialItems.filter(item => {
-      if (filters.contentType !== 'all' && item.type !== filters.contentType) return false;
-      if (filters.category && item.category !== filters.category) return false;
-      if (filters.accessory && item.accessory !== filters.accessory) return false;
-      if (filters.color && item.color !== filters.color) return false;
-      
-      if (filters.priceRange) {
-        if (item.type !== 'product') return false;
-        const price = item.rawPrice;
-        if (filters.priceRange === 'under-10000' && price >= 10000) return false;
-        if (filters.priceRange === '10000-30000' && (price < 10000 || price >= 30000)) return false;
-        if (filters.priceRange === '30000-50000' && (price < 30000 || price >= 50000)) return false;
-        if (filters.priceRange === 'over-50000' && price < 50000) return false;
-      }
-      return true;
-    });
-  }, [initialItems, filters]);
 
   const handleFilterChange = (key, value) => {
     setFilters(prev => ({ ...prev, [key]: value }));
@@ -141,51 +169,41 @@ export default function TopContentManager({
 
   const handleResetFilters = () => {
     setFilters({ category: "", accessory: "", priceRange: "", color: "", contentType: "all" });
-    if (!isSearchPage) setIsTopOnly(true); 
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    if (!isSearchPage && !isTopOnly) {
-      const params = new URLSearchParams();
-      if (filters.category) params.set('category', filters.category);
-      if (filters.accessory) params.set('accessory', filters.accessory);
-      if (filters.color) params.set('color', filters.color);
-      if (filters.priceRange) params.set('priceRange', filters.priceRange);
-      if (filters.contentType !== 'all') params.set('contentType', filters.contentType);
-      router.push(`/search?${params.toString()}`);
-    }
+    // モーダルを閉じても、すでに state が変わって fetch されているので何もしなくて良い
+    // URLを更新したい場合はここで router.replace 等
   };
 
-  const activeFilterCount = 
-    (filters.category ? 1 : 0) + 
-    (filters.accessory ? 1 : 0) + 
-    (filters.color ? 1 : 0) + 
+  const activeFilterCount =
+    (filters.category ? 1 : 0) +
+    (filters.accessory ? 1 : 0) +
+    (filters.color ? 1 : 0) +
     (filters.priceRange ? 1 : 0);
-  
-  const isRefineActive = activeFilterCount > 0;
 
   return (
     <div className="content-manager" ref={containerRef} style={{ minHeight: '100vh' }}>
-      
+
       <div className="content-header-wrapper">
         <h2 className="section-title">{title}</h2>
         <p className="section-subtitle">{subtitle}</p>
 
         <div className="content-type-tabs">
-          <button 
+          <button
             className={`type-tab ${filters.contentType === 'all' ? 'active' : ''}`}
             onClick={() => handleFilterChange('contentType', 'all')}
           >
             All
           </button>
-          <button 
+          <button
             className={`type-tab ${filters.contentType === 'product' ? 'active' : ''}`}
             onClick={() => handleFilterChange('contentType', 'product')}
           >
             Jewelry
           </button>
-          <button 
+          <button
             className={`type-tab ${filters.contentType === 'journal' ? 'active' : ''}`}
             onClick={() => handleFilterChange('contentType', 'journal')}
           >
@@ -194,10 +212,9 @@ export default function TopContentManager({
         </div>
       </div>
 
-      {/* ★修正: ポータルを使用してbody直下に描画 */}
       {mounted && createPortal(
         <>
-          <button 
+          <button
             className={`floating-filter-btn ${showFloatingBtn ? 'visible' : ''}`}
             onClick={() => setIsModalOpen(true)}
           >
@@ -206,9 +223,9 @@ export default function TopContentManager({
             </svg>
             <span className="btn-text">Refine</span>
             {activeFilterCount > 0 && (
-              <span style={{ 
-                background: '#fff', color: '#111', 
-                borderRadius: '50%', width: '20px', height: '20px', 
+              <span style={{
+                background: '#fff', color: '#111',
+                borderRadius: '50%', width: '20px', height: '20px',
                 fontSize: '0.75rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontWeight: 'bold', marginLeft: '8px'
               }}>
@@ -217,34 +234,43 @@ export default function TopContentManager({
             )}
           </button>
 
-          <FilterPopup 
+          <FilterPopup
             isOpen={isModalOpen}
             onClose={handleCloseModal}
             availableOptions={availableOptions}
             filters={filters}
             onFilterChange={handleFilterChange}
-            onReset={handleResetFilters} 
-            isTopOnly={isTopOnly}
-            onToggleTopOnly={() => setIsTopOnly(!isTopOnly)}
-            showOptionToggle={!isSearchPage}
+            onReset={handleResetFilters}
+            isTopOnly={false} // 未使用だが念のため
+            onToggleTopOnly={() => { }} // 未使用
+            showOptionToggle={false} // トグル非表示
           />
         </>,
         document.body
       )}
 
-      {isRefineActive && (
+      {isFirstRun.current === false && activeFilterCount > 0 && (
         <div className="fade-in" style={{ textAlign: 'center', marginBottom: '30px', color: '#888', fontSize: '0.8rem', letterSpacing: '0.1em' }}>
-          {filteredItems.length} ITEMS FOUND
+          Filtered Results
         </div>
       )}
 
-      {filteredItems.length > 0 ? (
-        <MasonryGrid items={filteredItems} />
+      {items.length > 0 ? (
+        <MasonryGrid items={items} />
       ) : (
-        <div style={{ textAlign: "center", padding: "60px", color: "#999" }}>
-          No items match your criteria.
-        </div>
+        !isLoading && (
+          <div style={{ textAlign: "center", padding: "60px", color: "#999" }}>
+            No items match your criteria.
+          </div>
+        )
       )}
+
+      {/* Infinite Scroll Loader / Trigger */}
+      <div ref={loaderRef} style={{ height: '60px', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', opacity: 0.6 }}>
+        {isLoading && (
+          <div className="skeleton-circle" style={{ width: '30px', height: '30px', border: '2px solid #ccc', borderTop: '2px solid #333' }}></div>
+        )}
+      </div>
     </div>
   );
 }

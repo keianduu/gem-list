@@ -6,10 +6,10 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function HeroSearch({ archives = [], categories = [], roughStones = [], gemLinks }) {
-    const [query, setQuery] = useState("");
-    const [results, setResults] = useState([]);
-    const [isOpen, setIsOpen] = useState(false);
-    const wrapperRef = useRef(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const wrapperRef = useRef(null);
 
   // ★追加: アイコン用画像の取得 (Diamond & Beryl)
   // 大文字小文字を区別せず検索して取得
@@ -91,24 +91,24 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
     <div className="hero-search-wrapper" ref={wrapperRef} style={{ position: 'relative', zIndex: 50 }}>
       {/* Search Input Box */}
       <div style={{ position: 'relative' }}>
-        
+
         <div className={`hero-search-container ${isOpen && query ? 'active' : ''}`}>
           {/* ★修正ポイント2: strokeLinecap, strokeLinejoin に修正 */}
           <svg className="hero-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          <input 
-            type="text" 
-            className="hero-search-input" 
-            placeholder="宝石名、原石、アイテム名..." 
+          <input
+            type="text"
+            className="hero-search-input"
+            placeholder="宝石名、原石、アイテム名..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => { if(query) setIsOpen(true); }}
+            onFocus={() => { if (query) setIsOpen(true); }}
           />
           {query && (
-            <button 
+            <button
               onClick={() => { setQuery(""); setResults([]); }}
-              style={{ border:'none', background:'transparent', color:'#999', cursor:'pointer', padding:'4px' }}
+              style={{ border: 'none', background: 'transparent', color: '#999', cursor: 'pointer', padding: '4px' }}
             >
               ×
             </button>
@@ -119,30 +119,40 @@ export default function HeroSearch({ archives = [], categories = [], roughStones
         {isOpen && results.length > 0 && (
           <div className="search-suggestions fade-in">
             {results.map((item, idx) => (
-              <Link 
-                href={item.link || '#'} 
-                key={`${item.type}-${item.id}-${idx}`} 
-                className="suggestion-item" 
+              <Link
+                href={item.link || '#'}
+                key={`${item.type}-${item.id}-${idx}`}
+                className="suggestion-item"
                 onClick={() => setIsOpen(false)}
               >
                 <div className="suggestion-thumb">
                   {item.image ? (
-                    <Image 
-                      src={item.image} 
-                      alt="" 
-                      width={40} 
-                      height={40} 
-                      style={{ objectFit: 'contain', width:'100%', height:'100%' }} 
-                    />
+                    item.image.startsWith('http') ? (
+                      /* eslint-disable-next-line @next/next/no-img-element */
+                      <img
+                        src={item.image}
+                        alt=""
+                        className="suggestion-img-external"
+                        style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                      />
+                    ) : (
+                      <Image
+                        src={item.image}
+                        alt=""
+                        width={40}
+                        height={40}
+                        style={{ objectFit: 'contain', width: '100%', height: '100%' }}
+                      />
+                    )
                   ) : (
-                    <div style={{width:'100%', height:'100%', background:'#eee', borderRadius:'4px'}}></div>
+                    <div style={{ width: '100%', height: '100%', background: '#eee', borderRadius: '4px' }}></div>
                   )}
                 </div>
                 <div className="suggestion-info">
                   <p className="suggestion-name">
                     {item.name}
                     {item.type === 'category' && <span className="suggestion-badge">CATEGORY</span>}
-                    {item.type === 'rough' && <span className="suggestion-badge" style={{background:'#666'}}>ROUGH</span>}
+                    {item.type === 'rough' && <span className="suggestion-badge" style={{ background: '#666' }}>ROUGH</span>}
                   </p>
                   {item.sub && <p className="suggestion-sub">{item.sub}</p>}
                 </div>

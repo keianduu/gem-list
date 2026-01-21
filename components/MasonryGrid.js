@@ -50,6 +50,8 @@ export default function MasonryGrid({ items }) {
                     alt={item.name}
                     className="external-image"
                     style={{ width: '100%' }}
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : imageUrl ? (
                   <Image
@@ -59,6 +61,7 @@ export default function MasonryGrid({ items }) {
                     height={item.image.height || 800}
                     className="pin-image"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    decoding="async"
                   />
                 ) : (
                   <div className="no-image-placeholder">No Image</div>

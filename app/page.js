@@ -16,7 +16,11 @@ async function getArchives() {
   try {
     const data = await client.get({
       endpoint: "archive",
-      queries: { limit: 100, orders: "-priority,-publishedAt" },
+      queries: {
+        limit: 24,
+        orders: "-priority,-publishedAt",
+        fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,relatedJewelries,relatedAccessories,price,description,affiliateUrl,color,priority"
+      },
       customRequestInit: { next: { revalidate: 60 } }
     });
     return data.contents;
