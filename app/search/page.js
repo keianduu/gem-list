@@ -8,14 +8,19 @@ import { client, getAllContents } from "@/libs/microcms"; // ★拡張した全�
 import { PAGE_METADATA } from "@/libs/meta";
 
 // 全アーカイブ取得（件数制限なし）
-async function getFullArchives() {
+async function getInitialArchives() {
   try {
-    // ページネーションを内部で回して全件取得
-    const contents = await getAllContents("archive", {
-      orders: "-priority,-publishedAt",
-      fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,relatedJewelries,relatedAccessories,price,description,affiliateUrl,color,priority"
+    const data = await client.get({
+      endpoint: "archive",
+      queries: {
+        limit: 24, // 初期ロードは24件に制限
+        orders: "-priority,-publishedAt",
+        // 必要なフィールドのみ指定（軽量化維持）
+        fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,relatedJewelries,relatedAccessories,price,description,affiliateUrl,color,priority"
+      },
+      customRequestInit: { next: { revalidate: 60 } }
     });
-    return contents;
+    return data.contents;
   } catch (err) {
     console.error("Archive fetch error:", err);
     return [];
@@ -59,7 +64,7 @@ export const metadata = {
 
 export default async function SearchPage() {
   const [archives, categories, accessories] = await Promise.all([
-    getFullArchives(),
+    getInitialArchives(),
     getCategories(),
     getAccessories()
   ]);

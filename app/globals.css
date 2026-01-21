@@ -573,7 +573,7 @@ a {
 /* カード本体 (Glassmorphism) */
 .pin-card {
   position: relative;
-  isolation: isolate;
+  /* isolation: isolate; */
   /* ★追加：この要素内でスタックを閉じる（iOS対策の定番） */
   z-index: 0;
   /* ★追加：疑似要素を -1 にしても安定する */
@@ -596,6 +596,10 @@ a {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
     box-shadow 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* backface-visibility: hidden; を追加して、裏面の描画計算をスキップさせる（ちらつき防止のお守り） */
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  /* GPUアクセラレーションのヒント */
 }
 
 /* hoverの背景変更は ::before 側でやるので、ここは変形と影だけにする */
@@ -688,7 +692,7 @@ a {
   letter-spacing: 0.05em;
   font-weight: 500;
   cursor: pointer;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); */
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   transform: translateY(15px);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), background 0.3s ease;
@@ -734,11 +738,13 @@ a {
   font-weight: 500;
   line-height: 1;
   color: #333;
-  background: rgba(255, 255, 255, 0.85);
+  /* background: rgba(255, 255, 255, 0.85); */
   padding: 5px 8px;
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(4px);
+  /* backdrop-filter: blur(4px); */
+  background: #ffffff;
+  /* 完全不透明、または rgba(255,255,255,0.95) 程度に */
 }
 
 .pin-category-row {
