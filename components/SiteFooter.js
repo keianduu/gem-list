@@ -7,11 +7,11 @@ async function getFooterData() {
     const [categoriesData, roughStonesData] = await Promise.all([
       client.get({
         endpoint: "jewelry-categories",
-        queries: { 
-          limit: 100, 
-          fields: 'id,name,slug,yomigana', 
+        queries: {
+          limit: 100,
+          fields: 'id,name,slug,yomigana',
           orders: 'name',
-          filters: 'isVisible[equals]true' 
+          filters: 'isVisible[equals]true'
         },
         customRequestInit: { next: { revalidate: 3600 } }
       }),
@@ -42,14 +42,14 @@ export default async function SiteFooter() {
   return (
     <footer className="gem-footer">
       <div className="footer-content-wrapper">
-        
+
         {/* --- Brand & Main Nav --- */}
         <div className="footer-brand-section">
           <Link href="/" className="footer-logo-container">
             <span className="logo-main">Jewelism</span>
             <span className="logo-sub">MARKET</span>
           </Link>
-          
+
           {/* ★修正: 英語(上・小) + 日本語(下・大) の2行構成に変更 */}
           <nav className="footer-main-nav">
             <Link href="/" className="footer-nav-item">
@@ -63,6 +63,10 @@ export default async function SiteFooter() {
             <Link href="/gems" className="footer-nav-item">
               <span className="nav-en">Gemstones</span>
               <span className="nav-jp">宝石カテゴリ一覧</span>
+            </Link>
+            <Link href="/birthstones" className="footer-nav-item">
+              <span className="nav-en">Birthstones</span>
+              <span className="nav-jp">誕生石から探す</span>
             </Link>
             <Link href="/rough-stones" className="footer-nav-item">
               <span className="nav-en">Rough Stones</span>
@@ -83,7 +87,7 @@ export default async function SiteFooter() {
 
         {/* --- Links Section --- */}
         <div className="footer-lists-container">
-          
+
           {/* Gemstones List */}
           <div className="footer-list-block">
             <details className="footer-details" open>
@@ -129,9 +133,9 @@ export default async function SiteFooter() {
         {/* --- Bottom Utility --- */}
         <div className="footer-bottom">
           <div className="footer-legal-links">
-             <Link href="/privacy-policy">プライバシーポリシー</Link>
-             <Link href="/about#contact">お問い合わせ</Link>
-             <Link href="/about">免責事項</Link>
+            <Link href="/privacy-policy">プライバシーポリシー</Link>
+            <Link href="/about#contact">お問い合わせ</Link>
+            <Link href="/about">免責事項</Link>
           </div>
           <p className="copyright">&copy; 2025 Jewelism Market. All Rights Reserved.</p>
         </div>

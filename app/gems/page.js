@@ -1,19 +1,21 @@
-/* app/gems/page.js */
 import Link from "next/link";
 import Image from "next/image";
 import { client } from "@/libs/microcms";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
+import GemTabNavigation from "@/components/GemTabNavigation";
+import GemCard from "@/components/GemCard";
+import PageTitle from "@/components/PageTitle";
 
 // 全カテゴリ取得
 async function getAllCategories() {
   try {
     const data = await client.get({
       endpoint: "jewelry-categories",
-      queries: { 
-        limit: 100, 
-        filters: 'isVisible[equals]true' 
+      queries: {
+        limit: 100,
+        filters: 'isVisible[equals]true',
       },
       customRequestInit: { next: { revalidate: 3600 } }
     });
@@ -33,17 +35,16 @@ export default async function CategoryIndexPage() {
   const categories = await getAllCategories();
 
   // アルファベット順にソート (A -> Z)
-  const sortedCategories = categories.sort((a, b) => 
+  const sortedCategories = categories.sort((a, b) =>
     a.name.localeCompare(b.name)
   );
 
-// パンくずデータ定義
-const breadcrumbItems = [
+  // パンくずデータ定義
+  const breadcrumbItems = [
     { label: "Home", path: "/" },
-    // ★修正: ラベルは同じでもパスを /gems に変更
-    { label: "All Gemstones", path: "/gems" } 
+    { label: "All Gemstones", path: "/gems" }
   ];
-  
+
   return (
     <>
       <SiteHeader />
@@ -51,48 +52,18 @@ const breadcrumbItems = [
       <main className="journal-main">
 
         <section style={{ maxWidth: '1000px', margin: '40px auto 80px' }}>
-          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-             <span style={{ 
-              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em', 
-              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' 
-            }}>
-              Encyclopedia
-            </span>
-            <h1 className="section-title">Gemstone Index</h1>
-            <p className="section-subtitle">宝石カテゴリ一覧（A-Z）</p>
-          </div>
+          <PageTitle
+            enLabel="Encyclopedia"
+            title="Gemstone Index"
+            subtitle="宝石カテゴリ一覧"
+          />
+
+          <GemTabNavigation activeTab="all" />
 
           {sortedCategories.length > 0 ? (
             <div className="category-index-grid">
               {sortedCategories.map((cat) => (
-                // ★修正: リンク先を /gems/... に変更
-                <Link 
-                  href={`/gems/${cat.slug}`} 
-                  key={cat.id} 
-                  className="category-index-card"
-                >
-                  <div style={{ position: 'relative', width: '64px', height: '64px', marginBottom: '12px' }}>
-                    {cat.image?.url ? (
-                      <Image 
-                        src={cat.image.url} 
-                        alt={cat.name} 
-                        fill
-                        sizes="100px"
-                        style={{ objectFit: 'contain' }}
-                        className="category-index-thumb"
-                      />
-                    ) : (
-                      <div style={{ width: '100%', height: '100%', background: '#eee', borderRadius: '50%' }}></div>
-                    )}
-                  </div>
-                  <span className="category-index-name">{cat.name}</span>
-                  {cat.yomigana && (
-                    <span className="category-index-name-ja">{cat.yomigana}</span>
-                  )}
-                  {cat.nameJa && (
-                    <span className="category-index-name-ja">{cat.nameJa}</span>
-                  )}
-                </Link>
+                <GemCard key={cat.id} cat={cat} />
               ))}
             </div>
           ) : (
@@ -100,8 +71,9 @@ const breadcrumbItems = [
               Category Not Found.
             </p>
           )}
+
         </section>
-        
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />

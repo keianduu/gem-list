@@ -1871,7 +1871,6 @@ a {
 }
 
 .type-tab {
-  width: 110px;
   padding: 10px 0;
   display: flex;
   justify-content: center;
@@ -1887,6 +1886,7 @@ a {
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   text-transform: uppercase;
+  padding: 12px 24px;
 }
 
 .type-tab:hover {
@@ -2641,6 +2641,9 @@ a {
   transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+
+
+/* ▲▲▲ 追加ここまで ▲▲▲ */
 .category-index-card:hover {
   transform: translateY(-8px);
 }
@@ -3009,15 +3012,46 @@ a {
   .content-type-tabs {
     display: flex;
     width: 100%;
-    max-width: 340px;
+    max-width: 440px;
+    /* ★修正: PCで安易に改行しないよう幅を広げる */
     margin: 0 auto;
+    flex-wrap: nowrap;
+    /* ★明示的に一行 */
   }
 
   .type-tab {
     width: auto;
     flex: 1;
-    font-size: 0.75rem;
-    padding: 9px 0;
+    font-size: 0.9rem;
+    /* PCでは少し大きく */
+    padding: 12px 0;
+    white-space: nowrap;
+    /* 折り返し防止 */
+  }
+
+  /* ★追加: 誕生石ページのイントロテキスト用 (PCでの改行制御) */
+  .birthstone-intro {
+    text-align: center;
+    line-height: 2;
+  }
+
+  .pc-break {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .pc-break {
+      display: block;
+      margin-top: 0;
+    }
+
+    .category-index-grid {
+      display: flex !important;
+      flex-wrap: wrap;
+      justify-content: center !important;
+      /* ★追加: グリッド内のアイテム(行が埋まらない場合)を中央寄せ */
+      gap: 40px;
+    }
   }
 
   .category-title-en {

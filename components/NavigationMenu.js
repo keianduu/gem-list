@@ -70,6 +70,12 @@ export default function NavigationMenu({ isOpen, onClose }) {
                   <span className="ja">宝石カテゴリ一覧</span>
                 </Link>
               </li>
+              <li style={{ '--delay': '0.35s' }}>
+                <Link href="/birthstones" className="nav-link">
+                  <span className="en">Birthstones</span>
+                  <span className="ja">誕生石から探す</span>
+                </Link>
+              </li>
               <li style={{ '--delay': '0.4s' }}>
                 <Link href="/rough-stones" className="nav-link">
                   <span className="en">Rough Stones</span>
