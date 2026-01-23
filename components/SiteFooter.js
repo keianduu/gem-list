@@ -13,12 +13,16 @@ async function getFooterData() {
           orders: 'name',
           filters: 'isVisible[equals]true'
         },
-        customRequestInit: { next: { revalidate: 3600 } }
+        customRequestInit: {
+          next: { revalidate: 3600, tags: ['layout'] }
+        }
       }),
       client.get({
         endpoint: "rough-stones",
         queries: { limit: 100, fields: 'id,name,slug,yomigana', orders: 'name' },
-        customRequestInit: { next: { revalidate: 3600 } }
+        customRequestInit: {
+          next: { revalidate: 3600, tags: ['layout'] }
+        }
       })
     ]);
 

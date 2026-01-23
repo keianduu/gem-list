@@ -22,7 +22,9 @@ async function getCategoryArchives(categoryId) {
         orders: "-priority,-publishedAt",
         fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,price,description,affiliateUrl"
       },
-      customRequestInit: { next: { revalidate: 60 } }
+      customRequestInit: {
+        next: { revalidate: 60, tags: ['content'] }
+      }
     });
     return data.contents;
   } catch (err) {
@@ -40,7 +42,10 @@ export async function generateMetadata({ params }) {
   const data = await client.get({
     endpoint: "jewelry-categories",
     queries: { filters: `slug[equals]${urlSlug}` },
-    customRequestInit: { cache: "no-store" }, // 必要に応じて調整
+    // ★修正: Layoutタグ
+    customRequestInit: {
+      next: { revalidate: 3600, tags: ['layout'] }
+    },
   });
 
   const category = data.contents[0];

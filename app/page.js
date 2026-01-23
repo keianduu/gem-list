@@ -21,7 +21,12 @@ async function getArchives() {
         orders: "-priority,-publishedAt",
         fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,relatedJewelries,relatedAccessories,price,description,affiliateUrl,color,priority"
       },
-      customRequestInit: { next: { revalidate: 60 } }
+      customRequestInit: {
+        next: {
+          revalidate: 3600, // 定期更新も残しておいて保険にするのが一般的です
+          tags: ['content'] // ★ここに追加！
+        }
+      }
     });
     return data.contents;
   } catch (err) {
@@ -36,7 +41,12 @@ async function getCategories() {
     const data = await client.get({
       endpoint: "jewelry-categories",
       queries: { filters: 'isVisible[equals]true', limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } }
+      customRequestInit: {
+        next: {
+          revalidate: 3600,
+          tags: ['layout'] // ★カテゴリはレイアウト扱い
+        }
+      }
     });
     return data.contents;
   } catch (err) {

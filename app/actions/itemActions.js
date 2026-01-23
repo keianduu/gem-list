@@ -66,7 +66,9 @@ export async function getItems({ offset = 0, limit = 24, filters = {} }) {
         const data = await client.get({
             endpoint: "archive",
             queries,
-            customRequestInit: { next: { revalidate: 60 } }
+            customRequestInit: {
+                next: { revalidate: 60, tags: ['content'] }
+            }
         });
 
         const items = data.contents.map((content) => {
