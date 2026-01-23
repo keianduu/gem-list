@@ -47,6 +47,29 @@ export const COUNTRY_FLAGS = {
   "Germany": "🇩🇪",
   "Afghanistan": "🇦🇫",
 
+  // --- Middle East / Asia (Additions) ---
+  "Iran": "🇮🇷",          // イラン
+  "China": "🇨🇳",         // 中国
+  "Cambodia": "🇰🇭",      // カンボジア
+
+  // --- Europe (Additions) ---
+  "Finland": "🇫🇮",       // フィンランド
+  "Poland": "🇵🇱",        // ポーランド（バルト海沿岸の主要産地として）
+  "UK": "🇬🇧",            // イギリス（ロジャリー鉱山など）
+  "Spain": "🇪🇸",         // スペイン
+  "Italy": "🇮🇹",         // イタリア（地中海沿岸・サルデーニャ島など）
+
+  // --- Africa (Additions) ---
+  "DR Congo": "🇨🇩",      // コンゴ民主共和国
+  "South Africa": "🇿🇦",  // 南アフリカ
+  "Namibia": "🇳🇦",       // ナミビア
+  "Algeria": "🇩🇿",       // アルジェリア
+
+  // --- North / South America (Additions) ---
+  "Dominican Republic": "🇩🇴", // ドミニカ共和国
+  "Argentina": "🇦🇷",     // アルゼンチン
+  "Peru": "🇵🇪",          // ペルー
+
   // その他（デフォルト用）
   "Unknown": "🌍"
 };
