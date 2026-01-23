@@ -3661,3 +3661,16 @@
     }
   }
 }
+/* Logo Position Fixes */
+@media (min-width: 768px) {
+  .site-header {
+    padding: 0 40px; /* PC: Restore broader padding */
+  }
+}
+
+@media (max-width: 768px) {
+  .header-logo-container {
+    margin-top: 4px; /* Optical adjustment: Push down */
+    margin-left: 4px; /* Optical adjustment: Push right */
+  }
+}
