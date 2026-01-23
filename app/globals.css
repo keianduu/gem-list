@@ -21,6 +21,7 @@
   --container-max-width: 1400px;
   --content-max-width: 1200px;
   /* PC */
+  --masonry-gutter: 16px;
 }
 
 @layer base {
