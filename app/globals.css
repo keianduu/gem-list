@@ -2877,11 +2877,20 @@
     }
 
     .category-scroll-wrap {
-      gap: 8px;
+      gap: 12px;
       padding-top: 60px;
       padding-bottom: 30px;
       margin-top: 20px;
       margin-bottom: -30px;
+    }
+
+    .category-card {
+      width: 124px;
+      /* PC(100px)より広く確保 */
+    }
+
+    .category-name {
+      font-size: 0.8rem;
     }
 
     .category-thumb {
@@ -3661,16 +3670,20 @@
     }
   }
 }
+
 /* Logo Position Fixes */
 @media (min-width: 768px) {
   .site-header {
-    padding: 0 40px; /* PC: Restore broader padding */
+    padding: 0 40px;
+    /* PC: Restore broader padding */
   }
 }
 
 @media (max-width: 768px) {
   .header-logo-container {
-    margin-top: 4px; /* Optical adjustment: Push down */
-    margin-left: 4px; /* Optical adjustment: Push right */
+    margin-top: 4px;
+    /* Optical adjustment: Push down */
+    margin-left: 4px;
+    /* Optical adjustment: Push right */
   }
 }

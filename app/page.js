@@ -40,7 +40,11 @@ async function getCategories() {
   try {
     const data = await client.get({
       endpoint: "jewelry-categories",
-      queries: { filters: 'isVisible[equals]true', limit: 100 },
+      queries: {
+        filters: 'isVisible[equals]true',
+        limit: 100,
+        orders: "name"
+      },
       customRequestInit: {
         next: {
           revalidate: 3600,
