@@ -7,6 +7,7 @@ import ItemCollection from "@/components/ItemCollection";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DeepDiveButton from "@/components/diagnosis/DeepDiveButton";
+import ReDiagnosisButton from "@/components/diagnosis/ReDiagnosisButton";
 
 export default async function DiagnosisResultPage({ params, searchParams }) {
     const { slug } = await params;
@@ -147,19 +148,6 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                             <RadarChart scores={scores} gemScores={gemScores} />
                         </div>
 
-                        {/* Deep Dive CTA */}
-                        {(!mode || mode !== 'deep') && (
-                            <div className="my-16 p-8 bg-gray-50 rounded-2xl text-center border border-dashed border-gray-200">
-                                <h4 className="font-jp text-xl text-gray-900 mb-4">さらに深く分析しますか？</h4>
-                                <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-                                    ここまでの結果は「表層意識」に基づいています。<br />
-                                    さらに20の問いに答えることで、あなたの無意識下に眠る<br />
-                                    「真の願望」と「隠された才能」を明らかにします。
-                                </p>
-                                <DeepDiveButton />
-                            </div>
-                        )}
-
                         {/* 3. 詳細データグリッド (4項目フル表示) */}
                         {/* ★修正: ボックス内のテキストは読みやすさ重視で常時左寄せ(text-left) */}
                         <div className="grid md:grid-cols-2 gap-8 font-jp text-sm text-gray-600 text-left">
@@ -194,6 +182,26 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 </div>
                             )}
 
+                        </div>
+
+                        {/* Deep Dive CTA */}
+                        {(!mode || mode !== 'deep') && (
+                            <div className="my-16 p-8 bg-gray-50 rounded-2xl text-center border border-dashed border-gray-200">
+                                <h4 className="font-jp text-xl text-gray-900 mb-4">さらに深く分析しますか？</h4>
+                                <p className="text-sm text-gray-500 mb-6 leading-relaxed">
+                                    ここまでの結果は「表層意識」に基づいています。<br />
+                                    さらに20の問いに答えることで、あなたの無意識下に眠る<br />
+                                    「真の願望」と「隠された才能」を明らかにします。
+                                </p>
+                                <DeepDiveButton />
+                            </div>
+                        )}
+
+                        <div className="mt-16 text-center border-t border-gray-100 pt-10">
+                            <p className="text-xs text-gray-400 mb-6 font-jp">
+                                結果に違和感がある場合は、もう一度お試しいただけます
+                            </p>
+                            <ReDiagnosisButton />
                         </div>
 
                     </div>

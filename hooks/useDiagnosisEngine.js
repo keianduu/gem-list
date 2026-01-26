@@ -21,13 +21,19 @@ export const useDiagnosisEngine = () => {
     // 初期化 (Start)
     // -------------------------------------------------------
     const startDiagnosis = useCallback(() => {
-        const initialScores = { group: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 }, role: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 } };
+        // スコア、履歴、インデックスをリセット
+        const initialScores = {
+            group: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
+            role: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
+        };
         setScores(initialScores);
         setHistory([]);
         setCurrentQuestionIndex(0);
+
+        // フェーズを 'playing' に戻すことで、モーダル内の表示を質問画面に切り替える
         setPhase('playing');
 
-        // 最初の質問をセット
+        // 最初の質問を再抽選してセット
         pickNextQuestion([], 0);
     }, []);
 
