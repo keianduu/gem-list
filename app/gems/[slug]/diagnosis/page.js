@@ -256,7 +256,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                                         width={48}  /* 元のサイズより小さく設定 */
                                                         height={48}
                                                         style={{ objectFit: 'contain' }}
-                                                        className="drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
+                                                        className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] group-hover:scale-110 transition-transform duration-500"
                                                     />
                                                 </div>
                                             )}
