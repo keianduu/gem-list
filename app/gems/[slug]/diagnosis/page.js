@@ -87,6 +87,27 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
     if (!diagnosisGem) {
         return <div className="p-20 text-center">Result not found.</div>;
     }
+    // ★追加: 相性の良い宝石（Compatible Gems）のデータをmicroCMSから取得
+    const compatibleSlugs = diagnosisGem.compatibleGems?.map(g => g.slug) || [];
+    let compatibleGemsData = [];
+
+    if (compatibleSlugs.length > 0) {
+        try {
+            const filtersQuery = compatibleSlugs.map(s => `slug[equals]${s}`).join('[or]');
+            const res = await client.get({
+                endpoint: "jewelry-categories",
+                queries: {
+                    filters: filtersQuery,
+                    fields: "id,name,nameJa,yomigana,slug,image" // yomiganaを追加
+                },
+            });
+            compatibleGemsData = compatibleSlugs.map(slug =>
+                res.contents.find(c => c.slug === slug)
+            ).filter(Boolean);
+        } catch (e) {
+            console.error("Compatible gems fetch error:", e);
+        }
+    }
     // ★追加: パンくずリストの定義 (HOME > 宝石図鑑 > 宝石名 > 診断データ)
     const breadcrumbItems = [
         { label: "Home", path: "/" },
@@ -171,11 +192,6 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                         {/* 1. 基本性格 (Full Width) */}
                         <div className="info-glass-card full-width">
                             <div className="info-header-row">
-                                <div className="info-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 17.5 3 20.58 3 23 5.42 23 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                                    </svg>
-                                </div>
                                 <h3 className="info-label">PERSONALITY & NATURE</h3>
                             </div>
 
@@ -211,7 +227,72 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 {diagnosisGem.love}
                             </p>
                         </div>
+                        {/* 5. COMPATIBILITY (100%幅のリッチカード) */}
+                        <div className="info-glass-card full-width">
+                            <div className="info-header-row mb-6">
+                                <h3 className="info-label">COMPATIBILITY</h3>
+                            </div>
 
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {compatibleGemsData.map((gem) => {
+                                    const config = diagnosisGem.compatibleGems.find(cg => cg.slug === gem.slug);
+                                    // compatibility文字列から、この宝石に関する説明行を抽出
+                                    const detailText = diagnosisGem.compatibility
+                                        .split('\n')
+                                        .find(line => line.includes(gem.name)) || diagnosisGem.compatibility;
+
+                                    return (
+                                        <Link
+                                            key={gem.id}
+                                            href={`/gems/${gem.slug}/diagnosis`}
+                                            className="flex flex-row items-center gap-6 p-6 bg-white/40 rounded-[32px] border border-gold/10 hover:border-gold/30 hover:bg-white/70 transition-all group min-h-[140px]"
+                                        >
+                                            {/* 宝石サムネイル */}
+                                            {gem.image && (
+                                                <div className="relative flex-shrink-0 flex items-center justify-center bg-white/50 rounded-xl p-2">
+                                                    <Image
+                                                        src={gem.image.url}
+                                                        alt={gem.name}
+                                                        width={48}  /* 元のサイズより小さく設定 */
+                                                        height={48}
+                                                        style={{ objectFit: 'contain' }}
+                                                        className="drop-shadow-sm group-hover:scale-110 transition-transform duration-500"
+                                                    />
+                                                </div>
+                                            )}
+
+                                            {/* テキスト情報 */}
+                                            <div className="flex-1 text-center md:text-left">
+                                                <div className="mb-3">
+                                                    <span className="inline-block px-3 py-1 bg-gold/10 text-gold-dark text-[10px] font-bold tracking-widest uppercase rounded-full mb-2">
+                                                        {config?.label || "PARTNER"}
+                                                    </span>
+                                                    <h4 className="font-jp font-medium text-gray-800 leading-tight">
+                                                        {gem.name}
+                                                    </h4>
+                                                    {/* よみがなを縦に配置 */}
+                                                    <span className="text-[10px] text-gray-400 font-normal leading-tight">
+                                                        {gem.yomigana}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[11px] font-jp text-gray-500 leading-relaxed line-clamp-2">
+                                                    {config?.description}
+                                                </p>
+                                            </div>
+
+                                            {/* 矢印 (PCのみ) */}
+                                            <div className="hidden md:flex items-center self-center pr-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all text-gold">
+                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M9 18l6-6-6-6" />
+                                                </svg>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+
+
+                        </div>
                         {/* 2. チャート (Half) */}
                         <div className="info-glass-card">
                             <div className="info-header-row">
@@ -226,9 +307,25 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 <RadarChart scores={scores} gemScores={gemScores} />
                             </div>
                         </div>
+                        {/* 6. GEMOLOGICAL BACKGROUND (独立したカード) */}
+                        <div className="info-glass-card">
+                            <div className="info-header-row mb-4">
+                                <div className="info-icon text-blue-400">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                    </svg>
+                                </div>
+                                <h3 className="info-label">GEMOLOGICAL BACKGROUND</h3>
+                            </div>
+                            <div className="p-2">
+                                <p className="font-jp text-sm text-gray-600 leading-loose">
+                                    {diagnosisGem.academic}
+                                </p>
+                            </div>
+                        </div>
 
                         {/* 3. Deep Dive / Rarity (Half) */}
-                        <div className="info-glass-card flex flex-col justify-center items-center text-center">
+                        <div className="info-glass-card flex flex-col justify-center items-center text-center full-width">
                             {(!mode || mode !== 'deep') ? (
                                 <>
                                     <h4 className="font-jp text-lg mb-4 text-gray-800">深層心理を探る</h4>
@@ -263,32 +360,13 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                             )}
                         </div>
 
-                        {/* 5. 相性 & 学術的背景 (Full Width) */}
-                        <div className="info-glass-card full-width">
-                            <div className="grid md:grid-cols-2 gap-8">
-                                <div>
-                                    <h4 className="text-gold font-en tracking-widest mb-3 text-xs">COMPATIBILITY</h4>
-                                    <div className="font-jp text-sm text-gray-600 leading-loose whitespace-pre-wrap">
-                                        {diagnosisGem.compatibility}
-                                    </div>
-                                </div>
-                                <div className="border-t md:border-t-0 md:border-l border-gray-200/50 pt-6 md:pt-0 md:pl-8">
-                                    <h4 className="text-gold font-en tracking-widest mb-3 text-xs">GEMOLOGICAL BACKGROUND</h4>
-                                    <p className="font-jp text-sm text-gray-600 leading-loose">
-                                        {diagnosisGem.academic}
-                                    </p>
-                                </div>
-                            </div>
-
-                            {/* 再診断ボタンエリア */}
-                            <div className="mt-12 text-center border-t border-gray-200/50 pt-8">
-                                <p className="text-xs text-gray-400 mb-4 font-jp">
-                                    結果に違和感がある場合は、もう一度お試しいただけます
-                                </p>
-                                <ReDiagnosisButton />
-                            </div>
-                        </div>
-
+                    </div>
+                    {/* 再診断ボタン（相性セクションの最下部へ） */}
+                    <div className="mt-12 text-center border-t border-gray-200/50 pt-8">
+                        <p className="text-[10px] text-gray-400 mb-4 font-jp tracking-wider">
+                            結果に違和感がある場合は、もう一度お試しいただけます
+                        </p>
+                        <ReDiagnosisButton />
                     </div>
                 </section>
 
