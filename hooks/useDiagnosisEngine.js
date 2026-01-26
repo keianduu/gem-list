@@ -114,6 +114,54 @@ export const useDiagnosisEngine = () => {
     }, [history, currentQuestionIndex]);
 
     // -------------------------------------------------------
+    // ★追加: 前の質問に戻る (Go Back)
+    // -------------------------------------------------------
+    const goBack = useCallback(() => {
+        // 履歴がない（1問目）なら何もしない
+        if (history.length === 0) return;
+
+        // 1. 直前の履歴を取り出す
+        const lastEntry = history[history.length - 1];
+        const lastQuestionId = lastEntry.id;
+
+        // 2. 質問データを取得（スコア計算用）
+        const questionData = diagnosisData.QUESTIONS.find(q => q.id === lastQuestionId);
+        if (!questionData) return;
+
+        // 3. スコアを元に戻す（加算した分を引く）
+        // ansがA(Yes)なら0、B(No)なら1
+        const idx = lastEntry.ans === questionData.a ? 0 : 1;
+        const effect = questionData.effect;
+        const boost = idx === 0 ? effect.a : effect.b;
+
+        setScores(prev => {
+            const newScores = { ...prev };
+            const targetScore = effect.type === 'G' ? newScores.group : newScores.role;
+
+            // 加算の逆（減算）を行う
+            boost.p.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] -= 2; });
+            boost.s.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] -= 1; });
+            boost.n.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] += 1; }); // 減算の逆は加算
+
+            return newScores;
+        });
+
+        // 4. 履歴とインデックスを1つ戻す
+        setHistory(prev => prev.slice(0, -1));
+        const prevIndex = currentQuestionIndex - 1;
+        setCurrentQuestionIndex(prevIndex);
+
+        // 5. 現在の質問を「直前の質問」に差し戻す
+        setCurrentQuestion(questionData);
+
+        // 6. フェーズの調整 (Deep Dive 1問目から戻った場合など)
+        if (phase === 'deep_dive' && prevIndex < PHASE1_LIMIT) {
+            setPhase('playing');
+        }
+
+    }, [history, phase, currentQuestionIndex]);
+
+    // -------------------------------------------------------
     // 結果計算 (Calculate Result)
     // -------------------------------------------------------
     const getResults = useCallback(() => {
@@ -169,6 +217,7 @@ export const useDiagnosisEngine = () => {
         startDiagnosis,
         handleAnswer,
         startDeepDive,
+        goBack,
         getResults
     };
 };

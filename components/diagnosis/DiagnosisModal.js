@@ -16,7 +16,9 @@ export default function DiagnosisModal() {
         progress,
         phase,
         getResults,
-        startDiagnosis
+        goBack,
+        startDiagnosis,
+        currentQuestionIndex
     } = engine || {};
 
     // 診断終了時の処理：ページ遷移
@@ -140,6 +142,15 @@ export default function DiagnosisModal() {
                                         YES <span className="text-navy-dark/50 group-hover:text-navy-dark ml-2 transition-colors">→</span>
                                     </button>
                                 </div>
+                                {/* 1問目(index===0)の時は invisible で隠し、pointer-events-none でクリック不可にする */}
+                                <button
+                                    onClick={goBack}
+                                    className={`mt-6 px-6 py-2 rounded-full bg-black/20 border border-white/10 text-white/60 text-xs hover:bg-black/40 hover:text-white hover:border-white/30 transition-all duration-300 ${currentQuestionIndex === 0 ? 'invisible pointer-events-none' : ''
+                                        }`}
+                                >
+                                    <span className="mr-2">↩︎</span>
+                                    ひとつ前の質問に戻る
+                                </button>
                             </>
                         )}
 

@@ -69,7 +69,8 @@ export default function SwipeableCard({ question, onSwipe }) {
                         </div>
 
                         {/* 質問文 */}
-                        <h3 className="font-jp text-xl md:text-2xl text-navy-dark leading-relaxed text-center font-medium mb-10">
+                        {/* text-center を削除し、text-left と w-full を追加 */}
+                        <h3 className="font-jp text-xl md:text-2xl text-navy-dark leading-relaxed text-left font-medium mb-10 w-full">
                             {question.text}
                         </h3>
 
