@@ -33,6 +33,9 @@ export const metadata = {
     template: `%s | ${SITE_NAME}`, // 子ページで title: "About" とすると "About | Jewelism MARKET" になる
   },
   description: SITE_DESCRIPTION,
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: {
       default: SITE_NAME,
