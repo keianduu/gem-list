@@ -6,10 +6,43 @@ import RadarChart from "@/components/diagnosis/RadarChart";
 import ItemCollection from "@/components/ItemCollection";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
+import Breadcrumb from "@/components/Breadcrumb";
 import DeepDiveButton from "@/components/diagnosis/DeepDiveButton";
 import ReDiagnosisButton from "@/components/diagnosis/ReDiagnosisButton";
 import GemPageNavigation from "@/components/GemPageNavigation";
 import GemStoneLinks from "@/components/GemStoneLinks";
+
+export async function generateMetadata({ params }) {
+    const { slug } = await params;
+
+    // microCMSから宝石情報を取得
+    const cmsData = await client.get({
+        endpoint: "jewelry-categories",
+        queries: { filters: `slug[equals]${slug}` },
+    });
+    const category = cmsData.contents[0];
+
+    if (!category) {
+        return { title: "宝石診断結果 | Jewelism Market" };
+    }
+
+    const jaName = category.nameJa ? `${category.nameJa}` : "";
+    const enName = category.name;
+
+    const title = `${enName} (${jaName}) タイプ | あなたの心理や感情を表す宝石診断の結果`;
+    const description = `【宝石診断結果】あなたの深層心理や感情を表す宝石は「${enName}（${jaName}）」です。内面に秘めた強みを専門的なデータから解析。宝石が持つ学術的背景とあなたの個性が結びつく、特別な診断結果をご覧ください。`;
+
+    return {
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            images: [category.image?.url],
+        },
+    };
+}
+
 
 export default async function DiagnosisResultPage({ params, searchParams }) {
     const { slug } = await params;
@@ -54,15 +87,31 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
     if (!diagnosisGem) {
         return <div className="p-20 text-center">Result not found.</div>;
     }
+    // ★追加: パンくずリストの定義 (HOME > 宝石図鑑 > 宝石名 > 診断データ)
+    const breadcrumbItems = [
+        { label: "Home", path: "/" },
+        { label: "All Gemstones", path: "/gems" },
+        { label: category?.name || diagnosisGem.name, path: `/gems/${slug}` },
+        { label: "Diagnosis Data", path: `/gems/${slug}/diagnosis` }
+    ];
+    const items = relatedArchives.contents.map(content => {
+        const isProduct = content.type.includes('product');
+        const displayCategoryName = category ? category.name : (isProduct ? "Item" : "Journal");
+        const displayCategoryIcon = category?.image?.url || null;
 
-    const items = relatedArchives.contents.map(content => ({
-        id: content.slug,
-        type: content.type.includes('product') ? 'product' : 'journal',
-        name: content.title,
-        price: content.price ? `¥${Number(content.price).toLocaleString()}` : null,
-        image: content.thumbnailUrl || content.thumbnail?.url,
-        category: category ? category.name : "Item"
-    }));
+        return {
+            id: content.slug,
+            type: isProduct ? 'product' : 'journal',
+            name: content.title,
+            price: isProduct && content.price ? `¥${Number(content.price).toLocaleString()}` : null,
+            desc: content.description, // カードに概要を表示するために追加
+            image: isProduct ? content.thumbnailUrl : content.thumbnail,
+            // リンク先を判定: 商品なら外部URL(アフィリエイト)、記事なら詳細ページへ
+            link: isProduct ? content.affiliateUrl : `/journals/${content.slug}`,
+            category: displayCategoryName,
+            categoryIcon: displayCategoryIcon,
+        };
+    });
 
     return (
         <>
@@ -72,7 +121,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
             <main className="category-main">
 
                 {/* --- ヘッダー (宝石詳細ページと統一) --- */}
-                <section className="category-header">
+                <section className="category-header !pb-0">
                     <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
                         {category?.image ? (
                             <Image
@@ -148,6 +197,20 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 ))}
                             </div>
                         </div>
+                        {/* 2. 詳細情報 (Weakness / Love) */}
+                        <div className="info-glass-card">
+                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">WEAKNESS</h4>
+                            <p className="font-jp text-sm text-gray-600 leading-loose">
+                                {diagnosisGem.weakness}
+                            </p>
+                        </div>
+
+                        <div className="info-glass-card">
+                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">LOVE & RELATIONSHIP</h4>
+                            <p className="font-jp text-sm text-gray-600 leading-loose">
+                                {diagnosisGem.love}
+                            </p>
+                        </div>
 
                         {/* 2. チャート (Half) */}
                         <div className="info-glass-card">
@@ -200,21 +263,6 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                             )}
                         </div>
 
-                        {/* 4. 詳細情報 (Weakness / Love) */}
-                        <div className="info-glass-card">
-                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">WEAKNESS</h4>
-                            <p className="font-jp text-sm text-gray-600 leading-loose">
-                                {diagnosisGem.weakness}
-                            </p>
-                        </div>
-
-                        <div className="info-glass-card">
-                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">LOVE & RELATIONSHIP</h4>
-                            <p className="font-jp text-sm text-gray-600 leading-loose">
-                                {diagnosisGem.love}
-                            </p>
-                        </div>
-
                         {/* 5. 相性 & 学術的背景 (Full Width) */}
                         <div className="info-glass-card full-width">
                             <div className="grid md:grid-cols-2 gap-8">
@@ -246,16 +294,18 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
 
                 <GemStoneLinks />
 
-                {/* --- 関連アイテム --- */}
+                {/* --- ★修正: タイトルを英語(category.name)に変更 --- */}
                 <ItemCollection
                     items={items}
-                    title={`${diagnosisGem.name} Collections`}
+                    title={`${category?.name || diagnosisGem.name} Collections`}
                     subtitle="Related Items & Journals"
                     emptyMessage="関連するアイテムはありません"
                 />
 
             </main>
 
+            {/* ★追加: パンくずリストをフッターの上に配置 */}
+            <Breadcrumb items={breadcrumbItems} />
             <SiteFooter />
         </>
     );

@@ -143,7 +143,7 @@ export default async function CategoryPage({ params, searchParams }) {
 
       <main className="category-main">
 
-        <section className="category-header">
+        <section className="category-header !pb-0">
           {/* 1. アイコン画像 */}
           <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
             {category.image && (
@@ -174,7 +174,12 @@ export default async function CategoryPage({ params, searchParams }) {
               </p>
             )}
           </div>
-
+          {/* ★追加: ページ間ナビゲーション (説明文の下に配置) */}
+          <GemPageNavigation
+            slug={category.slug}
+            activeTab="overview"
+            searchParams={resolvedSearchParams}
+          />
           {/* 4. 説明文 (ここが消えていないか確認してください) */}
           {category.description && (
             <div
@@ -182,12 +187,6 @@ export default async function CategoryPage({ params, searchParams }) {
               dangerouslySetInnerHTML={{ __html: category.description }}
             />
           )}
-          {/* ★追加: ページ間ナビゲーション (説明文の下に配置) */}
-          <GemPageNavigation
-            slug={category.slug}
-            activeTab="overview"
-            searchParams={resolvedSearchParams}
-          />
         </section>
 
         <section className="gem-infographic-section">
