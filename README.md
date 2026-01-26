@@ -16,6 +16,13 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 - **デジタル・エンサイクロペディア**: microCMSと連動した、各宝石の詳細データ表示（国旗アイコンによる原産地表示など）。
 - **レスポンシブ・デザイン**: PC・タブレット・スマホ全デバイス対応のMasonryグリッドレイアウト。
 - **お問い合わせ機能**: Server Actions + Resend を使用したメール配信システム。
+- **誕生石一覧 (Birthstone List)**: 1月から12月までの誕生石を月ごとに美しくグルーピング表示。
+- **無限スクロール (Infinite Scroll)**: `IntersectionObserver` を使用した、パフォーマンス重視の商品リスト読み込み。
+- **宝石診断 (Gem Diagnosis)**:
+  - **インタラクティブ診断**: `Framer Motion` を活用したTinder風のカードスワイプUIによる直感的な診断体験。
+  - **デュアルフェーズ**: 表層意識（20問）と深層意識（+20問: Deep Dive）の2段階構成で、ユーザーの深層心理を分析。
+  - **レーダーチャート分析**: `Chart.js` を使用し、8つのパラメータ（情熱、知性、調和など）を可視化。
+
 
 ## 今後の展望
 
@@ -34,7 +41,7 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 | **Frontend** | Next.js 16.1.1 (App Router) | Reactフレームワーク、SSR/ISR |
 | **Styling** | CSS Modules / Global CSS | グラスモーフィズム、レスポンシブデザイン |
 | **Headless CMS** | microCMS | コンテンツ・商品データ管理 |
-| **Libraries** | Swiper, react-masonry-css | UIコンポーネント |
+| **Libraries** | Swiper, react-masonry-css, framer-motion, chart.js | UIコンポーネント / アニメーション / データ可視化 |
 | **Email** | Resend | お問い合わせメール送信 |
 | **Deployment** | Vercel | ホスティング、CI/CD |
 
@@ -49,9 +56,11 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   │       └── page.js
 │   ├── favorites/          # お気に入り一覧ページ
 │   │   └── page.js
-│   ├── gems/               # [New] 宝石一覧 (50音順/産地別など)
-│   │   ├── [id]/
-│   │   │   └── page.js     # 宝石詳細 (Encyclopedia)
+│   ├── gems/               # 宝石一覧
+│   │   ├── [slug]/         # 宝石詳細 (Encyclopedia)
+│   │   │   ├── diagnosis/  # [New] 診断結果ページ
+│   │   │   │   └── page.js
+│   │   │   └── page.js
 │   │   └── page.js         # 宝石インデックス
 │   ├── journals/           # 記事詳細ページ
 │   │   └── [id]/
@@ -70,12 +79,15 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   │   └── page.js
 │   ├── actions/            # Server Actions (サーバーサイド処理)
 │   │   └── contact.js      # メール送信ロジック (Resend連携)
+│   ├── contexts/           # [New] Global Contexts
+│   │   └── DiagnosisContext.js # 診断エンジンの状態管理
 │   ├── favicon.ico
 │   ├── globals.css         # グローバルスタイル (Tailwind / CSS Modules / Custom CSS)
 │   ├── layout.js           # 共通レイアウト (RootLayout)
 │   └── page.js             # TOPページ (検索・フィルタリング・一覧表示の集約)
 │
 ├── components/             # UIコンポーネント
+│   ├── BirthstoneList.js   # [New] 誕生石一覧表示
 │   ├── Breadcrumb.js       # [New] パンくずリスト
 │   ├── CategorySlider.js   # カテゴリの横スクロールスライダー
 │   ├── ContactForm.js      # お問い合わせフォーム (Client Component)
@@ -83,9 +95,16 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   ├── FilterPopup.js      # 詳細絞り込みモーダル (Color/Accessory対応)
 │   ├── GemStoneLinks.js    # [New] TOPページの宝石・原石一覧リンク
 │   ├── HeroSearch.js       # リアルタイム検索・サジェスト機能
+│   ├── diagnosis/          # [New] 診断機能関連コンポーネント
+│   │   ├── DiagnosisModal.js   # 診断モーダル全体
+│   │   ├── DiagnosisTrigger.js # 診断起動ボタン
+│   │   ├── SwipeableCard.js    # スワイプ可能な質問カード
+│   │   ├── RadarChart.js       # チャート表示
+│   │   └── ResultView.js       # 簡易結果表示
 │   ├── ItemCollection.js   # アイテム一覧セクションのラッパー
 │   ├── MasonryGrid.js      # Masonryレイアウトの商品/記事カードグリッド
 │   ├── NavigationMenu.js   # [New] 全画面ナビゲーションメニュー
+│   ├── ProductsInfiniteList.js # [New] 無限スクロール対応リスト
 │   ├── RichTextRenderer.js # 記事本文のレンダリング & 商品埋め込み処理
 │   ├── SearchFilter.js     # 検索結果ページのフィルタリングUI
 │   ├── SiteFooter.js       # 共通フッター
@@ -93,11 +112,13 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   └── TopContentManager.js# TOPページのフィルタリング状態管理・リスト表示
 │
 ├── hooks/                  # カスタムフック
+│   ├── useDiagnosisEngine.js # [New] 診断ロジック・スコアリング計算 (Client Side)
 │   └── useFavorites.js     # お気に入り機能の状態管理 (LocalStorage連携)
 │
 ├── libs/                   # ユーティリティ・定数・API設定
 │   ├── authors.js          # [New] 執筆者データ
 │   ├── constants.js        # 定数ファイル (国旗マッピングデータ等)
+│   ├── diagnosisData.js    # [New] 診断用マスタデータ（質問・ロジック・宝石DB）
 │   ├── data.js             # (旧) ダミーデータ ※現在はmicroCMSに移行済み
 │   ├── meta.js             # [New] メタデータ設定
 │   └── microcms.js         # microCMS APIクライアント設定 (再帰取得対応)
