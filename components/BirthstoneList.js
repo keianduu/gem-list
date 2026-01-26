@@ -17,7 +17,7 @@ export default function BirthstoneList({ categories }) {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '80px' }}>
+        <div className="birthstone-list-container">
             {monthKeys.map(month => {
                 const monthData = MONTHS_DATA[month];
                 // その月の誕生石を持つカテゴリを抽出
@@ -28,41 +28,14 @@ export default function BirthstoneList({ categories }) {
 
                 return (
                     <section key={month} id={`month-${month}`}>
-                        <div style={{
-                            textAlign: 'center',
-                            marginBottom: '40px',
-                            position: 'relative'
-                        }}>
-                            <span style={{
-                                position: 'absolute',
-                                top: '-20px',
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                fontSize: '4rem',
-                                fontFamily: 'var(--font-en)',
-                                color: 'rgba(0,0,0,0.03)',
-                                fontWeight: '700',
-                                pointerEvents: 'none',
-                                whiteSpace: 'nowrap',
-                                lineHeight: 1
-                            }}>
+                        <div className="birthstone-month-header">
+                            <span className="birthstone-month-en-bg">
                                 {monthData.en}
                             </span>
-                            <h2 style={{
-                                fontFamily: 'var(--font-jp)',
-                                fontSize: '1.8rem',
-                                fontWeight: '500',
-                                margin: '0 0 8px',
-                                position: 'relative'
-                            }}>
+                            <h2 className="birthstone-month-jp">
                                 {monthData.ja}
                             </h2>
-                            <span style={{
-                                fontFamily: 'var(--font-en)',
-                                fontSize: '1.0rem',
-                                color: '#888',
-                                letterSpacing: '0.1em'
-                            }}>
+                            <span className="birthstone-month-en-small">
                                 {monthData.en}
                             </span>
                         </div>
@@ -75,13 +48,7 @@ export default function BirthstoneList({ categories }) {
                             </div>
                         ) : (
                             // 宝石がない場合の表示
-                            <div style={{
-                                textAlign: 'center',
-                                padding: '20px 0',
-                                color: '#ccc',
-                                fontFamily: 'var(--font-en)',
-                                letterSpacing: '0.05em'
-                            }}>
+                            <div className="birthstone-empty-state">
                                 Coming Soon...
                             </div>
                         )}

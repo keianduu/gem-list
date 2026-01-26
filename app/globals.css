@@ -3686,4 +3686,59 @@
     margin-left: 4px;
     /* Optical adjustment: Push right */
   }
+}/* =========================================
+   Birthstone Links / Month List
+  ========================================= */
+.birthstone-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+}
+
+.birthstone-month-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+/* 英語版の月名（透かし） */
+.birthstone-month-en-bg {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 4rem;
+    font-family: var(--font-en);
+    /* globals.cssの変数を使用 */
+    color: rgba(0, 0, 0, 0.03);
+    font-weight: 700;
+    pointer-events: none;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+/* 日本語の月名タイトル */
+.birthstone-month-jp {
+    font-family: var(--font-jp);
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin: 0 0 8px;
+    position: relative;
+}
+
+/* 英語版の月名（小） */
+.birthstone-month-en-small {
+    font-family: var(--font-en);
+    font-size: 1.0rem;
+    color: #888;
+    letter-spacing: 0.1em;
+}
+
+/* 宝石がない場合の表示 */
+.birthstone-empty-state {
+    text-align: center;
+    padding: 20px 0;
+    color: #ccc;
+    font-family: var(--font-en);
+    letter-spacing: 0.05em;
 }
