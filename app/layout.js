@@ -6,7 +6,7 @@ import { GoogleTagManager } from '@next/third-parties/google';
 // 💎 診断機能のインポート
 import { DiagnosisProvider } from '@/contexts/DiagnosisContext';
 import DiagnosisModal from '@/components/diagnosis/DiagnosisModal';
-
+import { Suspense } from 'react';
 // 英語フォント
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
