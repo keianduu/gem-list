@@ -10,6 +10,8 @@ import HeroSearch from "@/components/HeroSearch";
 import { client } from "@/libs/microcms";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { PAGE_METADATA } from "@/libs/meta";
+// 💎 ★追加: 診断トリガーのインポート
+import DiagnosisTrigger from '@/components/diagnosis/DiagnosisTrigger';
 
 // アーカイブ取得
 async function getArchives() {
@@ -23,8 +25,8 @@ async function getArchives() {
       },
       customRequestInit: {
         next: {
-          revalidate: 3600, // 定期更新も残しておいて保険にするのが一般的です
-          tags: ['content'] // ★ここに追加！
+          revalidate: 3600,
+          tags: ['content']
         }
       }
     });
@@ -48,7 +50,7 @@ async function getCategories() {
       customRequestInit: {
         next: {
           revalidate: 3600,
-          tags: ['layout'] // ★カテゴリはレイアウト扱い
+          tags: ['layout']
         }
       }
     });
@@ -89,10 +91,6 @@ async function getRoughStones() {
 }
 
 export const metadata = {
-  // TOPページだけは "| Jewelism MARKET" を付けたくない場合は absolute を使う
-  // title: { absolute: "Jewelism MARKET - 歴史に磨かれた一石との出会い" },
-
-  // テンプレートを使う場合（今回はこちらを採用）
   title: PAGE_METADATA.top.title,
   description: PAGE_METADATA.top.description,
 };
@@ -156,7 +154,6 @@ export default async function Home() {
             archives={items}
             categories={categories}
             roughStones={roughStones}
-            // ★追加: コンポーネントをPropsとして渡す
             gemLinks={
               <GemStoneLinks style={{ marginTop: '32px', marginBottom: '0' }} />
             }
@@ -178,6 +175,9 @@ export default async function Home() {
         </Suspense>
       </main>
       <SiteFooter />
+
+      {/* 💎 ★追加: 宝石診断トリガー */}
+      <DiagnosisTrigger />
     </>
   );
 }

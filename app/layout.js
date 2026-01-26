@@ -1,11 +1,13 @@
-/* app/layout.js */
 import "./globals.css";
 // Noto_Sans_JP を Noto_Serif_JP に変更
 import { Cormorant_Garamond, Noto_Serif_JP } from "next/font/google";
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_OG_IMAGE } from "@/libs/meta"; // ★追加
-import { GoogleTagManager } from '@next/third-parties/google'; // ★追加
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, SITE_OG_IMAGE } from "@/libs/meta";
+import { GoogleTagManager } from '@next/third-parties/google';
+// 💎 診断機能のインポート
+import { DiagnosisProvider } from '@/contexts/DiagnosisContext';
+import DiagnosisModal from '@/components/diagnosis/DiagnosisModal';
 
-// 英語フォント（変更なし）
+// 英語フォント
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-en",
@@ -13,24 +15,26 @@ const cormorant = Cormorant_Garamond({
   display: "swap",
 });
 
-// 日本語フォント（明朝体に変更）
+// 日本語フォント
 const notoSerif = Noto_Serif_JP({
-  weight: ["300", "400", "500", "600"], // 細字(300)もあるとエレガントです
+  weight: ["300", "400", "500", "600"],
   variable: "--font-jp",
   preload: false,
   display: "swap",
 });
+
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1, // 意図しないズームインによるレイアウト崩れを防ぐ（アクセシビリティ要件に応じて調整可）
-  userScalable: false, // ★これをtrueにするとピンチズーム可、falseなら不可。アプリっぽくするならfalseですが、今回は横揺れ防止が主目的なので一旦この設定を推奨します
+  maximumScale: 1,
+  userScalable: false,
 };
+
 export const metadata = {
-  metadataBase: new URL(SITE_URL), // OGP画像などの相対パス解決に必要
+  metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`, // 子ページで title: "About" とすると "About | Jewelism MARKET" になる
+    template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   alternates: {
@@ -62,7 +66,6 @@ export const metadata = {
       template: `%s | ${SITE_NAME}`,
     },
     description: SITE_DESCRIPTION,
-    // images: [SITE_OG_IMAGE], // OGと同じなら省略可
   },
   robots: {
     index: true,
@@ -70,18 +73,30 @@ export const metadata = {
   },
 };
 
+// ★統合された RootLayout
 export default function RootLayout({ children }) {
   return (
     <html lang="ja" className={`${cormorant.variable} ${notoSerif.variable}`} suppressHydrationWarning>
       <body>
-        <div className="fixed-bg">
-          <div className="orb orb-1"></div>
-          <div className="orb orb-2"></div>
-          <div className="orb orb-3"></div>
-          <div className="orb orb-4"></div>
-          <div className="orb orb-5"></div>
-        </div>
-        {children}
+        <DiagnosisProvider>
+          {/* 背景演出 */}
+          <div className="fixed-bg">
+            <div className="orb orb-1"></div>
+            <div className="orb orb-2"></div>
+            <div className="orb orb-3"></div>
+            <div className="orb orb-4"></div>
+            <div className="orb orb-5"></div>
+          </div>
+
+          {/* メインコンテンツ */}
+          <div className="main-content">
+            {children}
+          </div>
+
+          {/* 診断モーダル (どのページでも開けるように配置) */}
+          <DiagnosisModal />
+        </DiagnosisProvider>
+
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-XXXXXXX"} />
       </body>
     </html>
