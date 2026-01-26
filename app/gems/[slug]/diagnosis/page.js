@@ -8,10 +8,13 @@ import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import DeepDiveButton from "@/components/diagnosis/DeepDiveButton";
 import ReDiagnosisButton from "@/components/diagnosis/ReDiagnosisButton";
+import GemPageNavigation from "@/components/GemPageNavigation";
+import GemStoneLinks from "@/components/GemStoneLinks";
 
 export default async function DiagnosisResultPage({ params, searchParams }) {
     const { slug } = await params;
-    const { s, mode } = await searchParams;
+    const resolvedSearchParams = await searchParams;
+    const { s, mode } = resolvedSearchParams;
 
     // 1. microCMSから宝石カテゴリ基本情報を取得
     const cmsData = await client.get({
@@ -65,163 +68,191 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
         <>
             <SiteHeader />
 
-            <main className="min-h-screen bg-[#F9F7F2] pb-20">
+            {/* ★修正: .category-main を適用してレイアウトを統一 */}
+            <main className="category-main">
 
-                {/* --- 結果ヘッダー (常時中央寄せ) --- */}
-                <section className="pt-32 pb-12 px-6 text-center relative overflow-hidden text-gray-900">
-                    <div className="absolute inset-0 opacity-40 pointer-events-none">
-                        <div className="orb orb-1" style={{ top: '10%', left: '10%' }}></div>
-                        <div className="orb orb-3" style={{ top: '60%', right: '10%' }}></div>
-                    </div>
-
-                    <p className="font-en text-gold text-xs tracking-[0.3em] uppercase mb-4">
-                        Analysis Result
-                    </p>
-
-                    {/* アイコン */}
-                    <div className="relative w-32 h-32 mx-auto mb-6">
-                        {category?.image?.url ? (
+                {/* --- ヘッダー (宝石詳細ページと統一) --- */}
+                <section className="category-header">
+                    <div className="category-header-icon-wrapper" style={{ position: 'relative' }}>
+                        {category?.image ? (
                             <Image
                                 src={category.image.url}
-                                alt={diagnosisGem.name}
+                                alt={category.name}
                                 fill
-                                className="object-contain drop-shadow-xl"
+                                sizes="100px"
+                                style={{ objectFit: 'contain' }}
+                                className="category-header-img"
                             />
                         ) : (
                             <div className="w-full h-full bg-white rounded-full flex items-center justify-center text-4xl border border-gold/20">💎</div>
                         )}
                     </div>
 
-                    <h1 className="font-jp text-3xl md:text-4xl font-medium mb-4 tracking-wide">
-                        {diagnosisGem.name}
-                    </h1>
-                    <p className="font-en text-gray-500 text-sm tracking-wider uppercase">
-                        {diagnosisGem.catchCopy}
-                    </p>
+                    <h1 className="category-title-en">{category?.name || diagnosisGem.name}</h1>
+
+                    <div style={{ marginBottom: '24px' }}>
+                        {category?.yomigana && (
+                            <p className="category-title-ja" style={{ marginBottom: category.nameJa ? '4px' : '0' }}>
+                                {category.yomigana}
+                            </p>
+                        )}
+                        {category?.nameJa && (
+                            <p className="category-title-ja" style={{ marginBottom: '0' }}>
+                                {category.nameJa}
+                            </p>
+                        )}
+                    </div>
+
+                    <GemPageNavigation
+                        slug={slug}
+                        activeTab="diagnosis"
+                        searchParams={resolvedSearchParams}
+                    />
                 </section>
 
-                {/* --- 分析コンテンツ --- */}
-                <div className="max-w-4xl mx-auto px-4 relative z-10">
-                    <div className="bg-white rounded-3xl p-8 md:p-12 shadow-xl border border-gold/20 relative">
+                {/* --- 診断結果コンテンツ (Infographic Section) --- */}
+                <section className="gem-infographic-section">
+                    <div className="infographic-header">
+                        <span className="concept-label">Analysis Result</span>
+                        <h2 className="infographic-title">Your Guardian Gem</h2>
+                    </div>
 
-                        {/* 1. 概要と基本データ (★修正: スマホ左寄せ / PC中央寄せ) */}
-                        <div className="font-jp leading-loose mb-12 text-left md:text-center text-gray-600">
+                    <div className="infographic-grid">
 
-                            {/* レアリティ & キーワード (★修正: スマホ左揃え / PC中央揃え) */}
-                            <div className="flex flex-wrap items-center gap-3 mb-8 justify-start md:justify-center">
-                                {diagnosisGem.rarity && (
-                                    <span
-                                        className="px-3 py-1 text-[10px] font-en tracking-widest text-white rounded-full flex items-center gap-1"
-                                        style={{ backgroundColor: diagnosisGem.rarity.color || '#c5a365' }}
-                                    >
-                                        ★ {diagnosisGem.rarity.rank}
-                                    </span>
-                                )}
+                        {/* 1. 基本性格 (Full Width) */}
+                        <div className="info-glass-card full-width">
+                            <div className="info-header-row">
+                                <div className="info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 17.5 3 20.58 3 23 5.42 23 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                                    </svg>
+                                </div>
+                                <h3 className="info-label">PERSONALITY & NATURE</h3>
+                            </div>
+
+                            <div className="mb-6">
+                                <p className="font-jp text-lg font-medium text-gray-800 border-b border-gray-200/50 pb-4 mb-4">
+                                    {diagnosisGem.catchCopy}
+                                </p>
+                                <p className="font-jp text-sm text-gray-600 leading-loose">
+                                    {diagnosisGem.nature}
+                                </p>
+                            </div>
+
+                            {/* Keywords */}
+                            <div className="flex flex-wrap gap-2 mt-4">
                                 {diagnosisGem.keywords && diagnosisGem.keywords.map((kw, i) => (
-                                    <span key={i} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs rounded-full font-medium">
+                                    <span key={i} className="px-3 py-1 bg-white/50 text-gray-500 text-xs rounded-full border border-gray-200 font-jp">
                                         #{kw}
                                     </span>
                                 ))}
                             </div>
-
-                            {/* サマリー見出し */}
-                            <div className="mb-8">
-                                <p className="text-lg font-medium text-gray-900 border-b border-gold/30 pb-4 inline-block">
-                                    {diagnosisGem.summary}
-                                </p>
-                            </div>
-
-                            {/* 本文 */}
-                            <p className="text-gray-700 mb-6">{diagnosisGem.nature}</p>
                         </div>
 
-                        {/* 2. パーソナルチャート (常時中央寄せ) */}
-                        <div className="mb-16">
-                            <h3 className="text-center font-en text-gold/80 mb-6 tracking-widest text-xs">
-                                PERSONALITY CHART
-                            </h3>
-                            <p className="text-center text-[10px] text-gray-400 mb-4 font-jp">
-                                <span className="inline-block w-3 h-3 bg-[#c5a365] mr-1 align-middle rounded-full"></span>あなた
-                                <span className="mx-2">/</span>
-                                <span className="inline-block w-3 h-3 border border-gray-400 mr-1 align-middle rounded-full"></span>この宝石の属性
+                        {/* 2. チャート (Half) */}
+                        <div className="info-glass-card">
+                            <div className="info-header-row">
+                                <div className="info-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+                                    </svg>
+                                </div>
+                                <h3 className="info-label">PARAMETER</h3>
+                            </div>
+                            <div className="flex items-center justify-center h-full pb-4">
+                                <RadarChart scores={scores} gemScores={gemScores} />
+                            </div>
+                        </div>
+
+                        {/* 3. Deep Dive / Rarity (Half) */}
+                        <div className="info-glass-card flex flex-col justify-center items-center text-center">
+                            {(!mode || mode !== 'deep') ? (
+                                <>
+                                    <h4 className="font-jp text-lg mb-4 text-gray-800">深層心理を探る</h4>
+                                    <p className="font-jp text-xs text-gray-500 mb-6 leading-relaxed">
+                                        さらに20の問いで、<br />あなたの無意識を分析します。
+                                    </p>
+                                    <DeepDiveButton />
+                                </>
+                            ) : (
+                                <div className="w-full text-left">
+                                    <div className="info-header-row">
+                                        <div className="info-icon">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+                                            </svg>
+                                        </div>
+                                        <h3 className="info-label">RARITY</h3>
+                                    </div>
+                                    <div className="flex items-center gap-4 mt-2">
+                                        <span className="text-4xl font-en font-light text-gray-800">
+                                            {diagnosisGem.rarity?.rank}
+                                        </span>
+                                        <div className="flex flex-col">
+                                            <span className="text-xs text-gray-500 font-jp uppercase tracking-wider">Type</span>
+                                            <span className="text-sm font-jp text-gold">{diagnosisGem.rarity?.label}</span>
+                                        </div>
+                                    </div>
+                                    <p className="mt-6 text-xs text-gray-400 font-jp">
+                                        出現率: {diagnosisGem.rarity?.rate}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* 4. 詳細情報 (Weakness / Love) */}
+                        <div className="info-glass-card">
+                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">WEAKNESS</h4>
+                            <p className="font-jp text-sm text-gray-600 leading-loose">
+                                {diagnosisGem.weakness}
                             </p>
-                            <RadarChart scores={scores} gemScores={gemScores} />
                         </div>
 
-                        {/* 3. 詳細データグリッド (4項目フル表示) */}
-                        {/* ★修正: ボックス内のテキストは読みやすさ重視で常時左寄せ(text-left) */}
-                        <div className="grid md:grid-cols-2 gap-8 font-jp text-sm text-gray-600 text-left">
+                        <div className="info-glass-card">
+                            <h4 className="text-gold font-en tracking-widest mb-3 text-xs">LOVE & RELATIONSHIP</h4>
+                            <p className="font-jp text-sm text-gray-600 leading-loose">
+                                {diagnosisGem.love}
+                            </p>
+                        </div>
 
-                            {/* Weakness */}
-                            <div className="bg-[#fafafa] p-6 rounded-xl border border-gray-100">
-                                <h4 className="text-gold font-en tracking-widest mb-3 text-xs">WEAKNESS</h4>
-                                <p className="leading-relaxed text-gray-700">{diagnosisGem.weakness}</p>
-                            </div>
-
-                            {/* Love */}
-                            <div className="bg-[#fafafa] p-6 rounded-xl border border-gray-100">
-                                <h4 className="text-gold font-en tracking-widest mb-3 text-xs">LOVE & RELATIONSHIP</h4>
-                                <p className="leading-relaxed text-gray-700">{diagnosisGem.love}</p>
-                            </div>
-
-                            {/* Compatibility */}
-                            {diagnosisGem.compatibility && (
-                                <div className="bg-[#fafafa] p-6 rounded-xl border border-gray-100">
+                        {/* 5. 相性 & 学術的背景 (Full Width) */}
+                        <div className="info-glass-card full-width">
+                            <div className="grid md:grid-cols-2 gap-8">
+                                <div>
                                     <h4 className="text-gold font-en tracking-widest mb-3 text-xs">COMPATIBILITY</h4>
-                                    <div className="leading-relaxed text-gray-700 whitespace-pre-wrap">
+                                    <div className="font-jp text-sm text-gray-600 leading-loose whitespace-pre-wrap">
                                         {diagnosisGem.compatibility}
                                     </div>
                                 </div>
-                            )}
-
-                            {/* Academic */}
-                            {diagnosisGem.academic && (
-                                <div className="bg-[#fafafa] p-6 rounded-xl border border-gray-100">
+                                <div className="border-t md:border-t-0 md:border-l border-gray-200/50 pt-6 md:pt-0 md:pl-8">
                                     <h4 className="text-gold font-en tracking-widest mb-3 text-xs">GEMOLOGICAL BACKGROUND</h4>
-                                    <p className="leading-relaxed text-gray-700">{diagnosisGem.academic}</p>
+                                    <p className="font-jp text-sm text-gray-600 leading-loose">
+                                        {diagnosisGem.academic}
+                                    </p>
                                 </div>
-                            )}
-
-                        </div>
-
-                        {/* Deep Dive CTA */}
-                        {(!mode || mode !== 'deep') && (
-                            <div className="my-16 p-8 bg-gray-50 rounded-2xl text-center border border-dashed border-gray-200">
-                                <h4 className="font-jp text-xl text-gray-900 mb-4">さらに深く分析しますか？</h4>
-                                <p className="text-sm text-gray-500 mb-6 leading-relaxed">
-                                    ここまでの結果は「表層意識」に基づいています。<br />
-                                    さらに20の問いに答えることで、あなたの無意識下に眠る<br />
-                                    「真の願望」と「隠された才能」を明らかにします。
-                                </p>
-                                <DeepDiveButton />
                             </div>
-                        )}
 
-                        <div className="mt-16 text-center border-t border-gray-100 pt-10">
-                            <p className="text-xs text-gray-400 mb-6 font-jp">
-                                結果に違和感がある場合は、もう一度お試しいただけます
-                            </p>
-                            <ReDiagnosisButton />
+                            {/* 再診断ボタンエリア */}
+                            <div className="mt-12 text-center border-t border-gray-200/50 pt-8">
+                                <p className="text-xs text-gray-400 mb-4 font-jp">
+                                    結果に違和感がある場合は、もう一度お試しいただけます
+                                </p>
+                                <ReDiagnosisButton />
+                            </div>
                         </div>
 
                     </div>
-                </div>
+                </section>
+
+                <GemStoneLinks />
 
                 {/* --- 関連アイテム --- */}
-                <div className="mt-20 px-4">
-                    <ItemCollection
-                        items={items}
-                        title={`${diagnosisGem.name} Collections`}
-                        subtitle="Related Items & Journals"
-                    />
-                </div>
-
-                {/* --- ナビゲーション --- */}
-                <div className="text-center mt-20">
-                    <Link href="/gems" className="inline-block border-b border-gray-400 text-gray-600 text-sm pb-1 hover:text-black hover:border-black transition-all">
-                        宝石一覧に戻る
-                    </Link>
-                </div>
+                <ItemCollection
+                    items={items}
+                    title={`${diagnosisGem.name} Collections`}
+                    subtitle="Related Items & Journals"
+                    emptyMessage="関連するアイテムはありません"
+                />
 
             </main>
 

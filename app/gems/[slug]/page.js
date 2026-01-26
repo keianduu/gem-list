@@ -9,6 +9,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { SITE_NAME } from "@/libs/meta";
+import GemPageNavigation from "@/components/GemPageNavigation";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
@@ -69,8 +70,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function CategoryPage({ params }) {
+export default async function CategoryPage({ params, searchParams }) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const urlSlug = decodeURIComponent(resolvedParams.slug);
 
   const data = await client.get({
@@ -180,6 +182,12 @@ export default async function CategoryPage({ params }) {
               dangerouslySetInnerHTML={{ __html: category.description }}
             />
           )}
+          {/* ★追加: ページ間ナビゲーション (説明文の下に配置) */}
+          <GemPageNavigation
+            slug={category.slug}
+            activeTab="overview"
+            searchParams={resolvedSearchParams}
+          />
         </section>
 
         <section className="gem-infographic-section">
