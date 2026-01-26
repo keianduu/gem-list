@@ -94,7 +94,9 @@ export default function RootLayout({ children }) {
           </div>
 
           {/* 診断モーダル (どのページでも開けるように配置) */}
-          <DiagnosisModal />
+          <Suspense fallback={null}>
+            <DiagnosisModal />
+          </Suspense>
         </DiagnosisProvider>
 
         <GoogleTagManager gtmId={process.env.NEXT_PUBLIC_GTM_ID || "GTM-XXXXXXX"} />
