@@ -34,10 +34,9 @@ export async function POST(request) {
 
         // Signature is valid - Revalidate
         // revalidatePath('/', 'layout') revalidates everything under the root layout
-        // revalidateTag('gem') revalidates fetches tagged with 'gem'
-        revalidateTag('gem', 'page');
+        revalidatePath('/', 'layout');
 
-        console.log('[API] /api/revalidate: Revalidation successful');
+        console.log('[API] /api/revalidate: All paths revalidated');
         return NextResponse.json({ message: 'Revalidation successful' });
 
     } catch (err) {
