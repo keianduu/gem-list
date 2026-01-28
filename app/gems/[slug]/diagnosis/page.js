@@ -10,6 +10,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import DeepDiveButton from "@/components/diagnosis/DeepDiveButton";
 import ReDiagnosisButton from "@/components/diagnosis/ReDiagnosisButton";
 import StartDiagnosisButton from "@/components/diagnosis/StartDiagnosisButton";
+import SubResults from "@/components/diagnosis/SubResults";
 import GemPageNavigation from "@/components/GemPageNavigation";
 import GemStoneLinks from "@/components/GemStoneLinks";
 
@@ -206,7 +207,12 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                     {diagnosisGem.catchCopy}
                                 </p>
                                 <p className="font-jp text-sm text-gray-600 leading-loose">
-                                    {diagnosisGem.nature}
+                                    {diagnosisGem.nature.split('\n').map((line, i) => (
+                                        <span key={i}>
+                                            {line}
+                                            <br />
+                                        </span>
+                                    ))}
                                 </p>
                             </div>
 
@@ -223,14 +229,24 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                         <div className="info-glass-card">
                             <h4 className="text-gold font-en tracking-widest mb-3 text-xs">WEAKNESS</h4>
                             <p className="font-jp text-sm text-gray-600 leading-loose">
-                                {diagnosisGem.weakness}
+                                {diagnosisGem.weakness.split('\n').map((line, i) => (
+                                    <span key={i}>
+                                        {line}
+                                        <br />
+                                    </span>
+                                ))}
                             </p>
                         </div>
 
                         <div className="info-glass-card">
                             <h4 className="text-gold font-en tracking-widest mb-3 text-xs">LOVE & RELATIONSHIP</h4>
                             <p className="font-jp text-sm text-gray-600 leading-loose">
-                                {diagnosisGem.love}
+                                {diagnosisGem.love.split('\n').map((line, i) => (
+                                    <span key={i}>
+                                        {line}
+                                        <br />
+                                    </span>
+                                ))}
                             </p>
                         </div>
                         {/* 5. COMPATIBILITY (100%幅のリッチカード) */}
@@ -376,6 +392,15 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 </div>
                             )}
                         </div>
+
+                        {/* 4. Sub Results (2nd & 3rd) - DeepDive完了時のみ表示 */}
+                        {(mode === 'deep') && (
+                            <SubResults
+                                scores={scores}
+                                axisScores={axisScores}
+                                currentSlug={slug}
+                            />
+                        )}
 
                     </div>
                     {/* 再診断ボタン (パラメータがある場合のみ表示) */}
