@@ -3,16 +3,13 @@
 import { useDiagnosis } from '@/contexts/DiagnosisContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import SwipeableCard from './SwipeableCard';
-import { useEffect, useRef } from 'react'; // ★ useRef を追加
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function DiagnosisModal() {
     const { isOpen, closeDiagnosis, engine } = useDiagnosis();
     const router = useRouter();
     const pathname = usePathname();
-    const searchParams = useSearchParams();
-
-    // ★追加: 診断を開始した時のパスを記憶するための Ref
     const startPathRef = useRef(pathname);
 
     const {
@@ -26,20 +23,28 @@ export default function DiagnosisModal() {
         currentQuestionIndex
     } = engine || {};
 
-    // ★追加: モーダルが開いたときや診断開始時に、現在のパスを記録
+    const totalQuestions = phase === 'deep_dive' ? 30 : 15;
+    const currentNum = (currentQuestionIndex || 0) + 1;
+
     useEffect(() => {
         if (isOpen && phase === 'ready') {
             startPathRef.current = pathname;
         }
     }, [isOpen, phase, pathname]);
 
-    // 1. 診断終了時の処理：ページ遷移トリガー
     useEffect(() => {
         if (phase === 'result' || phase === 'phase1_result') {
             const result = getResults();
-
-            // URLパラメータの構築
             const params = new URLSearchParams();
+
+            const axisValues = [
+                result.axisPercent.world,
+                result.axisPercent.orient,
+                result.axisPercent.judge,
+                result.axisPercent.approach
+            ].join(',');
+            params.set('ax', axisValues);
+
             const scoreValues = Object.values(result.scores).join(',');
             params.set('s', scoreValues);
 
@@ -47,12 +52,10 @@ export default function DiagnosisModal() {
                 params.set('mode', 'deep');
             }
 
-            const slug = result.gemData.slug || 'diamond';
+            const slug = result.gemData?.slug || 'diamond';
             const targetUrl = `/gems/${slug}/diagnosis?${params.toString()}`;
 
-            // Analyzing表示のための待機時間後、遷移を実行
             const timer = setTimeout(() => {
-                // ここでは閉じずに遷移だけする
                 router.push(targetUrl);
             }, 1500);
 
@@ -60,9 +63,7 @@ export default function DiagnosisModal() {
         }
     }, [phase, getResults, router]);
 
-    // 2. ページ遷移完了（URL変化）を検知してモーダルを閉じる
     useEffect(() => {
-        // 結果表示フェーズであり、かつ「現在のパス」が「開始時のパス」と異なる場合のみ閉じる
         if (isOpen && (phase === 'result' || phase === 'phase1_result')) {
             if (pathname !== startPathRef.current) {
                 closeDiagnosis();
@@ -76,17 +77,24 @@ export default function DiagnosisModal() {
         <AnimatePresence>
             {isOpen && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-                    {/* 背景 */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
                         onClick={closeDiagnosis}
-                        className="absolute inset-0 bg-navy-dark/90 backdrop-blur-sm"
+                        className="absolute inset-0 bg-navy-dark/95 backdrop-blur-sm"
                     />
 
-                    {/* コンテンツ */}
+                    {(phase !== 'phase1_result' && phase !== 'result') && (
+                        <button
+                            onClick={closeDiagnosis}
+                            className="absolute top-6 right-6 p-2 text-white/50 hover:text-white transition-colors z-[10000]"
+                        >
+                            <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center bg-navy-dark/50">✕</div>
+                        </button>
+                    )}
+
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -95,16 +103,6 @@ export default function DiagnosisModal() {
                         className="relative w-full max-w-lg flex flex-col items-center justify-center min-h-[500px]"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {/* 閉じるボタン (Analyzing中は非表示) */}
-                        {(phase !== 'phase1_result' && phase !== 'result') && (
-                            <button
-                                onClick={closeDiagnosis}
-                                className="absolute top-0 right-0 p-2 text-white/50 hover:text-white transition-colors z-50"
-                            >
-                                <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center">✕</div>
-                            </button>
-                        )}
-
                         {/* A. スタート画面 */}
                         {phase === 'ready' && (
                             <div className="text-center p-8 w-full animate-fade-in">
@@ -129,10 +127,18 @@ export default function DiagnosisModal() {
                         {/* B. プレイ画面 */}
                         {(phase === 'playing' || phase === 'deep_dive') && (
                             <>
-                                <div className="w-full flex flex-col items-center mb-6 px-2 text-white/80">
-                                    <span className="font-en text-xs tracking-[0.2em] uppercase text-gold mb-4">
-                                        Phase {phase === 'deep_dive' ? '2 : Deep Analysis' : '1 : Basic Analysis'}
-                                    </span>
+                                <div className="w-full flex flex-col items-center mb-8 px-2 text-white/80">
+                                    <div className="flex items-end gap-3 mb-4 font-en text-gold">
+                                        {/* 文字サイズ拡大: text-xs -> text-sm */}
+                                        <span className="text-sm tracking-[0.2em] uppercase opacity-70">
+                                            Phase {phase === 'deep_dive' ? '2 : Deep' : '1 : Basic'}
+                                        </span>
+                                        {/* 文字サイズ拡大: text-sm -> text-xl */}
+                                        <span className="text-xl font-bold tracking-widest leading-none">
+                                            Q.{currentNum} <span className="text-sm opacity-50 font-normal">/ {totalQuestions}</span>
+                                        </span>
+                                    </div>
+
                                     <div className="w-full h-[2px] bg-white/10 relative overflow-hidden rounded-full">
                                         <motion.div
                                             initial={{ width: 0 }}
@@ -142,7 +148,7 @@ export default function DiagnosisModal() {
                                     </div>
                                 </div>
 
-                                <div className="w-full relative z-10 mb-8 min-h-[400px] flex items-center justify-center">
+                                <div className="w-full relative z-10 mb-6 flex items-center justify-center">
                                     <AnimatePresence mode="wait">
                                         {currentQuestion && (
                                             <SwipeableCard
@@ -154,21 +160,14 @@ export default function DiagnosisModal() {
                                     </AnimatePresence>
                                 </div>
 
-                                <div className="flex gap-4 w-full px-4">
-                                    <button onClick={() => handleAnswer('left')} className="flex-1 py-4 border border-white/20 rounded-full text-white font-en text-sm tracking-widest hover:bg-white/10 transition-colors group">
-                                        <span className="text-white/50 group-hover:text-white mr-2 transition-colors">←</span> NO
-                                    </button>
-                                    <button onClick={() => handleAnswer('right')} className="flex-1 py-4 bg-gold text-navy-dark font-en text-sm tracking-widest rounded-full shadow-lg hover:bg-gold-light transition-colors group">
-                                        YES <span className="text-navy-dark/50 group-hover:text-navy-dark ml-2 transition-colors">→</span>
-                                    </button>
-                                </div>
+                                {/* Backボタン: 文字サイズ拡大 */}
                                 <button
                                     onClick={goBack}
-                                    className={`mt-6 px-6 py-2 rounded-full bg-black/20 border border-white/10 text-white/60 text-xs hover:bg-black/40 hover:text-white hover:border-white/30 transition-all duration-300 ${currentQuestionIndex === 0 ? 'invisible pointer-events-none' : ''
+                                    className={`mt-2 px-8 py-3 rounded-full text-white/60 text-sm hover:text-white hover:bg-white/10 transition-all ${currentQuestionIndex === 0 ? 'invisible pointer-events-none' : ''
                                         }`}
                                 >
                                     <span className="mr-2">↩︎</span>
-                                    ひとつ前の質問に戻る
+                                    Back
                                 </button>
                             </>
                         )}

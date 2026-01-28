@@ -1,58 +1,51 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import * as diagnosisData from '@/libs/diagnosisData';
 
-const PHASE1_LIMIT = 20;
-const PHASE2_LIMIT = 40;
+// 定数定義
+const PHASE1_LIMIT = 15;
+const PHASE2_LIMIT = 30;
 
-// ★1. 序盤の固定質問リスト (ID指定)
-// 世界観(G)と役割(R)をバランスよく、かつ性格の根幹に関わる質問を選定
+// 固定質問リスト
 const FIXED_START_IDS = [
-    'g01', // 新しいもの好き vs 定番 (変化)
-    'r02', // リーダーシップ vs フォロワー (主導権)
-    'g03', // 外向 vs 内向 (エネルギー)
-    'r01', // 指摘する vs 空気を読む (葛藤処理)
-    'g02', // 直感 vs 情報 (判断基準)
+    'g03', 'x_world_01', 'v03', 'x_orient_02',
+    'g02', 'x_judge_01', 'g07', 'x_approach_01',
+    'r02', 'r01',
 ];
 
 export const useDiagnosisEngine = () => {
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [scores, setScores] = useState({
-        group: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
-        role: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
-    });
+    // --- State ---
+    const [phase, setPhase] = useState('ready'); // ready, playing, phase1_result, deep_dive, result
+    const [qIndex, setQIndex] = useState(0);
     const [history, setHistory] = useState([]);
-    const [phase, setPhase] = useState('ready');
     const [currentQuestion, setCurrentQuestion] = useState(null);
 
-    // ★前回の回答が「トップ属性への否定」だったかを追跡するためのRef
-    const irregularityCheckRef = useRef({ isIrregular: false, targetType: null, targetKey: null });
+    // スコア管理
+    const [scores, setScores] = useState({
+        axis: { world: 0, orient: 0, judge: 0, approach: 0 },
+        axisCounts: { world: 0, orient: 0, judge: 0, approach: 0 },
+        role: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }
+    });
 
-    // -------------------------------------------------------
-    // 初期化 (Start)
-    // -------------------------------------------------------
-    const startDiagnosis = useCallback(() => {
-        const initialScores = {
-            group: { A: 0, B: 0, C: 0, D: 0, E: 0, F: 0, G: 0, H: 0 },
-            role: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 }
-        };
-        setScores(initialScores);
-        setHistory([]);
-        setCurrentQuestionIndex(0);
-        setPhase('playing');
-        irregularityCheckRef.current = { isIrregular: false, targetType: null, targetKey: null };
-
-        // 最初の質問へ
-        pickNextQuestion([], 0, initialScores);
+    // --- Helpers ---
+    const allQuestions = useCallback(() => {
+        return diagnosisData.QUESTIONS || [];
     }, []);
 
-    // -------------------------------------------------------
-    // 質問選定ロジック (Pick Question) - ★ロジック強化
-    // -------------------------------------------------------
-    const pickNextQuestion = (currentHistory, nextIndex, currentScores) => {
-        const askedIds = new Set(currentHistory.map(h => h.id));
-        let pool = (diagnosisData.QUESTIONS || []).filter(q => !askedIds.has(q.id));
+    const findQuestionById = useCallback((id) => {
+        return allQuestions().find(q => q.id === id);
+    }, [allQuestions]);
+
+    const getAxisEffects = useCallback((q) => {
+        if (!q) return null;
+        if (q.axis) return q.axis;
+        return diagnosisData.AXIS_EFFECTS?.[q.id] || null;
+    }, []);
+
+    // --- Logic: Pick Next Question ---
+    const pickNextQuestion = useCallback((currentHistory, nextIndex, currentScores) => {
+        const pool = allQuestions().filter(q => !currentHistory.some(h => h.id === q.id));
 
         if (pool.length === 0) {
             setPhase('result');
@@ -61,234 +54,213 @@ export const useDiagnosisEngine = () => {
 
         let nextQ = null;
 
-        // --- A. 序盤固定フェーズ (1問目〜5問目) ---
+        // 1. 固定質問フェーズ
         if (nextIndex < FIXED_START_IDS.length) {
             const fixedId = FIXED_START_IDS[nextIndex];
             nextQ = pool.find(q => q.id === fixedId);
-            // 万が一データにない場合はランダムフォールバック
-            if (!nextQ) nextQ = pool[Math.floor(Math.random() * pool.length)];
         }
 
-        // --- B. イレギュラー検証 & 適応フェーズ (6問目以降) ---
-        else {
-            const check = irregularityCheckRef.current;
+        // 2. バランス調整フェーズ (回答数が少ない軸を優先)
+        if (!nextQ) {
+            const counts = currentScores.axisCounts;
+            const sortedAxes = Object.entries(counts).sort((a, b) => a[1] - b[1]);
 
-            // B-1. イレギュラー検知時の「確認質問」
-            // 「さっきNoと言ったけど、こっちの質問ならどう？」という検証
-            if (check.isIrregular && check.targetType && check.targetKey) {
-                // その属性(targetKey)を加点(p)する質問を優先的に探す
-                const verifyQ = pool.find(q => {
-                    const boostA = q.effect.a.p.includes(check.targetKey); // A回答で加点
-                    const boostB = q.effect.b.p.includes(check.targetKey); // B回答で加点
-                    return (q.effect.type === check.targetType) && (boostA || boostB);
+            for (const [axisKey] of sortedAxes) {
+                const candidates = pool.filter(q => {
+                    const eff = getAxisEffects(q);
+                    return eff && eff[axisKey];
                 });
-
-                if (verifyQ) {
-                    nextQ = verifyQ;
-                    // フラグをリセット
-                    irregularityCheckRef.current = { isIrregular: false, targetType: null, targetKey: null };
+                if (candidates.length) {
+                    nextQ = candidates[Math.floor(Math.random() * candidates.length)];
+                    break;
                 }
             }
+        }
 
-            // B-2. 特に検証事項がない場合：トップ属性を競わせる or ランダム
-            if (!nextQ) {
-                // 現在のトップスコアの属性を抽出
-                const sortedGroups = Object.entries(currentScores.group).sort((a, b) => b[1] - a[1]);
-                const topGroup = sortedGroups[0][0];
-
-                // トップグループに関連する質問を優先的に出して、特徴を固めに行く
-                // (ランダムすぎると特徴が薄まるため)
-                const relevantQ = pool.find(q =>
-                    q.effect.type === 'G' && (q.effect.a.p.includes(topGroup) || q.effect.b.p.includes(topGroup))
-                );
-
-                // 候補があれば50%の確率でそれを採用（偏りすぎ防止）、なければ完全ランダム
-                if (relevantQ && Math.random() > 0.5) {
-                    nextQ = relevantQ;
-                } else {
-                    nextQ = pool[Math.floor(Math.random() * pool.length)];
-                }
-            }
+        // 3. フォールバック
+        if (!nextQ) {
+            nextQ = pool[Math.floor(Math.random() * pool.length)];
         }
 
         setCurrentQuestion(nextQ);
-    };
+    }, [allQuestions, getAxisEffects]);
 
-    // -------------------------------------------------------
-    // 回答処理 (Answer) - ★イレギュラー判定を追加
-    // -------------------------------------------------------
+    // --- Action: Answer ---
     const handleAnswer = useCallback((direction) => {
         if (!currentQuestion) return;
+        const ansKey = direction === 'right' ? 'a' : 'b'; // YES=a, NO=b
 
-        const idx = direction === 'right' ? 0 : 1; // 0: A(Yes), 1: B(No)
-        const effect = currentQuestion.effect;
-        const boost = idx === 0 ? effect.a : effect.b; // 選んだ選択肢の加点内容
-        const reject = idx === 0 ? effect.b : effect.a; // 選ばなかった方の加点内容（＝否定した内容）
+        const newScores = JSON.parse(JSON.stringify(scores));
 
-        // 1. イレギュラー判定ロジック
-        // 「現在のトップスコアの属性」を「否定」したかチェック
-        // (例: 情熱(A)がトップなのに、情熱的な選択肢を選ばなかった場合)
-        if (currentQuestionIndex >= FIXED_START_IDS.length) {
-            // 現在のトップを計算
-            const targetScoreObj = effect.type === 'G' ? scores.group : scores.role;
-            const sorted = Object.entries(targetScoreObj).sort((a, b) => b[1] - a[1]);
-            const topKey = sorted[0][0]; // 現在の1位 (例: 'A')
-            const topVal = sorted[0][1];
-
-            // 2位との差がある程度開いている（＝傾向が出ている）場合のみ判定
-            if (topVal > 2) {
-                // 選ばなかった選択肢(reject)の加点要素(p)に、現在のトップ(topKey)が含まれていたか？
-                // 含まれていた場合、「トップ属性の行動を否定した」ことになる
-                if (reject.p.includes(topKey)) {
-                    irregularityCheckRef.current = {
-                        isIrregular: true,
-                        targetType: effect.type,
-                        targetKey: topKey
-                    };
-                    console.log(`Irregularity detected: User denied top trait ${topKey}. Verifying...`);
-                } else {
-                    irregularityCheckRef.current = { isIrregular: false, targetType: null, targetKey: null };
-                }
-            }
+        // 1. Axis反映
+        const axisEff = getAxisEffects(currentQuestion);
+        if (axisEff) {
+            Object.keys(axisEff).forEach(key => {
+                const delta = axisEff[key][ansKey] || 0;
+                newScores.axis[key] += delta;
+                newScores.axisCounts[key] += 1;
+            });
         }
 
-        // 2. スコア更新
-        const newScores = {
-            group: { ...scores.group },
-            role: { ...scores.role }
-        };
-        const targetScore = effect.type === 'G' ? newScores.group : newScores.role;
-
-        boost.p.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] += 2; });
-        boost.s.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] += 1; });
-        boost.n.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] -= 1; });
+        // 2. Role反映
+        if (currentQuestion.effect && currentQuestion.effect.type === 'R') {
+            const boost = ansKey === 'a' ? currentQuestion.effect.a : currentQuestion.effect.b;
+            boost.p?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] += 2; });
+            boost.s?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] += 1; });
+            boost.n?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] -= 1; });
+        }
 
         setScores(newScores);
 
-        // 3. 履歴更新
-        const newHistory = [
-            ...history,
-            { id: currentQuestion.id, text: currentQuestion.text, ans: idx === 0 ? currentQuestion.a : currentQuestion.b, type: effect.type }
-        ];
+        const newHistory = [...history, { id: currentQuestion.id, ans: ansKey }];
         setHistory(newHistory);
 
-        // 4. 次のフェーズ・質問へ
-        const nextCount = currentQuestionIndex + 1;
-        setCurrentQuestionIndex(nextCount);
+        const nextIndex = qIndex + 1;
+        setQIndex(nextIndex);
 
-        if (phase !== 'deep_dive' && nextCount >= PHASE1_LIMIT) {
+        if (phase === 'playing' && nextIndex >= PHASE1_LIMIT) {
             setPhase('phase1_result');
             return;
         }
-        if (nextCount >= PHASE2_LIMIT) {
+        if (phase === 'deep_dive' && nextIndex >= PHASE2_LIMIT) {
             setPhase('result');
             return;
         }
 
-        // 次の質問を選ぶ（最新のスコアを渡す）
-        pickNextQuestion(newHistory, nextCount, newScores);
+        pickNextQuestion(newHistory, nextIndex, newScores);
 
-    }, [currentQuestion, currentQuestionIndex, history, phase, scores]);
+    }, [currentQuestion, qIndex, history, phase, scores, pickNextQuestion, getAxisEffects]);
 
-    // ... (startDeepDive, goBack, getResults は変更なし)
-    // -------------------------------------------------------
-    // Deep Dive 開始
-    // -------------------------------------------------------
+    // --- Action: Start / Restart ---
+    const startDiagnosis = useCallback(() => {
+        const initScores = {
+            axis: { world: 0, orient: 0, judge: 0, approach: 0 },
+            axisCounts: { world: 0, orient: 0, judge: 0, approach: 0 },
+            role: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }
+        };
+        setScores(initScores);
+        setHistory([]);
+        setQIndex(0);
+        setPhase('playing');
+        pickNextQuestion([], 0, initScores);
+    }, [pickNextQuestion]);
+
     const startDeepDive = useCallback(() => {
         setPhase('deep_dive');
-        // Phase2の開始時も、現在のスコアに基づいて次の質問を選ぶ
-        pickNextQuestion(history, currentQuestionIndex, scores);
-    }, [history, currentQuestionIndex, scores]);
+        pickNextQuestion(history, qIndex, scores);
+    }, [history, qIndex, scores, pickNextQuestion]);
 
+    // --- Action: Go Back (修正版) ---
     const goBack = useCallback(() => {
         if (history.length === 0) return;
-        const lastEntry = history[history.length - 1];
-        const lastQuestionId = lastEntry.id;
-        const questionData = diagnosisData.QUESTIONS.find(q => q.id === lastQuestionId);
-        if (!questionData) return;
 
-        const idx = lastEntry.ans === questionData.a ? 0 : 1;
-        const effect = questionData.effect;
-        const boost = idx === 0 ? effect.a : effect.b;
+        // 1. 戻る先の履歴（末尾-1）を作成
+        const newHistory = history.slice(0, -1);
 
-        // スコアを戻す
-        const restoredScores = {
-            group: { ...scores.group },
-            role: { ...scores.role }
+        // 2. 直前に回答した（今回再表示する）質問を取得
+        const lastLog = history[history.length - 1];
+        const questionToRestore = findQuestionById(lastLog.id);
+
+        if (!questionToRestore) return;
+
+        // 3. スコアをゼロから再計算（減算より安全）
+        const newScores = {
+            axis: { world: 0, orient: 0, judge: 0, approach: 0 },
+            axisCounts: { world: 0, orient: 0, judge: 0, approach: 0 },
+            role: { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0, '6': 0 }
         };
-        const targetScore = effect.type === 'G' ? restoredScores.group : restoredScores.role;
 
-        boost.p.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] -= 2; });
-        boost.s.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] -= 1; });
-        boost.n.forEach(k => { if (targetScore[k] !== undefined) targetScore[k] += 1; });
+        newHistory.forEach(h => {
+            const q = findQuestionById(h.id);
+            if (!q) return;
+            const ansKey = h.ans;
 
-        setScores(restoredScores);
-        setHistory(prev => prev.slice(0, -1));
+            // Axis
+            const axisEff = getAxisEffects(q);
+            if (axisEff) {
+                Object.keys(axisEff).forEach(key => {
+                    const delta = axisEff[key][ansKey] || 0;
+                    newScores.axis[key] += delta;
+                    newScores.axisCounts[key] += 1;
+                });
+            }
 
-        const prevIndex = currentQuestionIndex - 1;
-        setCurrentQuestionIndex(prevIndex);
-        setCurrentQuestion(questionData);
+            // Role
+            if (q.effect && q.effect.type === 'R') {
+                const boost = ansKey === 'a' ? q.effect.a : q.effect.b;
+                boost.p?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] += 2; });
+                boost.s?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] += 1; });
+                boost.n?.forEach(k => { if (newScores.role[k] !== undefined) newScores.role[k] -= 1; });
+            }
+        });
 
-        // イレギュラーチェックもリセット
-        irregularityCheckRef.current = { isIrregular: false, targetType: null, targetKey: null };
+        // 4. State更新
+        setScores(newScores);
+        setHistory(newHistory);
+        setQIndex(newHistory.length);
+        setCurrentQuestion(questionToRestore); // 直前の質問に戻す
 
-        if (phase === 'deep_dive' && prevIndex < PHASE1_LIMIT) {
+        // フェーズ戻し判定 (DeepDive中ならPlayingに戻る可能性も)
+        if (phase === 'deep_dive' && newHistory.length < PHASE1_LIMIT) {
+            setPhase('playing');
+        } else if (phase === 'phase1_result') {
             setPhase('playing');
         }
-    }, [history, phase, currentQuestionIndex, scores]);
 
-    // getResultsは既存のまま
+    }, [history, phase, findQuestionById, getAxisEffects]);
+
+    // --- Results Calculation ---
     const getResults = useCallback(() => {
-        if (!diagnosisData.GEMS_DB) return { gemData: {}, scores: scores.group, ranking: [], consistency: 0 };
+        const axisPercent = {};
+        const axes = diagnosisData.AXES_DEF || [];
 
-        const gStats = Object.entries(scores.group).sort((a, b) => b[1] - a[1]);
-        const rStats = Object.entries(scores.role).sort((a, b) => b[1] - a[1]);
+        axes.forEach(ax => {
+            const v = scores.axis[ax.key];
+            const n = scores.axisCounts[ax.key] || 1;
+            const maxAbs = 2 * n;
+            const clamped = Math.max(-maxAbs, Math.min(maxAbs, v));
+            const pct = 50 + ((clamped / (maxAbs || 1)) * 40);
+            axisPercent[ax.key] = Math.round(Math.max(0, Math.min(100, pct)));
+        });
 
-        const gMargin = gStats[0][1] - gStats[1][1];
-        const rMargin = rStats[0][1] - rStats[1][1];
-        const scale = Math.min(1.0, (gMargin + rMargin) / 10);
+        const isOuter = axisPercent['world'] >= 50;
+        const isFlip = axisPercent['orient'] >= 50;
+        const isLogic = axisPercent['judge'] >= 50;
 
-        let allCandidates = [];
-        for (let g of ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']) {
-            for (let r of ['1', '2', '3', '4', '5', '6']) {
-                const id = `${g}-${r}`;
-                let baseScore = scores.group[g] + scores.role[r];
-                if (diagnosisData.SYNERGY_BONUS && diagnosisData.SYNERGY_BONUS[id]) {
-                    baseScore += (diagnosisData.SYNERGY_BONUS[id] * scale);
-                }
+        let groupId = 'H';
+        if (isOuter && isFlip && !isLogic) groupId = 'A';
+        else if (isOuter && isFlip && isLogic) groupId = 'B';
+        else if (isOuter && !isFlip && !isLogic) groupId = 'C';
+        else if (isOuter && !isFlip && isLogic) groupId = 'D';
+        else if (!isOuter && isFlip && !isLogic) groupId = 'E';
+        else if (!isOuter && isFlip && isLogic) groupId = 'F';
+        else if (!isOuter && !isFlip && !isLogic) groupId = 'G';
 
-                if (diagnosisData.GEMS_DB[id]) {
-                    allCandidates.push({
-                        id,
-                        score: baseScore,
-                        subScore: scores.role[r],
-                        data: diagnosisData.GEMS_DB[id]
-                    });
-                }
-            }
-        }
+        const sortedRoles = Object.entries(scores.role).sort((a, b) => b[1] - a[1]);
+        const topRole = sortedRoles[0]?.[0] || '1';
 
-        allCandidates.sort((a, b) => b.score - a.score || b.subScore - a.subScore);
-        const top = allCandidates[0] || { id: 'A-1', data: diagnosisData.GEMS_DB['A-1'] };
+        const gemId = `${groupId}-${topRole}`;
+        const gemData = diagnosisData.GEMS_DB?.[gemId] || null;
 
         return {
-            gemId: top.id,
-            gemData: top.data,
-            scores: scores.group,
-            ranking: allCandidates.slice(1, 4),
-            consistency: 85
+            gemId,
+            gemData,
+            scores: scores.role,
+            axisPercent,
+            groupId,
+            roleId: topRole
         };
     }, [scores]);
 
     return {
         phase,
         currentQuestion,
-        currentQuestionIndex,
-        progress: (currentQuestionIndex / (phase === 'deep_dive' ? PHASE2_LIMIT : PHASE1_LIMIT)) * 100,
+        currentQuestionIndex: qIndex,
+        progress: (qIndex / (phase === 'deep_dive' ? PHASE2_LIMIT : PHASE1_LIMIT)) * 100,
         startDiagnosis,
         handleAnswer,
         startDeepDive,
-        goBack,
-        getResults
+        getResults,
+        goBack
     };
 };

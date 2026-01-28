@@ -1,102 +1,124 @@
 'use client';
 
-import { useState, useRef } from 'react';
 import { motion, useMotionValue, useTransform, AnimatePresence } from 'framer-motion';
 
 export default function SwipeableCard({ question, onSwipe }) {
-    // ドラッグの移動量を管理する値
     const x = useMotionValue(0);
-
-    // ドラッグ量に応じてカードを回転させる（最大15度）
     const rotate = useTransform(x, [-200, 200], [-15, 15]);
-
-    // ドラッグ量に応じてカードの透明度を下げる（端に行くと消える）
     const opacity = useTransform(x, [-200, -150, 0, 150, 200], [0, 1, 1, 1, 0]);
 
-    // ドラッグ量に応じて背景に滲み出る色（左:ネイビー、右:ゴールド）
     const overlayColor = useTransform(
         x,
         [-150, 0, 150],
-        ['rgba(0, 88, 163, 0.2)', 'rgba(255, 255, 255, 0)', 'rgba(197, 163, 101, 0.2)']
+        ['rgba(243, 244, 246, 0.9)', 'rgba(255, 255, 255, 0)', 'rgba(255, 251, 235, 0.9)']
     );
 
-    // スワイプ判定のしきい値
-    const SWIPE_THRESHOLD = 100;
-
     const handleDragEnd = (event, info) => {
+        const SWIPE_THRESHOLD = 100;
         if (info.offset.x > SWIPE_THRESHOLD) {
-            onSwipe('right'); // YES
+            onSwipe('right');
         } else if (info.offset.x < -SWIPE_THRESHOLD) {
-            onSwipe('left'); // NO
+            onSwipe('left');
         }
-        // しきい値を超えなかった場合は、Framer Motionが自動で元の位置に戻します
     };
 
     return (
-        <div className="relative w-full max-w-md perspective-1000">
+        <div className="relative w-full max-w-md perspective-1000 h-[480px]">
+            {/* --- 重なり表現（ダミーカード） --- */}
+            {/* 3枚目 (一番後ろ): 大きく下にずらす */}
+            <div
+                className="absolute inset-0 bg-white/20 rounded-3xl border border-white/10 shadow transform translate-y-10 scale-90"
+                style={{ zIndex: 0 }}
+            />
+            {/* 2枚目 (真ん中): 少し下にずらす */}
+            <div
+                className="absolute inset-0 bg-white/40 rounded-3xl border border-white/20 shadow-lg transform translate-y-5 scale-95"
+                style={{ zIndex: 10 }}
+            />
+
             <AnimatePresence mode="wait">
                 <motion.div
                     key={question.id}
-                    // --- アニメーション設定 ---
                     initial={{ scale: 0.95, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0, x: 0, rotate: 0 }}
-                    exit={{ scale: 0.95, opacity: 0, y: -20, transition: { duration: 0.3 } }}
+                    exit={{ scale: 0.95, opacity: 0, y: -20, transition: { duration: 0.2 } }}
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    // --- ドラッグ設定 ---
                     drag="x"
-                    dragConstraints={{ left: 0, right: 0 }} // カードが飛んでいかないように制限
-                    dragElastic={0.7} // 引っ張りの抵抗感
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={0.7}
                     onDragEnd={handleDragEnd}
-                    style={{ x, rotate, opacity }}
-                    // --- スタイル設定 ---
-                    className="relative w-full bg-white rounded-2xl shadow-2xl border border-gold/20 overflow-hidden cursor-grab active:cursor-grabbing"
+                    style={{ x, rotate, opacity, zIndex: 20 }} // メインカードは最前面
+                    className="absolute inset-0 bg-white rounded-3xl shadow-2xl border border-white/40 overflow-hidden flex flex-col"
                 >
-                    {/* 背景に滲み出る色のオーバーレイ */}
                     <motion.div
                         style={{ backgroundColor: overlayColor }}
-                        className="absolute inset-0 pointer-events-none z-0 transition-colors duration-300"
+                        className="absolute inset-0 pointer-events-none z-0"
                     />
 
-                    {/* カードの中身 */}
-                    <div className="relative z-10 p-8 md:p-12 flex flex-col items-center justify-center min-h-[400px]">
-
-                        {/* 装飾的なヘッダー */}
-                        <div className="mb-8 text-center">
-                            <span className="font-en text-gold/70 text-xs tracking-[0.3em] uppercase block mb-2">
-                                Question
-                            </span>
-                            <div className="w-8 h-[1px] bg-gold/30 mx-auto"></div>
-                        </div>
-
-                        {/* 質問文 */}
-                        {/* text-center を削除し、text-left と w-full を追加 */}
-                        <h3 className="font-jp text-xl md:text-2xl text-navy-dark leading-relaxed text-left font-medium mb-10 w-full">
+                    {/* 質問文エリア */}
+                    <div className="relative z-10 flex-1 flex flex-col items-center justify-center p-8 text-center pointer-events-none">
+                        <span className="font-en text-gold text-[10px] tracking-[0.3em] uppercase mb-6 block">
+                            Question
+                        </span>
+                        {/* インラインスタイルで色を強制 */}
+                        <h3 className="font-jp text-2xl md:text-3xl font-medium leading-relaxed" style={{ color: '#111827' }}>
                             {question.text}
                         </h3>
+                    </div>
 
-                        {/* YES / NO インジケーター */}
-                        <div className="absolute bottom-6 left-0 right-0 flex justify-between px-8 pointer-events-none">
-                            <div className="flex flex-col items-center gap-1 opacity-60 font-en">
-                                <div className="w-10 h-10 rounded-full border border-navy/30 flex items-center justify-center text-navy">
-                                    ←
+                    {/* 選択肢エリア */}
+                    <div className="relative z-10 w-full grid grid-cols-2 border-t border-gray-100 h-[180px] bg-white">
+
+                        {/* --- 左: 選択肢B (NO/Left) --- */}
+                        <div
+                            onClick={() => onSwipe('left')}
+                            className="relative flex flex-col justify-start pt-8 pb-4 px-5 bg-gray-50/80 border-r border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors group active:bg-gray-200"
+                        >
+                            {/* ヘッダー: 左寄せ */}
+                            <div className="flex items-center gap-2 mb-3 w-full">
+                                <div className="text-gray-400 group-hover:text-gray-600 transition-colors">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
                                 </div>
-                                <span className="text-xs tracking-widest text-navy">NO</span>
+                                <span className="font-en text-gray-500 text-xs tracking-widest font-bold">B</span>
                             </div>
-                            <div className="flex flex-col items-center gap-1 opacity-60 font-en">
-                                <div className="w-10 h-10 rounded-full border border-gold/50 flex items-center justify-center text-gold-dark">
-                                    →
-                                </div>
-                                <span className="text-xs tracking-widest text-gold-dark">YES</span>
-                            </div>
+
+                            {/* テキスト: 左寄せ & インラインスタイルで色を強制 */}
+                            <p
+                                className="font-jp text-sm md:text-base leading-relaxed font-medium text-left"
+                                style={{ color: '#1f2937' }} // gray-800相当
+                            >
+                                {question.b}
+                            </p>
                         </div>
 
+                        {/* --- 右: 選択肢A (YES/Right) --- */}
+                        <div
+                            onClick={() => onSwipe('right')}
+                            className="relative flex flex-col justify-start pt-8 pb-4 px-5 bg-white cursor-pointer hover:bg-yellow-50 transition-colors group active:bg-yellow-100"
+                        >
+                            {/* ヘッダー: 右寄せ */}
+                            <div className="flex items-center justify-end gap-2 mb-3 w-full">
+                                <span className="font-en text-gold text-xs tracking-widest font-bold">A</span>
+                                <div className="text-gold group-hover:text-gold-dark transition-colors">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            {/* テキスト: 左寄せ & インラインスタイルで色を強制 */}
+                            <p
+                                className="font-jp text-sm md:text-base leading-relaxed font-medium text-left"
+                                style={{ color: '#004480' }} // navy-dark相当
+                            >
+                                {question.a}
+                            </p>
+                        </div>
                     </div>
                 </motion.div>
             </AnimatePresence>
-
-            {/* 背景にある次のカードのダミー（奥行き演出用） */}
-            <div className="absolute top-4 inset-x-4 h-full bg-white/80 rounded-2xl border border-gold/10 shadow-xl -z-10 scale-[0.95]"></div>
-            <div className="absolute top-8 inset-x-8 h-full bg-white/60 rounded-2xl border border-gold/5 shadow-lg -z-20 scale-[0.9]"></div>
         </div>
     );
 }

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { client } from "@/libs/microcms";
 import { GEMS_DB, GROUP_IDEALS } from "@/libs/diagnosisData";
-import RadarChart from "@/components/diagnosis/RadarChart";
+import AxisMeter from "@/components/diagnosis/AxisMeter";
 import ItemCollection from "@/components/ItemCollection";
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
@@ -48,7 +48,7 @@ export async function generateMetadata({ params }) {
 export default async function DiagnosisResultPage({ params, searchParams }) {
     const { slug } = await params;
     const resolvedSearchParams = await searchParams;
-    const { s, mode } = resolvedSearchParams;
+    const { s, ax, mode } = resolvedSearchParams;
 
     // 1. microCMSから宝石カテゴリ基本情報を取得
     const cmsData = await client.get({
@@ -68,12 +68,13 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
         E: scoreArray[4] || 0, F: scoreArray[5] || 0, G: scoreArray[6] || 0, H: scoreArray[7] || 0
     };
 
-    // 4. 宝石の理想スコアを取得
-    const groupId = diagnosisGem?.id?.split('-')[0];
-    const idealValues = groupId && GROUP_IDEALS[groupId] ? GROUP_IDEALS[groupId] : [];
-    const gemScores = {
-        A: idealValues[0] || 0, B: idealValues[1] || 0, C: idealValues[2] || 0, D: idealValues[3] || 0,
-        E: idealValues[4] || 0, F: idealValues[5] || 0, G: idealValues[6] || 0, H: idealValues[7] || 0
+    // 4. URLパラメータから4軸スコアを復元 (ax=world,orient,judge,approach)
+    const axisArray = ax ? ax.split(',').map(Number) : [];
+    const axisScores = {
+        world: axisArray[0] || 50,
+        orient: axisArray[1] || 50,
+        judge: axisArray[2] || 50,
+        approach: axisArray[3] || 50
     };
 
     // 5. 関連アイテム取得
@@ -305,10 +306,10 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                         <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                                     </svg>
                                 </div>
-                                <h3 className="info-label">PARAMETER</h3>
+                                <h3 className="info-label">ANALYSIS (4-AXIS)</h3>
                             </div>
                             <div className="flex items-center justify-center h-full pb-4">
-                                <RadarChart scores={scores} gemScores={gemScores} />
+                                <AxisMeter axisPercent={axisScores} />
                             </div>
                         </div>
                         {/* 6. GEMOLOGICAL BACKGROUND (独立したカード) */}
