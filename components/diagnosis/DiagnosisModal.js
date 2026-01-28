@@ -4,13 +4,17 @@ import { useDiagnosis } from '@/contexts/DiagnosisContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import SwipeableCard from './SwipeableCard';
 import { useEffect, useRef } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 export default function DiagnosisModal() {
     const { isOpen, closeDiagnosis, engine } = useDiagnosis();
     const router = useRouter();
     const pathname = usePathname();
-    const startPathRef = useRef(pathname);
+    const searchParams = useSearchParams(); // 追加
+
+    // フルパス（クエリ含む）で比較して、ページ内遷移(DeepDive結果)も検知できるようにする
+    const currentFullPath = `${pathname}?${searchParams.toString()}`;
+    const startPathRef = useRef(currentFullPath);
 
     const {
         currentQuestion,
@@ -27,10 +31,12 @@ export default function DiagnosisModal() {
     const currentNum = (currentQuestionIndex || 0) + 1;
 
     useEffect(() => {
-        if (isOpen && phase === 'ready') {
-            startPathRef.current = pathname;
+        if (isOpen) {
+            // モーダルが開いた時点、またはフェーズ開始時点のパスを記録
+            startPathRef.current = currentFullPath;
         }
-    }, [isOpen, phase, pathname]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen]);
 
     useEffect(() => {
         if (phase === 'result' || phase === 'phase1_result') {
@@ -65,11 +71,12 @@ export default function DiagnosisModal() {
 
     useEffect(() => {
         if (isOpen && (phase === 'result' || phase === 'phase1_result')) {
-            if (pathname !== startPathRef.current) {
+            // パスまたはクエリパラメータが変わったら閉じる
+            if (currentFullPath !== startPathRef.current) {
                 closeDiagnosis();
             }
         }
-    }, [pathname, isOpen, phase, closeDiagnosis]);
+    }, [currentFullPath, isOpen, phase, closeDiagnosis]);
 
     if (!isOpen) return null;
 

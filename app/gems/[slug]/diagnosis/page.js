@@ -9,6 +9,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import DeepDiveButton from "@/components/diagnosis/DeepDiveButton";
 import ReDiagnosisButton from "@/components/diagnosis/ReDiagnosisButton";
+import StartDiagnosisButton from "@/components/diagnosis/StartDiagnosisButton";
 import GemPageNavigation from "@/components/GemPageNavigation";
 import GemStoneLinks from "@/components/GemStoneLinks";
 
@@ -331,7 +332,17 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
 
                         {/* 3. Deep Dive / Rarity (Half) */}
                         <div className="info-glass-card flex flex-col justify-center items-center text-center full-width">
-                            {(!mode || mode !== 'deep') ? (
+                            {/* パラメータがない場合 (直接ランディング) */}
+                            {(!s && !ax) ? (
+                                <>
+                                    <h4 className="font-jp text-lg mb-4 text-gray-800">あなたを宝石に例えると？</h4>
+                                    <p className="font-jp text-xs text-gray-500 mb-6 leading-relaxed">
+                                        質問に答えて<br />あなたの宝石を分析します。
+                                    </p>
+                                    <StartDiagnosisButton />
+                                </>
+                            ) : (!mode || mode !== 'deep') ? (
+                                /* パラメータあり & DeepDive未実施 */
                                 <>
                                     <h4 className="font-jp text-lg mb-4 text-gray-800">深層心理を探る</h4>
                                     <p className="font-jp text-xs text-gray-500 mb-6 leading-relaxed">
@@ -340,6 +351,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                     <DeepDiveButton />
                                 </>
                             ) : (
+                                /* DeepDive実施済み (Rarity表示) */
                                 <div className="w-full text-left">
                                     <div className="info-header-row">
                                         <div className="info-icon">
@@ -366,13 +378,15 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                         </div>
 
                     </div>
-                    {/* 再診断ボタン（相性セクションの最下部へ） */}
-                    <div className="mt-12 text-center border-t border-gray-200/50 pt-8">
-                        <p className="text-[10px] text-gray-400 mb-4 font-jp tracking-wider">
-                            結果に違和感がある場合は、もう一度お試しいただけます
-                        </p>
-                        <ReDiagnosisButton />
-                    </div>
+                    {/* 再診断ボタン (パラメータがある場合のみ表示) */}
+                    {(s || ax) && (
+                        <div className="mt-12 text-center border-t border-gray-200/50 pt-8">
+                            <p className="text-[10px] text-gray-400 mb-4 font-jp tracking-wider">
+                                結果に違和感がある場合は、もう一度お試しいただけます
+                            </p>
+                            <ReDiagnosisButton />
+                        </div>
+                    )}
                 </section>
 
                 <GemStoneLinks />
