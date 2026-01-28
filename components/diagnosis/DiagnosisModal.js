@@ -56,6 +56,8 @@ export default function DiagnosisModal() {
 
             if (phase === 'result') {
                 params.set('mode', 'deep');
+                // 完了フラグ: ヘッダーアイコン更新用 (1位の結果のみ更新するため)
+                params.set('diagnosis_complete', '1');
             }
 
             const slug = result.gemData?.slug || 'diamond';

@@ -144,6 +144,8 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
 
     // URL for saving history
     const currentUrl = `/gems/${slug}/diagnosis?s=${s || ''}&ax=${ax || ''}&mode=${mode || ''}`;
+    // Only save if diagnosis_complete flag is present
+    const isDiagnosisComplete = resolvedSearchParams.diagnosis_complete === '1';
 
     return (
         <>
@@ -155,6 +157,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                     image: category?.image // Use CMS image object which has .url
                 }}
                 url={currentUrl}
+                shouldSave={isDiagnosisComplete}
             />
             <SiteHeader />
 
