@@ -25,7 +25,7 @@ async function getArchives() {
       },
       customRequestInit: {
         next: {
-          tags: ['gem']
+          tags: ['gem', 'journal']
         }
       }
     });

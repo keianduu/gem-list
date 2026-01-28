@@ -37,10 +37,12 @@ export async function POST(request) {
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Revalidate
-        // revalidatePath('/', 'layout') revalidates everything under the root layout
-        revalidatePath('/', 'layout');
+        // revalidateTag('gem') revalidates fetches tagged with 'gem'
+        // revalidateTag('journal') revalidates fetches tagged with 'journal'
+        revalidateTag('gem');
+        revalidateTag('journal');
 
-        console.log('[API] /api/revalidate: All paths revalidated');
+        console.log('[API] /api/revalidate: Revalidated tags: gem, journal');
         return NextResponse.json({ message: 'Revalidation successful' });
 
     } catch (err) {

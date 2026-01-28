@@ -24,7 +24,7 @@ async function getRelatedItems(categoryId, currentContentId) {
         limit: 6,
         orders: "-publishedAt",
       },
-      customRequestInit: { next: { revalidate: 3600 } }
+      customRequestInit: { next: { tags: ['journal'] } }
     });
 
     return data.contents.map((content) => {
@@ -68,7 +68,7 @@ async function processBodyWithProducts(bodyContent) {
       productsData = await client.get({
         endpoint: "archive",
         queries: { filters: filtersQuery, limit: 100 },
-        customRequestInit: { next: { revalidate: 0 } }
+        customRequestInit: { next: { tags: ['journal'] } }
       });
     } catch (e) {
       console.error("[Journal] Product fetch failed:", e);
@@ -112,7 +112,7 @@ export async function generateMetadata({ params }) {
     const data = await client.get({
       endpoint: "archive",
       queries: { filters: `slug[equals]${id}` },
-      customRequestInit: { next: { revalidate: 60 } }
+      customRequestInit: { next: { tags: ['journal'] } }
     });
     const journal = data.contents[0];
 
@@ -148,7 +148,7 @@ export default async function JournalPage({ params }) {
       filters: `slug[equals]${id}`,
       depth: 2
     },
-    customRequestInit: { next: { revalidate: 0 } }
+    customRequestInit: { next: { tags: ['journal'] } }
   });
   const journal = data.contents[0];
 
