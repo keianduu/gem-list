@@ -13,6 +13,7 @@ import StartDiagnosisButton from "@/components/diagnosis/StartDiagnosisButton";
 import SubResults from "@/components/diagnosis/SubResults";
 import GemPageNavigation from "@/components/GemPageNavigation";
 import GemStoneLinks from "@/components/GemStoneLinks";
+import DiagnosisHistorySaver from "@/components/diagnosis/DiagnosisHistorySaver";
 
 export async function generateMetadata({ params }) {
     const { slug } = await params;
@@ -141,8 +142,20 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
         };
     });
 
+    // URL for saving history
+    const currentUrl = `/gems/${slug}/diagnosis?s=${s || ''}&ax=${ax || ''}&mode=${mode || ''}`;
+
     return (
         <>
+            {/* Save diagnosis result to history - Use CMS image (category.image) */}
+            <DiagnosisHistorySaver
+                gem={{
+                    ...diagnosisGem,
+                    name: category?.name || diagnosisGem.name, // Prefer CMS name
+                    image: category?.image // Use CMS image object which has .url
+                }}
+                url={currentUrl}
+            />
             <SiteHeader />
 
             {/* ★修正: .category-main を適用してレイアウトを統一 */}

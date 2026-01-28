@@ -1,15 +1,18 @@
 /* components/SiteHeader.js */
-"use client"; 
+"use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useDiagnosisHistory } from "@/hooks/useDiagnosisHistory";
 import NavigationMenu from "./NavigationMenu"; // ★追加
 
 export default function SiteHeader() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false); // ★追加: メニュー開閉状態
-  
+
+  const { latestDiagnosis } = useDiagnosisHistory();
+
   const { favorites, isLoaded } = useFavorites();
   const hasFavorites = isLoaded && favorites.length > 0;
 
@@ -31,8 +34,32 @@ export default function SiteHeader() {
             <span className="logo-sub">MARKET</span>
           </Link>
         </div>
-        
+
         <div className="header-icons">
+          {/* Diagnosis Shortcut */}
+          {latestDiagnosis && (
+            <Link
+              href={latestDiagnosis.url}
+              className="icon-btn"
+              aria-label={`Diagnosis: ${latestDiagnosis.name}`}
+            >
+              {latestDiagnosis.image ? (
+                <div className="w-6 h-6 relative">
+                  {/* Using next/image requires width/height or fill. Since this is an icon, simpler to use direct img or simple div bg if complex. 
+                        Let's use a simple img tag for icon scale or next/image with objectFit.
+                     */}
+                  <img
+                    src={latestDiagnosis.image}
+                    alt={latestDiagnosis.name}
+                    className="w-full h-full object-contain drop-shadow"
+                  />
+                </div>
+              ) : (
+                <span className="text-lg">💎</span>
+              )}
+            </Link>
+          )}
+
           <Link href="/favorites" className="icon-btn" aria-label="Favorites">
             {hasFavorites && <span className="icon-badge-dot"></span>}
             <svg className="icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -48,8 +75,8 @@ export default function SiteHeader() {
           */}
 
           {/* ハンバーガーアイコン: クリックで開く */}
-          <button 
-            className="icon-btn" 
+          <button
+            className="icon-btn"
             aria-label="Menu"
             onClick={() => setIsMenuOpen(true)} // ★追加
           >
