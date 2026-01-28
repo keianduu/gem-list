@@ -19,6 +19,7 @@ export async function generateMetadata({ params }) {
     const cmsData = await client.get({
         endpoint: "jewelry-categories",
         queries: { filters: `slug[equals]${slug}` },
+        customRequestInit: { next: { tags: ['gem'] } },
     });
     const category = cmsData.contents[0];
 
@@ -53,6 +54,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
     const cmsData = await client.get({
         endpoint: "jewelry-categories",
         queries: { filters: `slug[equals]${slug}` },
+        customRequestInit: { next: { tags: ['gem'] } },
     });
     const category = cmsData.contents[0];
 
@@ -81,7 +83,8 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
             filters: `relatedJewelries[contains]${category.id}`,
             limit: 6,
             orders: "-priority,-publishedAt",
-        }
+        },
+        customRequestInit: { next: { tags: ['gem'] } },
     }) : { contents: [] };
 
     if (!diagnosisGem) {
@@ -100,6 +103,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                     filters: filtersQuery,
                     fields: "id,name,nameJa,yomigana,slug,image" // yomiganaを追加
                 },
+                customRequestInit: { next: { tags: ['gem'] } },
             });
             compatibleGemsData = compatibleSlugs.map(slug =>
                 res.contents.find(c => c.slug === slug)

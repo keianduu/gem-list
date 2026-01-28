@@ -24,7 +24,7 @@ async function getCategoryArchives(categoryId) {
         fields: "id,title,slug,publishedAt,thumbnail,thumbnailUrl,type,price,description,affiliateUrl"
       },
       customRequestInit: {
-        next: { revalidate: 60, tags: ['content'] }
+        next: { tags: ['gem'] }
       }
     });
     return data.contents;
@@ -45,7 +45,7 @@ export async function generateMetadata({ params }) {
     queries: { filters: `slug[equals]${urlSlug}` },
     // ★修正: Layoutタグ
     customRequestInit: {
-      next: { revalidate: 3600, tags: ['layout'] }
+      next: { tags: ['gem'] }
     },
   });
 
@@ -81,7 +81,7 @@ export default async function CategoryPage({ params, searchParams }) {
       filters: `slug[equals]${urlSlug}`,
       fields: "id,name,nameJa,yomigana,slug,image,description,miningLocations,roughStones,accessories",
       customRequestInit: {
-        cache: "no-store",
+        next: { tags: ['gem'] },
       },
     },
   });

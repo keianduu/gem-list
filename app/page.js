@@ -25,8 +25,7 @@ async function getArchives() {
       },
       customRequestInit: {
         next: {
-          revalidate: 3600,
-          tags: ['content']
+          tags: ['gem']
         }
       }
     });
@@ -49,8 +48,7 @@ async function getCategories() {
       },
       customRequestInit: {
         next: {
-          revalidate: 3600,
-          tags: ['layout']
+          tags: ['gem']
         }
       }
     });
@@ -66,7 +64,7 @@ async function getAccessories() {
     const data = await client.get({
       endpoint: "accessory",
       queries: { limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } }
+      customRequestInit: { next: { tags: ['gem'] } }
     });
     return data.contents;
   } catch (err) {
@@ -81,7 +79,7 @@ async function getRoughStones() {
     const data = await client.get({
       endpoint: "rough-stones",
       queries: { limit: 100 },
-      customRequestInit: { next: { revalidate: 3600 } }
+      customRequestInit: { next: { tags: ['gem'] } }
     });
     return data.contents;
   } catch (err) {
