@@ -32,7 +32,11 @@ export async function POST(request) {
             return NextResponse.json({ message: 'Invalid signature' }, { status: 401 });
         }
 
-        // Signature is valid - Revalidate
+        // Signature is valid
+        // Wait 2 seconds to ensure MicroCMS data is fully propagated
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Revalidate
         // revalidatePath('/', 'layout') revalidates everything under the root layout
         revalidatePath('/', 'layout');
 
