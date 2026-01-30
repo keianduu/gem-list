@@ -93,11 +93,20 @@ export default async function sitemap() {
             priority: 0.6,
         }));
 
+    // 6. 宝石診断ページ ( /gems/[slug]/diagnosis )
+    const diagnosisUrls = categories.map((cat) => ({
+        url: `${baseUrl}/gems/${cat.slug}/diagnosis`,
+        lastModified: new Date(cat.updatedAt),
+        changeFrequency: 'weekly',
+        priority: 0.7,
+    }));
+
     // 全て結合して返す
     return [
         ...staticPages,
         ...categoryUrls,
         ...roughStoneUrls,
         ...archiveUrls,
+        ...diagnosisUrls,
     ];
 }
