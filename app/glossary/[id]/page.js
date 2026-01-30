@@ -57,6 +57,7 @@ export default async function GlossaryDetailPage({ params }) {
                     <div className="infographic-header">
                         <span className="concept-label">Term Details</span>
                         <h2 className="infographic-title">{term.category_en}</h2>
+                        <p className="category-title-ja" style={{ marginBottom: 0 }}>{term.category_jp}</p>
                     </div>
 
                     <div className="infographic-grid">
