@@ -1,5 +1,6 @@
 import { getAllContents } from "@/libs/microcms";
 import { SITE_URL } from "@/libs/meta";
+import { GLOSSARY_DATA } from "@/libs/glossaryData";
 
 // サイトマップの再生成頻度 (秒) - ISRと同様の考え方
 // 頻繁に更新されない場合は長めに設定してもOK
@@ -101,6 +102,23 @@ export default async function sitemap() {
         priority: 0.7,
     }));
 
+    // 7. 用語集ページ ( /glossary ) & 詳細 ( /glossary/[id] )
+    const glossaryIndex = {
+        url: `${baseUrl}/glossary`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly',
+        priority: 0.6,
+    };
+
+    const glossaryUrls = GLOSSARY_DATA
+        .filter(term => term.isTooltipEnabled !== false)
+        .map((term) => ({
+            url: `${baseUrl}/glossary/${term.id}`,
+            lastModified: new Date(), // 更新日時は管理されていないため現在時刻(または固定)
+            changeFrequency: 'yearly',
+            priority: 0.5,
+        }));
+
     // 全て結合して返す
     return [
         ...staticPages,
@@ -108,5 +126,7 @@ export default async function sitemap() {
         ...roughStoneUrls,
         ...archiveUrls,
         ...diagnosisUrls,
+        glossaryIndex,
+        ...glossaryUrls,
     ];
 }

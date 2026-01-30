@@ -26,6 +26,10 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
     - **イレギュラー検知**: ユーザーの回答矛盾（トップ属性の否定など）を検知し、検証質問を優先的に出題する適応型アルゴリズム。
   - **相性診断 (Compatibility)**: 診断結果に基づき、相性の良い「最高の相棒」と「癒やしの相手」をリコメンド表示。microCMSと連動し、詳細なジュエルデータをカード形式で提示。
   - **レーダーチャート分析**: `Chart.js` を使用し、8つのパラメータ（情熱、知性、調和など）を可視化。
+- **宝石用語集 (Gemstone Glossary)**:
+  - **カテゴリ別表示**: カット、成分、歴史などのカテゴリごとに用語を整理して表示。
+  - **スマートツールチップ**: 記事や説明文中の専門用語を自動検出し、ツールチップで解説を表示する `SmartRichText` コンポーネントを導入。
+  - **検索流入対応**: 用語ごとに個別ページ (`/glossary/[id]`) を持ち、SEOと回遊性を強化。
 
 
 ## 今後の展望
@@ -66,6 +70,10 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   │   │   │   └── page.js
 │   │   │   └── page.js
 │   │   └── page.js         # 宝石インデックス
+│   ├── glossary/           # [New] 用語集
+│   │   ├── [id]/
+│   │   │   └── page.js     # 用語詳細
+│   │   └── page.js         # 用語集トップ
 │   ├── journals/           # 記事詳細ページ
 │   │   └── [id]/
 │   │       └── page.js
@@ -88,7 +96,7 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   ├── favicon.ico
 │   ├── globals.css         # グローバルスタイル (Tailwind / CSS Modules / Custom CSS)
 │   ├── layout.js           # 共通レイアウト (RootLayout)
-│   └── page.js             # TOPページ (検索・フィルタリング・一覧表示の集約)
+│   └── page.js             # TOPページの集約 (検索・フィルタリング・一覧表示)
 │
 ├── components/             # UIコンポーネント
 │   ├── BirthstoneList.js   # [New] 誕生石一覧表示
@@ -98,7 +106,9 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   ├── FavoritesContent.js # お気に入りリスト表示
 │   ├── FilterPopup.js      # 詳細絞り込みモーダル (Color/Accessory対応)
 │   ├── GemStoneLinks.js    # [New] TOPページの宝石・原石一覧リンク
+│   ├── GlossaryBackButton.js # [New] 用語詳細から戻るボタン
 │   ├── HeroSearch.js       # リアルタイム検索・サジェスト機能
+│   ├── SmartRichText.js    # [New] 自動ツールチップリンク付与コンポーネント
 │   ├── diagnosis/          # [New] 診断機能関連コンポーネント
 │   │   ├── DiagnosisModal.js   # 診断モーダル全体
 │   │   ├── DiagnosisTrigger.js # 診断起動ボタン
@@ -123,6 +133,7 @@ Jewelism MARKETは、宝石の美しさ（Brilliance）からアフィリエイ�
 │   ├── authors.js          # [New] 執筆者データ
 │   ├── constants.js        # 定数ファイル (国旗マッピングデータ等)
 │   ├── diagnosisData.js    # [New] 診断用マスタデータ（質問・ロジック・宝石DB）
+│   ├── glossaryData.js     # [New] 用語集データ
 │   ├── data.js             # (旧) ダミーデータ ※現在はmicroCMSに移行済み
 │   ├── meta.js             # [New] メタデータ設定
 │   └── microcms.js         # microCMS APIクライアント設定 (再帰取得対応)
@@ -158,9 +169,11 @@ URL構造はリソースごとにフラット化しつつ、IDの命名規則に
 | **宝石詳細** | `/gems/[id]` | `app/gems/[id]/page.js` | **宝石英名** | `ruby`, `alexandrite` 等 |
 | **原石一覧** | `/rough-stones` | `app/rough-stones/page.js` | - | インデックス |
 | **原石詳細** | `/rough-stones/[id]` | `app/rough-stones/[id]/page.js` | **原石英名** | `corundum` 等 |
+| **用語集一覧** | `/glossary` | `app/glossary/page.js` | - | インデックス |
+| **用語詳細** | `/glossary/[id]` | `app/glossary/[id]/page.js` | **連番ID** | `1`, `2` 等 (`libs/glossaryData.js`) |
 | **検索結果** | `/search` | `app/search/page.js` | - | クエリパラメータで制御 |
 | **閲覧履歴** | - | - | (Local Storage) | 将来実装予定 |
-| **記事詳細 (Journal)** | `/journals/[id]` | `app/journals/[id]/` | **手動設定 (SEO重視)** | 記事内容を表す英単語<br>例: `topaz-history` |
+| **記事詳細 (Journal)** | `/journals/[id]` | `app/journals/[id]/` | **手動設定 (SEO重視)** | 記事内容を表す英単語<br>例: `topaz-history` | 
 
 ### パンくずリスト設計 (Breadcrumbs)
 
