@@ -1,4 +1,5 @@
 /* app/glossary/[id]/page.js */
+import { Suspense } from 'react';
 import SiteHeader from "@/components/SiteHeader";
 import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
@@ -81,7 +82,9 @@ export default async function GlossaryDetailPage({ params }) {
                         </div>
                     </div>
 
-                    <GlossaryBackButton />
+                    <Suspense fallback={null}>
+                        <GlossaryBackButton />
+                    </Suspense>
 
                     <div className="mt-12 text-center">
                         <a href="/glossary" className="text-gray-400 hover:text-navy text-xs font-en tracking-widest transition-colors">
