@@ -2124,13 +2124,14 @@
   }
 
   .rich-text-body h2 {
-    font-family: var(--font-en);
+    font-family: var(--font-ja);
     font-size: 1.6rem;
     font-weight: 400;
     margin: 60px 0 30px;
     text-align: center;
     color: #111;
     position: relative;
+    line-height: 1.6;
   }
 
   .rich-text-body h2::after {
