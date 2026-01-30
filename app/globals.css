@@ -3879,3 +3879,223 @@
     opacity: 1;
   }
 }
+
+/* app/globals.css の末尾に追記 */
+
+/* =========================================
+   Glossary & Smart Tooltip Styles
+   ========================================= */
+
+/* app/globals.css の末尾に追記 */
+
+/* =========================================
+   Glossary List Styles
+   ========================================= */
+
+.glossary-main {
+  /* category-mainと同じような余白設定 */
+  padding-top: var(--header-height);
+  padding-bottom: 120px;
+  width: 100%;
+  padding-left: var(--page-padding-pc);
+  padding-right: var(--page-padding-pc);
+}
+
+.glossary-container {
+  max-width: 1000px;
+  margin: 40px auto;
+}
+
+.glossary-section {
+  margin-bottom: 4rem;
+}
+
+.glossary-section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.glossary-section-header h3 {
+  font-family: var(--font-en);
+  font-size: 1.5rem;
+  color: #111;
+  font-weight: 400;
+}
+
+.glossary-section-header span {
+  font-size: 0.85rem;
+  color: #888;
+  font-family: var(--font-jp);
+}
+
+.glossary-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .glossary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .glossary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.glossary-card {
+  display: block;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  backdrop-filter: blur(4px);
+}
+
+.glossary-card:hover {
+  background: #fff;
+  border-color: #c5a365;
+  /* Gold */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+.glossary-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.glossary-name-jp {
+  font-weight: 500;
+  color: #333;
+  font-size: 1rem;
+}
+
+.glossary-card:hover .glossary-name-jp {
+  color: #0058a3;
+  /* Navy */
+}
+
+.glossary-name-en {
+  font-family: var(--font-en);
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.glossary-summary {
+  font-size: 0.8rem;
+  color: #666;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =========================================
+   Smart Tooltip Styles
+   ========================================= */
+
+.smart-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+  /* リンクっぽさを点線で控えめに表現 */
+  border-bottom: 1px dotted #a3937d;
+  transition: border-color 0.2s;
+}
+
+.smart-tooltip:hover {
+  border-bottom-style: solid;
+}
+
+.smart-tooltip a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Tooltip Body */
+.smart-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+
+  width: max-content;
+  max-width: 280px;
+  padding: 12px 16px;
+
+  background-color: #1a1a1a;
+  /* Dark background */
+  color: #fff;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  text-align: left;
+  font-weight: 400;
+
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 100;
+  white-space: normal;
+}
+
+/* Triangle Arrow */
+.smart-tooltip::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1a1a1a;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s;
+  z-index: 100;
+}
+
+.smart-tooltip:hover::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+.smart-tooltip:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Mobile: Disable hover tooltip */
+@media (max-width: 768px) {
+
+  .smart-tooltip::after,
+  .smart-tooltip::before {
+    display: none;
+  }
+
+  .smart-tooltip {
+    border-bottom: 1px solid #cbd5e0;
+    color: #0058a3;
+    /* リンク色にする */
+  }
+}

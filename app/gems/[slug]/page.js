@@ -10,6 +10,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { SITE_NAME } from "@/libs/meta";
 import GemPageNavigation from "@/components/GemPageNavigation";
+import SmartRichText from "@/components/SmartRichText";
 
 async function getCategoryArchives(categoryId) {
   if (!categoryId) return [];
@@ -182,10 +183,9 @@ export default async function CategoryPage({ params, searchParams }) {
           />
           {/* 4. 説明文 (ここが消えていないか確認してください) */}
           {category.description && (
-            <div
-              className="category-desc"
-              dangerouslySetInnerHTML={{ __html: category.description }}
-            />
+            <div className="category-desc">
+              <SmartRichText content={category.description} />
+            </div>
           )}
         </section>
 

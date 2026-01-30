@@ -82,6 +82,12 @@ export default function NavigationMenu({ isOpen, onClose }) {
                   <span className="ja">原石図鑑</span>
                 </Link>
               </li>
+              <li style={{ '--delay': '0.35s' }}>
+                <Link href="/glossary" className="nav-link">
+                  <span className="en">Glossary</span>
+                  <span className="ja">宝石用語集</span>
+                </Link>
+              </li>
               <li style={{ '--delay': '0.5s' }}>
                 <Link href="/search" className="nav-link">
                   <span className="en">Search All</span>

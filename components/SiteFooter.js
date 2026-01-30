@@ -76,6 +76,10 @@ export default async function SiteFooter() {
               <span className="nav-en">Rough Stones</span>
               <span className="nav-jp">原石図鑑</span>
             </Link>
+            <Link href="/glossary" className="footer-nav-item">
+              <span className="nav-en">Glossary</span>
+              <span className="nav-jp">宝石用語集</span>
+            </Link>
             <Link href="/search" className="footer-nav-item">
               <span className="nav-en">Search All</span>
               <span className="nav-jp">全てのアイテムを探す</span>

@@ -9,6 +9,7 @@ import ItemCollection from "@/components/ItemCollection";
 import Breadcrumb from "@/components/Breadcrumb";
 import { SITE_NAME } from "@/libs/meta";
 import { AUTHORS, DEFAULT_AUTHOR_ID } from "@/libs/authors"; // ★追加
+import SmartRichText from "@/components/SmartRichText";
 
 export const dynamic = 'force-dynamic';
 
@@ -223,7 +224,7 @@ export default async function JournalPage({ params }) {
                 />
               </div>
             )}
-            <RichTextRenderer content={processedBody} />
+            <SmartRichText content={processedBody} />
 
             {/* ★修正: Authorセクションを動的にレンダリング */}
             <div className="journal-author-section">
