@@ -90,8 +90,8 @@ export default function JournalPagination({ prev, next }) {
 
             {/* Center link back to list (Optional decoration) */}
             <div className="text-center mt-12">
-                <Link href="/search?contentType=journal" className="text-xs font-en text-gray-400 tracking-[0.2em] hover:text-gold transition-colors">
-                    VIEW ALL JOURNALS
+                <Link href="/search?contentType=journal" className="text-gray-400 hover:text-gold text-xs font-en tracking-widest transition-colors">
+                    ← VIEW ALL JOURNALS
                 </Link>
             </div>
         </div>
