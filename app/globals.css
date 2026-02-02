@@ -4099,3 +4099,66 @@
     /* リンク色にする */
   }
 }
+
+/* =========================================
+   Glossary Detail Header Styles
+   ========================================= */
+
+.glossary-page-header {
+  text-align: center;
+  padding: 50px 20px 0;
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.glossary-header-en {
+  font-family: var(--font-en);
+  color: #333;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+  margin-bottom: 24px;
+}
+
+.glossary-header-title {
+  font-family: var(--font-jp);
+  font-size: 2.0rem;
+  font-weight: 500;
+  margin-bottom: 30px;
+  color: #111;
+  line-height: 1.4;
+}
+
+@media (min-width: 768px) {
+  .glossary-header-title {
+    font-size: 2.6rem;
+  }
+}
+
+.glossary-category-badge-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.glossary-category-pill {
+  border: 1px solid #c5a365;
+  border-radius: 50px;
+  padding: 6px 24px;
+  color: #c5a365;
+  font-family: var(--font-en);
+  font-size: 0.85rem;
+  background-color: transparent;
+  display: inline-block;
+  letter-spacing: 0.05em;
+}
+
+.glossary-category-jp {
+  font-family: var(--font-jp);
+  color: #c5a365;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  margin: 0;
+}

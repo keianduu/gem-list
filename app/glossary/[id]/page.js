@@ -45,20 +45,22 @@ export default async function GlossaryDetailPage({ params }) {
             {/* 既存の .category-main を使って構造を統一 */}
             <main className="category-main">
 
-                {/* --- Header Section (宝石詳細ページと同じスタイル) --- */}
-                <section className="category-header !pb-0">
+                {/* --- New Header Section (Matches Design Reference) --- */}
+                <section className="glossary-page-header">
+                    <p className="glossary-header-en">{term.name_en}</p>
+                    <h1 className="glossary-header-title">{term.name_jp}</h1>
 
-                    <h1 className="category-title-ja">{term.name_jp}</h1>
-                    <p className="category-title-en" style={{ marginBottom: 0 }}>{term.name_en}</p>
+                    <div className="glossary-category-badge-wrapper">
+                        <div className="glossary-category-pill">
+                            {term.category_en}
+                        </div>
+                        <p className="glossary-category-jp">{term.category_jp}</p>
+                    </div>
                 </section>
 
                 {/* --- Content Section (Infographic Style) --- */}
-                <section className="gem-infographic-section">
-                    <div className="infographic-header">
-                        <span className="concept-label">Term Details</span>
-                        <h2 className="infographic-title">{term.category_en}</h2>
-                        <p className="category-title-ja" style={{ marginBottom: 0 }}>{term.category_jp}</p>
-                    </div>
+                <section className="gem-infographic-section !mt-8">
+
 
                     <div className="infographic-grid">
                         {/* Full Width Card for Content */}
