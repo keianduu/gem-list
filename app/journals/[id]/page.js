@@ -10,6 +10,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import { SITE_NAME } from "@/libs/meta";
 import { AUTHORS, DEFAULT_AUTHOR_ID } from "@/libs/authors"; // ★追加
 import SmartRichText from "@/components/SmartRichText";
+import JournalPagination from "@/components/JournalPagination";
 
 export const dynamic = 'force-dynamic';
 
@@ -189,6 +190,33 @@ export default async function JournalPage({ params }) {
   const authorId = journal.author || DEFAULT_AUTHOR_ID;
   const author = AUTHORS[authorId] || AUTHORS[DEFAULT_AUTHOR_ID];
 
+  // ★追加: 前後の記事を取得
+  const [prevArticle, nextArticle] = await Promise.all([
+    // 前の記事 (古い) : publishedAt < current
+    client.get({
+      endpoint: "archive",
+      queries: {
+        filters: `publishedAt[less_than]${journal.publishedAt}[and]type[contains]journal`,
+        limit: 1,
+        orders: "-publishedAt",
+        fields: "id,slug,title,thumbnail,publishedAt"
+      },
+      customRequestInit: { next: { tags: ['journal'] } }
+    }).then(res => res.contents[0] || null),
+
+    // 次の記事 (新しい) : publishedAt > current
+    client.get({
+      endpoint: "archive",
+      queries: {
+        filters: `publishedAt[greater_than]${journal.publishedAt}[and]type[contains]journal`,
+        limit: 1,
+        orders: "publishedAt",
+        fields: "id,slug,title,thumbnail,publishedAt"
+      },
+      customRequestInit: { next: { tags: ['journal'] } }
+    }).then(res => res.contents[0] || null)
+  ]);
+
   return (
     <>
       <SiteHeader />
@@ -225,6 +253,9 @@ export default async function JournalPage({ params }) {
               </div>
             )}
             <SmartRichText content={processedBody} />
+
+            {/* ★追加: ページネーション (Authorセクションの上) */}
+            <JournalPagination prev={prevArticle} next={nextArticle} />
 
             {/* ★修正: Authorセクションを動的にレンダリング */}
             <div className="journal-author-section">
