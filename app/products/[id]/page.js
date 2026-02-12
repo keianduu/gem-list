@@ -4,13 +4,16 @@ import { client } from "@/libs/microcms";
 // ▼▼▼ 追加: こちらも動的レンダリングを強制します ▼▼▼
 export const dynamic = 'force-dynamic';
 
-export const metadata = {
-  title: 'Product Detail - Management Only',
-  robots: { index: false, follow: false },
-  alternates: {
-    canonical: `/products/${id}`,
-  },
-};
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  return {
+    title: 'Product Detail - Management Only',
+    robots: { index: false, follow: false },
+    alternates: {
+      canonical: `/products/${id}`,
+    },
+  };
+}
 
 export default async function ProductPage({ params }) {
   const { id } = await params; // slug
