@@ -8,6 +8,9 @@ import { PAGE_METADATA } from "@/libs/meta";
 export const metadata = {
   title: PAGE_METADATA.favorites.title,
   description: PAGE_METADATA.favorites.description,
+  alternates: {
+    canonical: '/favorites',
+  },
 };
 
 export default function FavoritesPage() {
@@ -26,7 +29,7 @@ export default function FavoritesPage() {
       </main>
 
       <Breadcrumb items={breadcrumbItems} />
-      
+
       {/* サーバーコンポーネントとしてレンダリングされるのでエラーが解消します */}
       <SiteFooter />
     </>

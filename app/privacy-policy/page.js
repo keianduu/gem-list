@@ -8,6 +8,9 @@ import { PAGE_METADATA } from "@/libs/meta";
 export const metadata = {
   title: PAGE_METADATA.privacy.title,
   description: PAGE_METADATA.privacy.description,
+  alternates: {
+    canonical: '/privacy-policy',
+  },
 };
 
 export default function PrivacyPolicyPage() {
@@ -26,18 +29,18 @@ export default function PrivacyPolicyPage() {
         {/* --- 修正: タイトルエリアのデザインを共通化 --- */}
         <section style={{ maxWidth: '800px', margin: '40px auto 60px' }}>
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-             <span style={{ 
-              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em', 
-              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' 
+            <span style={{
+              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em',
+              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px'
             }}>
               Legal
             </span>
             <h1 className="section-title">Privacy Policy</h1>
             <p className="section-subtitle">個人情報保護方針</p>
           </div>
-          
+
           <div className="policy-content">
-            
+
             {/* ▼▼▼ 全体を一つのグラスモーフィズムカードで囲む ▼▼▼ */}
             <div className="policy-contact-info">
               <p>
@@ -135,7 +138,7 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
         </section>
-        
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />

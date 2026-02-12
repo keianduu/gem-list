@@ -7,6 +7,9 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Product Detail - Management Only',
   robots: { index: false, follow: false },
+  alternates: {
+    canonical: `/products/${id}`,
+  },
 };
 
 export default async function ProductPage({ params }) {
@@ -20,7 +23,7 @@ export default async function ProductPage({ params }) {
   });
   const product = data.contents[0];
 
-  if (!product) return <div style={{padding:100}}>Product Not Found</div>;
+  if (!product) return <div style={{ padding: 100 }}>Product Not Found</div>;
 
   return (
     <div className="item-admin-container">
@@ -33,18 +36,18 @@ export default async function ProductPage({ params }) {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={product.thumbnailUrl} alt={product.title} />
         </div>
-        
+
         <div className="item-info">
           <span className="item-badge">PRODUCT CHECK</span>
           <h1>{product.title}</h1>
           <p className="price">¥{Number(product.price).toLocaleString()}</p>
           <p className="desc">{product.description}</p>
-          
+
           <div className="action-area">
             <a href={product.affiliateUrl} target="_blank" rel="noopener noreferrer" className="affiliate-btn">
               アフィリエイトリンクを確認 (Shop)
             </a>
-            
+
             <div className="copy-area">
               <p>Journal埋め込み用URL:</p>
               <code>{`/products/${product.slug}`}</code>

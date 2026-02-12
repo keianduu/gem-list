@@ -9,6 +9,9 @@ import { GLOSSARY_DATA } from "@/libs/glossaryData";
 export const metadata = {
     title: "Gemstone Glossary - 宝石用語集 | Jewelism Market",
     description: "宝石にまつわる専門用語、カットの種類、歴史的な背景などをわかりやすく解説します。",
+    alternates: {
+        canonical: '/glossary',
+    },
 };
 
 export default function GlossaryPage() {

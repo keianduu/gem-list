@@ -91,6 +91,9 @@ async function getRoughStones() {
 export const metadata = {
   title: PAGE_METADATA.top.title,
   description: PAGE_METADATA.top.description,
+  alternates: {
+    canonical: '/',
+  },
 };
 
 export default async function Home() {

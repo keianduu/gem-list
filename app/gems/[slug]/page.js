@@ -63,6 +63,9 @@ export async function generateMetadata({ params }) {
   return {
     title: title,
     description: description,
+    alternates: {
+      canonical: `/gems/${urlSlug}`,
+    },
     openGraph: {
       title: `${title} | ${SITE_NAME}`,
       description: description,

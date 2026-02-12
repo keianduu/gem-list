@@ -9,6 +9,9 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Products List - Management Only',
   robots: { index: false, follow: false },
+  alternates: {
+    canonical: '/products',
+  },
 };
 
 export default async function ProductsListPage() {

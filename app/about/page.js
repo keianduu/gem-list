@@ -9,6 +9,9 @@ import { PAGE_METADATA } from "@/libs/meta";
 export const metadata = {
   title: PAGE_METADATA.about.title,
   description: PAGE_METADATA.about.description,
+  alternates: {
+    canonical: '/about',
+  },
 };
 const breadcrumbItems = [
   { label: "Home", path: "/" },
@@ -24,18 +27,18 @@ export default function AboutPage() {
 
         {/* --- 修正: タイトルエリアのデザインを共通化 --- */}
         <div style={{ maxWidth: "800px", margin: "40px auto 60px" }}>
-          
+
           <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-             <span style={{ 
-              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em', 
-              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' 
+            <span style={{
+              fontFamily: 'var(--font-en)', fontSize: '0.8rem', letterSpacing: '0.1em',
+              color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px'
             }}>
               Information
             </span>
             <h1 className="section-title">About & Disclaimer</h1>
             <p className="section-subtitle">運営情報 & 免責事項</p>
           </div>
-          
+
           <div className="policy-content">
 
             {/* --- Concept Section --- */}
@@ -64,7 +67,7 @@ export default function AboutPage() {
                 </div>
               </div>
             </section>
-            
+
             {/* --- 運営者情報 --- */}
             <section>
               <div className="policy-contact-info">
@@ -114,7 +117,7 @@ export default function AboutPage() {
                   <p>
                     当サイトに関するご質問、ご要望、お仕事のご依頼などは、以下のフォームよりお願いいたします。
                   </p>
-                  
+
                   <div style={{ marginTop: '40px' }}>
                     <ContactForm />
                   </div>
@@ -128,7 +131,7 @@ export default function AboutPage() {
 
           </div>
         </div>
-        
+
       </main>
       <Breadcrumb items={breadcrumbItems} />
       <SiteFooter />

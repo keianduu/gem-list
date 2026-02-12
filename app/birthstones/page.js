@@ -27,6 +27,9 @@ async function getAllCategories() {
 export const metadata = {
     title: "誕生石一覧（1月〜12月） - Jewelism MARKET",
     description: "各月の誕生石とその意味、石言葉を一覧で紹介。大切な人への贈り物や、自分へのお守りとして、あなたの誕生月の宝石を見つけてください。",
+    alternates: {
+        canonical: '/birthstones',
+    },
 };
 
 export default async function BirthstonesPage() {

@@ -60,6 +60,9 @@ async function getAccessories() {
 export const metadata = {
   title: PAGE_METADATA.search.title,
   description: PAGE_METADATA.search.description,
+  alternates: {
+    canonical: '/search',
+  },
 };
 
 export default async function SearchPage() {

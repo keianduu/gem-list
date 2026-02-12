@@ -29,6 +29,9 @@ async function getAllCategories() {
 export const metadata = {
   title: "Gemstone Index - Jewelism MARKET",
   description: "取り扱い宝石カテゴリの一覧です。名前からお好みの宝石をお探しいただけます。",
+  alternates: {
+    canonical: '/gems',
+  },
 };
 
 export default async function CategoryIndexPage() {

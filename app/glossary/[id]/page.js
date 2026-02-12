@@ -20,6 +20,9 @@ export async function generateMetadata({ params }) {
     return {
         title: `${term.name_jp} (${term.name_en}) とは？ - 宝石用語集`,
         description: term.summary,
+        alternates: {
+            canonical: `/glossary/${id}`,
+        },
     };
 }
 

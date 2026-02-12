@@ -127,6 +127,9 @@ export async function generateMetadata({ params }) {
     return {
       title: journal.title,
       description: journal.description || "Jewelism MARKETの記事詳細です。",
+      alternates: {
+        canonical: `/journals/${id}`,
+      },
       openGraph: {
         title: `${journal.title} | ${SITE_NAME}`,
         description: journal.description,

@@ -92,6 +92,9 @@ export async function generateMetadata({ params }) {
   return {
     title: title,
     description: description,
+    alternates: {
+      canonical: `/rough-stones/${urlSlug}`,
+    },
     openGraph: {
       title: `${title} | ${SITE_NAME}`,
       description: description,
