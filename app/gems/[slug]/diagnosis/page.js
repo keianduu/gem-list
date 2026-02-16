@@ -222,14 +222,30 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                                 <p className="font-jp text-lg font-medium text-gray-800 border-b border-gray-200/50 pb-4 mb-4">
                                     {diagnosisGem.catchCopy}
                                 </p>
-                                <p className="font-jp text-sm text-gray-600 leading-loose">
-                                    {diagnosisGem.nature.split('\n').map((line, i) => (
-                                        <span key={i}>
-                                            {line}
-                                            <br />
-                                        </span>
-                                    ))}
-                                </p>
+                                <div className="font-jp text-sm text-gray-600 leading-loose">
+                                    <div className="flex flex-col gap-5 mt-4">
+                                        <div>
+                                            <span className="inline-block text-gold-dark font-jp font-bold text-xs border-b border-gold/30 mb-2">性格</span>
+                                            <p>{diagnosisGem.nature.personality}</p>
+                                        </div>
+                                        <div>
+                                            <span className="inline-block text-gold-dark font-jp font-bold text-xs border-b border-gold/30 mb-2">強み</span>
+                                            <p>{diagnosisGem.nature.strength}</p>
+                                        </div>
+                                        <div>
+                                            <span className="inline-block text-gold-dark font-jp font-bold text-xs border-b border-gold/30 mb-2">対人・内面</span>
+                                            <p>{diagnosisGem.nature.social}</p>
+                                        </div>
+                                        <div>
+                                            <span className="inline-block text-gold-dark font-jp font-bold text-xs border-b border-gold/30 mb-2">起源・らしさ</span>
+                                            <p>{diagnosisGem.nature.origin}</p>
+                                        </div>
+                                        <div>
+                                            <span className="inline-block text-gold-dark font-jp font-bold text-xs border-b border-gold/30 mb-2">注意点</span>
+                                            <p>{diagnosisGem.nature.caution}</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Keywords */}
