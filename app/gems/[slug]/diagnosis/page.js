@@ -207,7 +207,7 @@ export default async function DiagnosisResultPage({ params, searchParams }) {
                 <section className="gem-infographic-section">
                     <div className="infographic-header">
                         <span className="concept-label">Analysis Result</span>
-                        <h2 className="infographic-title">Your Guardian Gem</h2>
+                        <h2 className="infographic-title">Your Signature Gem</h2>
                     </div>
 
                     <div className="infographic-grid">

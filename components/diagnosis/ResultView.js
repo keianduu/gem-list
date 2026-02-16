@@ -25,7 +25,7 @@ export default function ResultView({ result, onClose }) {
 
                 <div className="relative z-10">
                     <p className="font-en text-gold text-xs tracking-[0.3em] uppercase mb-4">
-                        Your Guardian Gem
+                        Your Signature Gem
                     </p>
 
                     {/* 宝石名 */}
