@@ -3,9 +3,24 @@
 
 import { useDiagnosis } from '@/contexts/DiagnosisContext';
 import { motion } from 'framer-motion';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation'; // 追加
+import { useEffect } from 'react'; // 追加
 
 export default function DiagnosisTrigger() {
     const { openDiagnosis } = useDiagnosis();
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    const pathname = usePathname();
+
+    // URLパラメータ (?diagnosis=open) の監視
+    useEffect(() => {
+        const diagnosisParam = searchParams.get('diagnosis');
+        if (diagnosisParam === 'open' || diagnosisParam === 'true') {
+            openDiagnosis();
+
+
+        }
+    }, [searchParams, openDiagnosis, pathname, router]);
 
     return (
         <motion.div

@@ -178,7 +178,9 @@ export default async function Home() {
       <SiteFooter />
 
       {/* 💎 ★追加: 宝石診断トリガー */}
-      <DiagnosisTrigger />
+      <Suspense fallback={null}>
+        <DiagnosisTrigger />
+      </Suspense>
     </>
   );
 }
