@@ -30,6 +30,21 @@ export default function DiagnosisModal() {
     const totalQuestions = phase === 'deep_dive' ? 30 : 15;
     const currentNum = (currentQuestionIndex || 0) + 1;
 
+    // モーダルを閉じる際の処理: URLパラメータも削除する
+    const handleClose = () => {
+        closeDiagnosis();
+
+        // URLパラメータのクリーンアップ
+        // Trigger側で二重オープン防止ガードを入れたため、即座に削除して問題なし
+        const params = new URLSearchParams(searchParams.toString());
+        if (params.has('diagnosis')) {
+            params.delete('diagnosis');
+            const newQuery = params.toString();
+            const newUrl = newQuery ? `${pathname}?${newQuery}` : pathname;
+            router.replace(newUrl, { scroll: false });
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
             // モーダルが開いた時点、またはフェーズ開始時点のパスを記録
@@ -91,13 +106,13 @@ export default function DiagnosisModal() {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        onClick={closeDiagnosis}
+                        onClick={handleClose}
                         className="absolute inset-0 bg-navy-dark/95 backdrop-blur-sm"
                     />
 
                     {(phase !== 'phase1_result' && phase !== 'result') && (
                         <button
-                            onClick={closeDiagnosis}
+                            onClick={handleClose}
                             className="absolute top-6 right-6 p-2 text-white/50 hover:text-white transition-colors z-[10000]"
                         >
                             <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center bg-navy-dark/50">✕</div>

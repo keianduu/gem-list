@@ -4,7 +4,7 @@
 import { useDiagnosis } from '@/contexts/DiagnosisContext';
 import { motion } from 'framer-motion';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'; // 追加
-import { useEffect } from 'react'; // 追加
+import { useEffect, useRef } from 'react'; // 追加
 
 export default function DiagnosisTrigger() {
     const { openDiagnosis } = useDiagnosis();
@@ -12,15 +12,18 @@ export default function DiagnosisTrigger() {
     const router = useRouter();
     const pathname = usePathname();
 
+    const hasAutoOpened = useRef(false); // 自動オープンが実行されたかを管理
+
     // URLパラメータ (?diagnosis=open) の監視
     useEffect(() => {
         const diagnosisParam = searchParams.get('diagnosis');
-        if (diagnosisParam === 'open' || diagnosisParam === 'true') {
+
+        // まだ自動オープンしておらず、パラメータが有効な場合のみ実行
+        if (!hasAutoOpened.current && (diagnosisParam === 'open' || diagnosisParam === 'true')) {
             openDiagnosis();
-
-
+            hasAutoOpened.current = true; // 実行済みフラグを立てる
         }
-    }, [searchParams, openDiagnosis, pathname, router]);
+    }, [searchParams, openDiagnosis]);
 
     return (
         <motion.div
