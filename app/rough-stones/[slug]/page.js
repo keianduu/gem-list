@@ -8,6 +8,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import GemStoneLinks from "@/components/GemStoneLinks";
 import { SITE_NAME } from "@/libs/meta";
+import SmartRichText from "@/components/SmartRichText";
 
 // ★追加: この原石に関連する宝石カテゴリを取得
 async function getRelatedJewelryCategories(roughStoneId) {
@@ -185,10 +186,9 @@ export default async function RoughStonePage({ params }) {
           <p className="category-title-ja">{roughStone.yomigana}</p>
 
           {roughStone.description && (
-            <div
-              className="category-desc"
-              dangerouslySetInnerHTML={{ __html: roughStone.description }}
-            />
+            <div className="category-desc">
+              <SmartRichText content={roughStone.description} />
+            </div>
           )}
         </section>
 
