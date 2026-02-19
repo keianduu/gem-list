@@ -182,8 +182,8 @@ export default async function RoughStonePage({ params }) {
             )}
           </div>
 
-          <h1 className="category-title-en">{roughStone.name}</h1>
-          <p className="category-title-ja">{roughStone.yomigana}</p>
+
+          <h1 className="category-title-ja">{roughStone.yomigana}<br /><span className="category-title-en">{roughStone.name}</span></h1>
 
           {roughStone.description && (
             <div className="category-desc">
