@@ -87,7 +87,7 @@ export async function generateMetadata({ params }) {
   }
 
   const jaName = roughStone.nameJa ? `(${roughStone.nameJa})` : "";
-  const title = `${roughStone.name} ${jaName} - 原石図鑑`;
+  const title = roughStone.seotitle || `${roughStone.name} ${jaName} - 原石図鑑`;
   const description = `宝石の原点である${roughStone.name}${jaName}のデータ。結晶構造や生成環境など、鉱物としての魅力を深掘りします。`;
 
   return {
