@@ -71,13 +71,13 @@ export default async function GlossaryDetailPage({ params }) {
 
                             {/* Header Row: Icon + Label */}
                             <div className="info-header-row mb-6">
-                                <h3 className="info-label">SUMMARY</h3>
+                                <p className="info-label">SUMMARY</p>
                             </div>
 
                             {/* Catchy Summary (Large Text) */}
-                            <p className="font-jp text-lg font-medium text-gray-800 border-b border-gray-200/50 pb-4 mb-6 leading-relaxed">
+                            <h2 className="font-jp text-lg font-medium text-gray-800 border-b border-gray-200/50 pb-4 mb-6 leading-relaxed">
                                 {term.summary}
-                            </p>
+                            </h2>
 
                             {/* Main Description */}
                             <div
