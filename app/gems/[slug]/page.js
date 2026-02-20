@@ -163,15 +163,11 @@ export default async function CategoryPage({ params, searchParams }) {
           </div>
 
           {/* 2. 英語タイトル */}
-          <h1 className="category-title-en">{category.name}</h1>
+          <h1><span className="category-title-ja">{category.yomigana}</span><br /><span className="category-title-en">{category.name}</span></h1>
 
           {/* 3. 読みがな & 日本語名 (ここを追加しました) */}
           <div style={{ marginBottom: '24px' }}>
-            {category.yomigana && (
-              <p className="category-title-ja" style={{ marginBottom: category.nameJa ? '4px' : '0' }}>
-                {category.yomigana}
-              </p>
-            )}
+
             {category.nameJa && (
               <p className="category-title-ja" style={{ marginBottom: '0' }}>
                 {category.nameJa}

@@ -5,6 +5,7 @@ import SiteFooter from "@/components/SiteFooter";
 import Breadcrumb from "@/components/Breadcrumb";
 import { GLOSSARY_DATA } from "@/libs/glossaryData";
 import GlossaryBackButton from "@/components/GlossaryBackButton";
+import HtmlWithScrollHint from "@/components/HtmlWithScrollHint";
 
 // 静的パス生成
 export async function generateStaticParams() {
@@ -80,10 +81,7 @@ export default async function GlossaryDetailPage({ params }) {
                             </h2>
 
                             {/* Main Description */}
-                            <div
-                                className="font-jp text-sm text-gray-600 leading-loose"
-                                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-                            />
+                            <HtmlWithScrollHint htmlContent={descriptionHtml} />
 
                         </div>
                     </div>
